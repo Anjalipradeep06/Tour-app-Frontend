@@ -1,0 +1,277 @@
+/* ==========================
+   NAVBAR
+========================== */
+
+.navbar{
+
+position:fixed;
+
+top:0;
+
+left:0;
+
+width:100%;
+
+z-index:1000;
+
+transition:.35s;
+
+padding:18px 0;
+
+}
+
+.navbar-scrolled{
+
+background:#0B0E11;
+
+border-bottom:1px solid rgba(201,166,105,.18);
+
+backdrop-filter:blur(10px);
+
+}
+
+/* ==========================
+CONTAINER
+========================== */
+
+.navbar-container{
+
+width:90%;
+
+max-width:1400px;
+
+margin:auto;
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+}
+
+/* ==========================
+LOGO
+========================== */
+
+.logo{
+
+font-family:"Fraunces",serif;
+
+font-size:2rem;
+
+letter-spacing:2px;
+
+color:#E8E3D9;
+
+text-decoration:none;
+
+transition:.3s;
+
+}
+
+.logo:hover{
+
+color:#C9A669;
+
+}
+
+/* ==========================
+NAV LINKS
+========================== */
+
+.nav-links{
+
+display:flex;
+
+align-items:center;
+
+gap:35px;
+
+}
+
+.nav-links a{
+
+position:relative;
+
+text-decoration:none;
+
+font-family:"Inter",sans-serif;
+
+font-size:.95rem;
+
+letter-spacing:1px;
+
+text-transform:uppercase;
+
+color:#E8E3D9;
+
+transition:.3s;
+
+}
+
+.nav-links a::after{
+
+content:"";
+
+position:absolute;
+
+bottom:-8px;
+
+left:0;
+
+width:0;
+
+height:1px;
+
+background:#C9A669;
+
+transition:.3s;
+
+}
+
+.nav-links a:hover{
+
+color:#C9A669;
+
+}
+
+.nav-links a:hover::after,
+
+.nav-links .active::after{
+
+width:100%;
+
+}
+
+.nav-links .active{
+
+color:#C9A669;
+
+}
+
+/* ==========================
+REGISTER BUTTON
+========================== */
+
+.register-btn{
+
+padding:10px 22px;
+
+border:1px solid #C9A669;
+
+}
+
+.register-btn:hover{
+
+background:#C9A669;
+
+color:#0B0E11 !important;
+
+}
+
+/* ==========================
+USER
+========================== */
+
+.user-name{
+
+font-family:"JetBrains Mono",monospace;
+
+color:#C9A669;
+
+font-size:.85rem;
+
+letter-spacing:1px;
+
+}
+
+.logout-btn{
+
+background:none;
+
+border:1px solid #C9A669;
+
+padding:10px 18px;
+
+color:#C9A669;
+
+cursor:pointer;
+
+transition:.3s;
+
+font-family:Inter,sans-serif;
+
+}
+
+.logout-btn:hover{
+
+background:#C9A669;
+
+color:#0B0E11;
+
+}
+
+/* ==========================
+MENU BUTTON
+========================== */
+
+.menu-toggle{
+
+display:none;
+
+background:none;
+
+border:none;
+
+color:#E8E3D9;
+
+font-size:2rem;
+
+cursor:pointer;
+
+}
+
+/* ==========================
+MOBILE
+========================== */
+
+@media(max-width:900px){
+
+.menu-toggle{
+
+display:block;
+
+}
+
+.nav-links{
+
+position:absolute;
+
+top:80px;
+
+left:0;
+
+width:100%;
+
+background:#15191E;
+
+border-top:1px solid rgba(201,166,105,.15);
+
+display:none;
+
+flex-direction:column;
+
+padding:30px 0;
+
+gap:25px;
+
+}
+
+.nav-links.open{
+
+display:flex;
+
+}
+
+}

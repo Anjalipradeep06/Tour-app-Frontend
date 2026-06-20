@@ -1,0 +1,392 @@
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import { createTour, updateTour } from "../../redux/thunks/tourThunk";
+import { getAllDestinations } from "../../redux/thunks/destinationThunk";
+import { resetTourActionState } from "../../redux/slices/tourSlice";
+
+import TagListInput from "./TagListInput";
+import ItineraryEditor from "./ItineraryEditor";
+import StartDatesEditor from "./StartDatesEditor";
+
+import "./TourFormModal.css";
+
+const emptyTour = {
+  title: "",
+  destination: "",
+  description: "",
+  duration: "",
+  price: "",
+  availableSlots: "",
+  activities: [],
+  highlights: [],
+  inclusions: [],
+  exclusions: [],
+  itinerary: [],
+  startDates: [],
+  meetingPoint: { address: "", latitude: "", longitude: "" },
+  isFeatured: false,
+};
+
+// Converts a Tour document (from the API) into the shape this
+// form's controlled inputs expect — mainly: dates as YYYY-MM-DD
+// strings for <input type="date">, destination as just the id
+// (it may arrive populated as an object).
+const toFormState = (tour) => {
+  if (!tour) return emptyTour;
+
+  // TEMP DEBUG — remove once the crash is identified.
+  console.log("toFormState received tour:", tour);
+  console.log("activities:", tour.activities, "highlights:", tour.highlights, "itinerary:", tour.itinerary, "startDates:", tour.startDates, "meetingPoint:", tour.meetingPoint);
+
+  return {
+    title: tour.title || "",
+    destination:
+      typeof tour.destination === "object"
+        ? tour.destination?._id || ""
+        : tour.destination || "",
+    description: tour.description || "",
+    duration: tour.duration ?? "",
+    price: tour.price ?? "",
+    availableSlots: tour.availableSlots ?? "",
+    activities: tour.activities || [],
+    highlights: tour.highlights || [],
+    inclusions: tour.inclusions || [],
+    exclusions: tour.exclusions || [],
+    itinerary: tour.itinerary || [],
+    startDates: (tour.startDates || []).map((d) =>
+      new Date(d).toISOString().slice(0, 10)
+    ),
+    meetingPoint: {
+      address: tour.meetingPoint?.address || "",
+      latitude: tour.meetingPoint?.latitude ?? "",
+      longitude: tour.meetingPoint?.longitude ?? "",
+    },
+    isFeatured: !!tour.isFeatured,
+  };
+};
+
+// Converts form state back into the payload shape the backend
+// expects — numbers as numbers, dates as Date-parseable strings.
+const toPayload = (form) => ({
+  title: form.title.trim(),
+  destination: form.destination,
+  description: form.description.trim(),
+  duration: Number(form.duration),
+  price: Number(form.price),
+  availableSlots: Number(form.availableSlots) || 0,
+  activities: form.activities,
+  highlights: form.highlights,
+  inclusions: form.inclusions,
+  exclusions: form.exclusions,
+  itinerary: form.itinerary.map((d) => ({
+    day: Number(d.day),
+    title: d.title.trim(),
+    description: d.description.trim(),
+  })),
+  startDates: form.startDates.filter(Boolean),
+  meetingPoint: {
+    address: form.meetingPoint.address.trim(),
+    latitude: form.meetingPoint.latitude
+      ? Number(form.meetingPoint.latitude)
+      : undefined,
+    longitude: form.meetingPoint.longitude
+      ? Number(form.meetingPoint.longitude)
+      : undefined,
+  },
+  isFeatured: form.isFeatured,
+});
+
+const TourFormModal = ({ tour, onClose }) => {
+  const dispatch = useDispatch();
+  const isEditMode = !!tour;
+
+  const { allDestinations = [], loading: destinationsLoading } = useSelector(
+    (state) => state.destinations
+  );
+  const { actionLoading, actionError, actionSuccess } = useSelector(
+    (state) => state.tours
+  );
+
+  const [form, setForm] = useState(() => toFormState(tour));
+  const [validationError, setValidationError] = useState("");
+
+  useEffect(() => {
+    dispatch(getAllDestinations({ limit: 100 }));
+  }, [dispatch]);
+
+  // Close automatically once the create/update actually succeeds.
+  useEffect(() => {
+    if (actionSuccess) {
+      dispatch(resetTourActionState());
+      onClose();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [actionSuccess]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetTourActionState());
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const updateField = (field, value) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const updateMeetingPoint = (field, value) => {
+    setForm((prev) => ({
+      ...prev,
+      meetingPoint: { ...prev.meetingPoint, [field]: value },
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setValidationError("");
+
+    if (!form.title.trim()) {
+      setValidationError("Title is required.");
+      return;
+    }
+    if (!form.destination) {
+      setValidationError("Please select a destination.");
+      return;
+    }
+    if (!form.description.trim()) {
+      setValidationError("Description is required.");
+      return;
+    }
+    if (!form.duration || Number(form.duration) < 1) {
+      setValidationError("Duration must be at least 1 day.");
+      return;
+    }
+    if (form.price === "" || Number(form.price) < 0) {
+      setValidationError("Price must be a positive number.");
+      return;
+    }
+
+    const payload = toPayload(form);
+
+    if (isEditMode) {
+      dispatch(updateTour({ id: tour._id, tourData: payload }));
+    } else {
+      dispatch(createTour(payload));
+    }
+  };
+
+  return (
+    <div className="tf-overlay" role="dialog" aria-modal="true">
+      <div className="tf-modal">
+        <div className="tf-modal-header">
+          <h2>{isEditMode ? "Edit Tour" : "Create Tour"}</h2>
+          <button
+            type="button"
+            className="tf-icon-btn"
+            onClick={onClose}
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </div>
+
+        <form className="tf-modal-body" onSubmit={handleSubmit}>
+          {(validationError || actionError) && (
+            <div className="tf-form-error">
+              {validationError || actionError}
+            </div>
+          )}
+
+          <div className="tf-grid-2">
+            <div className="tf-field">
+              <label className="tf-label">Title</label>
+              <input
+                type="text"
+                className="tf-input"
+                value={form.title}
+                onChange={(e) => updateField("title", e.target.value)}
+                placeholder="e.g. Japan Nature & Hiking Adventure"
+              />
+            </div>
+
+            <div className="tf-field">
+              <label className="tf-label">Destination</label>
+              <select
+                className="tf-input"
+                value={form.destination}
+                onChange={(e) => updateField("destination", e.target.value)}
+                disabled={destinationsLoading}
+              >
+                <option value="">
+                  {destinationsLoading ? "Loading…" : "Select a destination"}
+                </option>
+                {allDestinations.map((d) => (
+                  <option key={d._id} value={d._id}>
+                    {d.name}, {d.country}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="tf-field">
+            <label className="tf-label">Description</label>
+            <textarea
+              className="tf-textarea"
+              rows={3}
+              value={form.description}
+              onChange={(e) => updateField("description", e.target.value)}
+              placeholder="Describe the tour experience…"
+            />
+          </div>
+
+          <div className="tf-grid-3">
+            <div className="tf-field">
+              <label className="tf-label">Duration (days)</label>
+              <input
+                type="number"
+                min="1"
+                className="tf-input"
+                value={form.duration}
+                onChange={(e) => updateField("duration", e.target.value)}
+              />
+            </div>
+
+            <div className="tf-field">
+              <label className="tf-label">Price (₹)</label>
+              <input
+                type="number"
+                min="0"
+                className="tf-input"
+                value={form.price}
+                onChange={(e) => updateField("price", e.target.value)}
+              />
+            </div>
+
+            <div className="tf-field">
+              <label className="tf-label">Available slots</label>
+              <input
+                type="number"
+                min="0"
+                className="tf-input"
+                value={form.availableSlots}
+                onChange={(e) =>
+                  updateField("availableSlots", e.target.value)
+                }
+              />
+            </div>
+          </div>
+
+          <TagListInput
+            label="Activities"
+            values={form.activities}
+            onChange={(v) => updateField("activities", v)}
+            placeholder="e.g. Hiking — press Enter"
+          />
+
+          <TagListInput
+            label="Highlights"
+            values={form.highlights}
+            onChange={(v) => updateField("highlights", v)}
+            placeholder="e.g. Sunrise at Mt Fuji"
+          />
+
+          <ItineraryEditor
+            days={form.itinerary}
+            onChange={(v) => updateField("itinerary", v)}
+          />
+
+          <div className="tf-grid-2">
+            <TagListInput
+              label="Inclusions"
+              values={form.inclusions}
+              onChange={(v) => updateField("inclusions", v)}
+              placeholder="e.g. Airport transfers"
+            />
+
+            <TagListInput
+              label="Exclusions"
+              values={form.exclusions}
+              onChange={(v) => updateField("exclusions", v)}
+              placeholder="e.g. International flights"
+            />
+          </div>
+
+          <StartDatesEditor
+            dates={form.startDates}
+            onChange={(v) => updateField("startDates", v)}
+          />
+
+          <div className="tf-field">
+            <label className="tf-label">Meeting point</label>
+            <div className="tf-grid-3">
+              <input
+                type="text"
+                className="tf-input"
+                placeholder="Address"
+                value={form.meetingPoint.address}
+                onChange={(e) =>
+                  updateMeetingPoint("address", e.target.value)
+                }
+              />
+              <input
+                type="number"
+                step="any"
+                className="tf-input"
+                placeholder="Latitude"
+                value={form.meetingPoint.latitude}
+                onChange={(e) =>
+                  updateMeetingPoint("latitude", e.target.value)
+                }
+              />
+              <input
+                type="number"
+                step="any"
+                className="tf-input"
+                placeholder="Longitude"
+                value={form.meetingPoint.longitude}
+                onChange={(e) =>
+                  updateMeetingPoint("longitude", e.target.value)
+                }
+              />
+            </div>
+          </div>
+
+          <label className="tf-checkbox-row">
+            <input
+              type="checkbox"
+              checked={form.isFeatured}
+              onChange={(e) => updateField("isFeatured", e.target.checked)}
+            />
+            Feature this tour on the homepage
+          </label>
+
+          <div className="tf-modal-footer">
+            <button
+              type="button"
+              className="tf-btn tf-btn--secondary"
+              onClick={onClose}
+              disabled={actionLoading}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="tf-btn tf-btn--primary"
+              disabled={actionLoading}
+            >
+              {actionLoading
+                ? "Saving…"
+                : isEditMode
+                ? "Save changes"
+                : "Create tour"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default TourFormModal;

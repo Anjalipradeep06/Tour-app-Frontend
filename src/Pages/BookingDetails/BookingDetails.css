@@ -1,0 +1,520 @@
+/* ==========================================================================
+   Booking Details — international travel-booking style
+   Palette:  #0B4F4A teal (brand) · #FAF7F2 sand (bg) · #FFFFFF card
+             #1C2521 ink (text) · #6B7670 slate (secondary)
+             confirmed #1B7A4D · pending #B8770A · cancelled #C03B2B
+             paid #1B7A4D · unpaid #B8770A · refunded #6B7670
+   Type:     "Fraunces" (display, price/title) + "Inter" (UI/body)
+   ========================================================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap");
+
+.booking-details-page {
+  --teal: #0b4f4a;
+  --teal-dark: #073733;
+  --sand: #faf7f2;
+  --card: #ffffff;
+  --ink: #1c2521;
+  --slate: #6b7670;
+  --line: #e7e2d8;
+  --confirmed: #1b7a4d;
+  --confirmed-bg: #e8f4ec;
+  --pending: #b8770a;
+  --pending-bg: #fbf0dd;
+  --cancelled: #c03b2b;
+  --cancelled-bg: #fbe9e6;
+  --refunded: #6b7670;
+  --refunded-bg: #ececea;
+
+  min-height: 100vh;
+  background: var(--sand);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--ink);
+  padding: 40px 24px 80px;
+  box-sizing: border-box;
+}
+
+.booking-details-page *,
+.booking-details-page *::before,
+.booking-details-page *::after {
+  box-sizing: border-box;
+}
+
+.booking-details-shell {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+/* ---------- Back link ---------- */
+
+.booking-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--slate);
+  text-decoration: none;
+  margin-bottom: 24px;
+  transition: color 0.15s ease;
+}
+
+.booking-back-link:hover {
+  color: var(--teal);
+}
+
+.booking-back-link:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* ---------- Header ---------- */
+
+.booking-header {
+  margin-bottom: 28px;
+}
+
+.booking-eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--slate);
+  margin: 0 0 10px;
+}
+
+.booking-header h1 {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(26px, 3.6vw, 36px);
+  line-height: 1.15;
+  margin: 0 0 16px;
+  color: var(--teal-dark);
+}
+
+.booking-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Status pills — both the lifecycle status and the payment status share
+   this base class, distinguished by modifier */
+.booking-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 14px 6px 10px;
+  border-radius: 999px;
+  text-transform: capitalize;
+  background: var(--refunded-bg);
+  color: var(--refunded);
+}
+
+.booking-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+/* Lifecycle status */
+.booking-status--confirmed {
+  background: var(--confirmed-bg);
+  color: var(--confirmed);
+}
+
+.booking-status--pending {
+  background: var(--pending-bg);
+  color: var(--pending);
+}
+
+.booking-status--cancelled {
+  background: var(--cancelled-bg);
+  color: var(--cancelled);
+}
+
+.booking-status--completed {
+  background: #e9eef0;
+  color: var(--slate);
+}
+
+/* Payment status reuses pending/cancelled tones for unpaid/failed,
+   confirmed tone for paid, and neutral for refunded */
+.booking-status--paid {
+  background: var(--confirmed-bg);
+  color: var(--confirmed);
+}
+
+.booking-status--unpaid {
+  background: var(--pending-bg);
+  color: var(--pending);
+}
+
+.booking-status--failed {
+  background: var(--cancelled-bg);
+  color: var(--cancelled);
+}
+
+.booking-status--refunded {
+  background: var(--refunded-bg);
+  color: var(--refunded);
+}
+
+/* ---------- Layout: two columns ---------- */
+
+.booking-layout {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.booking-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--teal);
+  border-radius: 14px;
+}
+
+.booking-card--main {
+  overflow: hidden;
+}
+
+/* ---------- Main card (left) ---------- */
+
+.booking-card--main {
+  padding: 0 0 28px;
+  display: flex;
+  flex-direction: column;
+}
+
+.booking-card-media {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  background: var(--line);
+}
+
+.booking-card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Info grid: fixed 3 columns, never absorbs the view-tour link */
+.booking-info-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  padding: 28px 28px 4px;
+}
+
+.booking-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-left: 14px;
+  border-left: 2px solid var(--teal);
+  min-width: 0;
+}
+
+.booking-info-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--slate);
+  white-space: nowrap;
+}
+
+.booking-info-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.4;
+}
+
+.booking-info-value--mono {
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--slate);
+  word-break: break-all;
+  line-height: 1.5;
+}
+
+/* Sits as its own row below the grid, full width, with breathing room */
+.booking-view-tour {
+  margin: 24px 28px 0;
+  align-self: flex-start;
+}
+
+/* ---------- Summary card (right, sticky) ---------- */
+
+.booking-card--summary {
+  position: sticky;
+  top: 32px;
+  padding: 28px;
+  background: var(--teal-dark);
+  border: none;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+}
+
+.booking-summary-top {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.booking-summary-label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.booking-summary-price {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 500;
+  font-size: 38px;
+  line-height: 1.25;
+  margin: 6px 0 2px;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: visible;
+}
+
+.booking-currency {
+  font-size: 22px;
+  vertical-align: 3px;
+  margin-right: 2px;
+  opacity: 0.85;
+}
+
+.booking-summary-sub {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Perforated "ticket stub" divider — the signature detail */
+.booking-perforation {
+  position: relative;
+  height: 1px;
+  margin: 24px -28px;
+  background: repeating-linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.35) 0,
+    rgba(255, 255, 255, 0.35) 6px,
+    transparent 6px,
+    transparent 13px
+  );
+  flex-shrink: 0;
+}
+
+.booking-perforation::before,
+.booking-perforation::after {
+  content: "";
+  position: absolute;
+  top: -10px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--sand);
+}
+
+.booking-perforation::before {
+  left: -10px;
+}
+
+.booking-perforation::after {
+  right: -10px;
+}
+
+/* Action stack: payment button + cancel button, evenly spaced, never crammed */
+.booking-summary-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.booking-summary-bottom > * {
+  width: 100%;
+}
+
+.booking-locked-note {
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+}
+
+/* ---------- Buttons ---------- */
+
+.booking-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 13px 20px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease,
+    transform 0.1s ease;
+  white-space: nowrap;
+}
+
+.booking-btn:active {
+  transform: scale(0.98);
+}
+
+.booking-btn:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+}
+
+.booking-btn--ghost {
+  background: transparent;
+  color: var(--teal-dark);
+  border: 1.5px solid var(--line);
+}
+
+.booking-btn--ghost:hover {
+  border-color: var(--teal);
+  background: #f1f7f6;
+}
+
+.booking-btn--danger {
+  background: #ffffff;
+  color: var(--cancelled);
+}
+
+.booking-btn--danger:hover:not(:disabled) {
+  background: var(--cancelled-bg);
+}
+
+.booking-btn--danger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ---------- PaymentButton (3rd-party component) wrapper ----------
+   We don't control its internal markup, so we style defensively:
+   normalize whatever button it renders to match our button system
+   without needing to touch that component's source. */
+
+.booking-summary-bottom button {
+  width: 100%;
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 13px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.booking-summary-bottom > *:first-child:not(.booking-btn--danger):not(.booking-locked-note) button,
+.booking-summary-bottom > *:first-child button {
+  background: #ffffff;
+  color: var(--teal-dark);
+  border: none;
+}
+
+.booking-summary-bottom > *:first-child button:hover {
+  background: #f1f1ee;
+}
+
+/* ---------- State cards: loading / error / empty ---------- */
+
+.booking-state-card {
+  max-width: 480px;
+  margin: 80px auto 0;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 48px 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  color: var(--slate);
+  font-size: 15px;
+}
+
+.booking-state-card--error {
+  color: var(--cancelled);
+}
+
+.booking-spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--line);
+  border-top-color: var(--teal);
+  border-radius: 50%;
+  animation: booking-spin 0.7s linear infinite;
+}
+
+@keyframes booking-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .booking-spinner {
+    animation: none;
+  }
+  .booking-btn,
+  .booking-back-link {
+    transition: none;
+  }
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 760px) {
+  .booking-details-page {
+    padding: 28px 16px 60px;
+  }
+
+  .booking-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-card--summary {
+    position: static;
+  }
+
+  .booking-info-grid {
+    grid-template-columns: 1fr 1fr;
+    padding: 24px 20px 4px;
+    gap: 18px;
+  }
+
+  .booking-view-tour {
+    margin: 20px 20px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .booking-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-summary-price {
+    font-size: 32px;
+  }
+}

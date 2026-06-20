@@ -1,0 +1,82 @@
+.filter-sidebar{
+
+background:#15191E;
+
+padding:25px;
+
+border-radius:12px;
+
+border:1px solid rgba(201,166,105,.2);
+
+height:fit-content;
+
+}
+
+.filter-sidebar h2{
+
+font-family:"Fraunces",serif;
+
+color:#C9A669;
+
+margin-bottom:25px;
+
+}
+
+.filter-sidebar label{
+
+display:block;
+
+margin:18px 0 8px;
+
+color:#E8E3D9;
+
+font-size:14px;
+
+}
+
+.filter-sidebar input,
+.filter-sidebar select{
+
+width:100%;
+
+padding:12px;
+
+background:#0B0E11;
+
+border:1px solid rgba(201,166,105,.2);
+
+color:#E8E3D9;
+
+border-radius:8px;
+
+outline:none;
+
+}
+
+.filter-sidebar button{
+
+width:100%;
+
+margin-top:25px;
+
+padding:14px;
+
+background:#C9A669;
+
+border:none;
+
+border-radius:8px;
+
+cursor:pointer;
+
+font-weight:600;
+
+transition:.3s;
+
+}
+
+.filter-sidebar button:hover{
+
+background:#d8b77c;
+
+}

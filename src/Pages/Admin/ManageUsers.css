@@ -1,0 +1,83 @@
+/* ========================================================================
+   ManageUsers — toggle row, role/badge accents, confirm modal
+   Reuses .admin-shell / .mt-* tokens from ManageTours.css for layout;
+   only new, user-specific classes are defined here.
+   ======================================================================== */
+
+.mu-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--slate);
+  cursor: pointer;
+  user-select: none;
+}
+
+.mu-toggle-row input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--teal);
+  cursor: pointer;
+}
+
+.mu-you-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--teal);
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
+.mu-role-cell {
+  text-transform: capitalize;
+  color: var(--ink);
+}
+
+.mu-no-action {
+  color: var(--line);
+  font-size: 0.9rem;
+}
+
+/* Confirm modal — only define if not already present in ManageTours.css.
+   If you already have .tf-overlay / .mt-confirm-modal styled elsewhere,
+   these rules are redundant but harmless (same selector names, same
+   visual intent), since both files share the same design tokens. */
+
+.mt-confirm-modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+}
+
+.mt-confirm-modal h3 {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+  color: var(--ink);
+}
+
+.mt-confirm-modal p {
+  margin: 0 0 20px;
+  font-size: 0.9rem;
+  color: var(--slate);
+  line-height: 1.5;
+}
+
+.mt-delete-btn--confirm {
+  padding: 8px 16px;
+  font-weight: 600;
+}
+
+.mt-delete-btn--confirm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

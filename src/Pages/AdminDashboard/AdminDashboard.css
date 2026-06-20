@@ -1,0 +1,462 @@
+/* ==========================================================================
+   Admin Dashboard — data-dense, consistent with the booking/review
+   design system (teal / sand / ink palette)
+   ========================================================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500&family=Inter:wght@400;500;600;700&display=swap");
+
+.admin-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--ink);
+}
+
+.admin-shell *,
+.admin-shell *::before,
+.admin-shell *::after {
+  box-sizing: border-box;
+}
+
+.admin-header {
+  margin-bottom: 28px;
+}
+
+.admin-eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--slate);
+  margin: 0 0 6px;
+}
+
+.admin-header h1 {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(26px, 3.6vw, 34px);
+  margin: 0;
+  color: var(--teal-dark);
+}
+
+.admin-error-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--cancelled-bg);
+  color: var(--cancelled);
+  font-size: 14px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.admin-error-banner button {
+  background: none;
+  border: none;
+  color: var(--cancelled);
+  cursor: pointer;
+  font-size: 15px;
+}
+
+/* ---------- Stat cards ---------- */
+
+.admin-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.admin-stat-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-top: 3px solid var(--teal);
+}
+
+.admin-stat-card--skeleton {
+  min-height: 76px;
+  background: linear-gradient(
+    90deg,
+    var(--card) 25%,
+    #f1ede4 37%,
+    var(--card) 63%
+  );
+  background-size: 400% 100%;
+  animation: admin-shimmer 1.4s ease infinite;
+  border-top-color: var(--line);
+}
+
+@keyframes admin-shimmer {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}
+
+.admin-stat-card--pending {
+  border-top-color: var(--pending);
+}
+
+.admin-stat-card--confirmed {
+  border-top-color: var(--confirmed);
+}
+
+.admin-stat-card--completed {
+  border-top-color: var(--completed);
+}
+
+.admin-stat-card--cancelled {
+  border-top-color: var(--cancelled);
+}
+
+.admin-stat-card--revenue {
+  border-top-color: var(--teal-dark);
+  background: var(--teal-dark);
+}
+
+.admin-stat-card--revenue .admin-stat-label,
+.admin-stat-card--revenue .admin-stat-value {
+  color: #ffffff;
+}
+
+.admin-stat-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--slate);
+}
+
+.admin-stat-value {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 500;
+  font-size: 26px;
+  color: var(--ink);
+}
+
+/* ---------- Charts ---------- */
+
+.admin-charts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.admin-chart-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px 20px 12px;
+}
+
+.admin-chart-title {
+  font-family: "Inter", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--teal-dark);
+  margin: 0 0 8px;
+}
+
+.admin-chart-empty {
+  padding: 48px 0;
+  text-align: center;
+  color: var(--slate);
+  font-size: 13.5px;
+}
+
+.admin-chart-donut-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-chart-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+  min-width: 120px;
+}
+
+.admin-chart-legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.admin-chart-legend li strong {
+  margin-left: auto;
+  font-weight: 700;
+}
+
+.admin-chart-legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.admin-chart-tooltip {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: 0 6px 18px rgba(7, 55, 51, 0.12);
+  font-size: 12.5px;
+}
+
+.admin-chart-tooltip-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: space-between;
+  color: var(--ink);
+}
+
+.admin-chart-tooltip-row strong {
+  color: var(--teal-dark);
+}
+
+/* ---------- Tabs ---------- */
+
+.admin-bookings-section {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 10px 14px 0;
+  border-bottom: 1px solid var(--line);
+  overflow-x: auto;
+}
+
+.admin-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--slate);
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 10px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.admin-tab:hover {
+  color: var(--teal-dark);
+}
+
+.admin-tab--active {
+  color: var(--teal-dark);
+  border-bottom-color: var(--teal);
+}
+
+.admin-tab-count {
+  background: var(--pending-bg);
+  color: var(--pending);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 999px;
+}
+
+/* ---------- Table ---------- */
+
+.admin-table-wrap {
+  overflow-x: auto;
+}
+
+.admin-table-state {
+  padding: 48px 16px;
+  text-align: center;
+  color: var(--slate);
+  font-size: 14px;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.admin-table thead th {
+  text-align: left;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--slate);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.admin-table tbody td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.admin-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-table tbody tr:hover {
+  background: #faf9f6;
+}
+
+.admin-table-primary {
+  display: block;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.admin-table-secondary {
+  display: block;
+  font-size: 12px;
+  color: var(--slate);
+  margin-top: 1px;
+}
+
+.admin-status {
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  text-transform: capitalize;
+  background: var(--completed-bg);
+  color: var(--completed);
+}
+
+.admin-status--pending {
+  background: var(--pending-bg);
+  color: var(--pending);
+}
+
+.admin-status--confirmed {
+  background: var(--confirmed-bg);
+  color: var(--confirmed);
+}
+
+.admin-status--completed {
+  background: var(--completed-bg);
+  color: var(--completed);
+}
+
+.admin-status--cancelled {
+  background: var(--cancelled-bg);
+  color: var(--cancelled);
+}
+
+.admin-status--paid {
+  background: var(--confirmed-bg);
+  color: var(--confirmed);
+}
+
+.admin-status--unpaid {
+  background: var(--pending-bg);
+  color: var(--pending);
+}
+
+.admin-row-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.admin-btn {
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 7px;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.admin-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.admin-btn--approve {
+  background: var(--confirmed);
+  color: #ffffff;
+}
+
+.admin-btn--approve:hover:not(:disabled) {
+  opacity: 0.88;
+}
+
+.admin-btn--reject {
+  background: var(--cancelled-bg);
+  color: var(--cancelled);
+}
+
+.admin-btn--reject:hover:not(:disabled) {
+  background: #f6d9d4;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 960px) {
+  .admin-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .admin-charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .admin-stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .admin-stat-card {
+    padding: 14px;
+  }
+
+  .admin-stat-value {
+    font-size: 21px;
+  }
+
+  .admin-chart-donut-row {
+    flex-direction: column;
+  }
+
+  .admin-chart-legend {
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    min-width: 0;
+  }
+}

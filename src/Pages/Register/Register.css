@@ -1,0 +1,256 @@
+/* ==========================
+   REGISTER PAGE
+========================== */
+
+.register-page {
+  min-height: 100vh;
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  padding: 120px 20px 60px;
+
+  background: linear-gradient(
+      rgba(11, 14, 17, 0.85),
+      rgba(11, 14, 17, 0.9)
+    ),
+    url("https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80")
+      center/cover no-repeat;
+}
+
+/* ==========================
+   CARD
+========================== */
+
+.register-card {
+  width: 100%;
+
+  max-width: 520px;
+
+  background: #15191e;
+
+  border: 1px solid rgba(201, 166, 105, 0.25);
+
+  border-radius: 12px;
+
+  padding: 45px;
+
+  position: relative;
+
+  overflow: hidden;
+}
+
+.register-card::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+
+  left: 0;
+
+  width: 100%;
+
+  height: 4px;
+
+  background: #c9a669;
+}
+
+/* ==========================
+   HEADER
+========================== */
+
+.register-overline {
+  font-family: "JetBrains Mono", monospace;
+
+  color: #c9a669;
+
+  letter-spacing: 3px;
+
+  text-transform: uppercase;
+
+  font-size: 12px;
+
+  margin-bottom: 18px;
+}
+
+.register-card h1 {
+  font-family: "Fraunces", serif;
+
+  color: #e8e3d9;
+
+  font-size: 2.3rem;
+
+  margin-bottom: 10px;
+}
+
+.register-subtitle {
+  color: #7c8a8d;
+
+  line-height: 1.7;
+
+  margin-bottom: 35px;
+}
+
+/* ==========================
+   FORM
+========================== */
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  color: #c9a669;
+
+  font-weight: 600;
+
+  font-size: 14px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+
+  padding: 14px 16px;
+
+  border-radius: 8px;
+
+  border: 1px solid #2d3339;
+
+  background: #0b0e11;
+
+  color: #e8e3d9;
+
+  font-size: 15px;
+
+  transition: 0.3s;
+}
+
+.form-group input::placeholder {
+  color: #7c8a8d;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+
+  border-color: #c9a669;
+
+  box-shadow: 0 0 0 3px rgba(201, 166, 105, 0.15);
+}
+
+/* ==========================
+   BUTTON
+========================== */
+
+.register-btn {
+  width: 100%;
+
+  padding: 15px;
+
+  margin-top: 10px;
+
+  background: transparent;
+
+  border: 1px solid #c9a669;
+
+  color: #c9a669;
+
+  border-radius: 8px;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  letter-spacing: 1px;
+
+  text-transform: uppercase;
+
+  transition: 0.3s ease;
+}
+
+.register-btn:hover {
+  background: #c9a669;
+
+  color: #0b0e11;
+}
+
+.register-btn:disabled {
+  opacity: 0.7;
+
+  cursor: not-allowed;
+}
+
+/* ==========================
+   ERROR
+========================== */
+
+.register-error {
+  background: rgba(180, 40, 40, 0.15);
+
+  color: #ffb4b4;
+
+  border: 1px solid rgba(255, 90, 90, 0.3);
+
+  border-radius: 6px;
+
+  padding: 12px;
+
+  margin-bottom: 20px;
+}
+
+/* ==========================
+   FOOTER
+========================== */
+
+.register-footer {
+  margin-top: 28px;
+
+  text-align: center;
+
+  color: #7c8a8d;
+
+  font-size: 14px;
+}
+
+.register-footer a {
+  color: #c9a669;
+
+  margin-left: 6px;
+
+  text-decoration: none;
+
+  font-weight: 600;
+}
+
+.register-footer a:hover {
+  text-decoration: underline;
+}
+
+/* ==========================
+   RESPONSIVE
+========================== */
+
+@media (max-width: 600px) {
+  .register-card {
+    padding: 30px 25px;
+  }
+
+  .register-card h1 {
+    font-size: 1.9rem;
+  }
+
+  .register-overline {
+    font-size: 11px;
+
+    letter-spacing: 2px;
+  }
+}

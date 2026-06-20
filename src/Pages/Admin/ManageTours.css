@@ -1,0 +1,199 @@
+/* ==========================================================================
+   Manage Tours — list page. Reuses --teal/--sand/--ink tokens declared
+   in AdminLayout.css (inherited via the .admin-page ancestor), and
+   the .admin-shell/.admin-header/.admin-eyebrow rules from
+   AdminDashboard.css for header consistency across admin pages.
+   ========================================================================== */
+
+.mt-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.mt-create-btn {
+  background: var(--teal);
+  color: #ffffff;
+  border: none;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 9px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+}
+
+.mt-create-btn:hover {
+  background: var(--teal-dark);
+}
+
+.mt-search-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.mt-search-input {
+  flex: 1;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--ink);
+  background: var(--card);
+}
+
+.mt-search-input:focus {
+  outline: none;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(11, 79, 74, 0.12);
+}
+
+.mt-table-section {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.mt-table-wrap {
+  overflow-x: auto;
+}
+
+.mt-table-state {
+  padding: 48px 16px;
+  text-align: center;
+  color: var(--slate);
+  font-size: 14px;
+}
+
+.mt-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.mt-table thead th {
+  text-align: left;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--slate);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.mt-table tbody td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.mt-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.mt-table tbody tr:hover {
+  background: #faf9f6;
+}
+
+.mt-table-primary {
+  font-weight: 600;
+  color: var(--ink);
+  margin-right: 8px;
+}
+
+.mt-featured-badge {
+  display: inline-block;
+  background: #fbf0dd;
+  color: var(--pending);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.mt-row-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.mt-delete-btn {
+  background: var(--cancelled-bg);
+  color: var(--cancelled);
+  border: none;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 7px 12px;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.mt-delete-btn:hover:not(:disabled) {
+  background: #f6d9d4;
+}
+
+.mt-delete-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.mt-delete-btn--confirm {
+  padding: 9px 16px;
+  font-size: 13.5px;
+}
+
+.mt-total-count {
+  padding: 12px 16px;
+  font-size: 12.5px;
+  color: var(--slate);
+  margin: 0;
+  border-top: 1px solid var(--line);
+}
+
+/* ---------- Delete confirm modal ---------- */
+
+.mt-confirm-modal {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 22px;
+  max-width: 400px;
+  width: 100%;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.mt-confirm-modal h3 {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 500;
+  font-size: 19px;
+  margin: 0 0 8px;
+  color: var(--teal-dark);
+}
+
+.mt-confirm-modal p {
+  font-size: 13.5px;
+  color: var(--slate);
+  line-height: 1.5;
+  margin: 0 0 18px;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 640px) {
+  .mt-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .mt-search-row {
+    flex-direction: column;
+  }
+}

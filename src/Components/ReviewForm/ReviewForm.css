@@ -1,0 +1,110 @@
+.review-form,
+.review-form-locked,
+.review-form-success {
+  background: #ffffff;
+  border: 1px solid #e7e2d8;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.review-form-locked,
+.review-form-success {
+  text-align: center;
+  font-size: 14px;
+  color: #6b7670;
+}
+
+.review-form-locked a {
+  color: #0b4f4a;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.review-form-locked a:hover {
+  text-decoration: underline;
+}
+
+.review-form-success {
+  color: #1b7a4d;
+  font-weight: 500;
+}
+
+.review-form h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 16px;
+  color: #1c2521;
+}
+
+.review-form-field {
+  margin-bottom: 14px;
+}
+
+.review-form-field label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #6b7670;
+  margin-bottom: 6px;
+}
+
+.review-form-field textarea {
+  width: 100%;
+  font-family: inherit;
+  font-size: 13.5px;
+  color: #1c2521;
+  border: 1.5px solid #e7e2d8;
+  border-radius: 8px;
+  padding: 10px 12px;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.review-form-field textarea:focus {
+  outline: none;
+  border-color: #0b4f4a;
+}
+
+.review-form-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #fbe9e6;
+  color: #c03b2b;
+  font-size: 13px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+
+.review-form-error button {
+  background: none;
+  border: none;
+  color: #c03b2b;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.review-form-submit {
+  width: 100%;
+  background: #0b4f4a;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.review-form-submit:hover:not(:disabled) {
+  background: #073733;
+}
+
+.review-form-submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

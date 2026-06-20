@@ -1,0 +1,32 @@
+.search-page{
+    background:#0B0E11;
+    min-height:100vh;
+    padding-top:120px;
+}
+
+.search-layout{
+    width:90%;
+    max-width:1400px;
+    margin:40px auto;
+    display:grid;
+    grid-template-columns:280px 1fr;
+    gap:35px;
+}
+
+.tour-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+    gap:30px;
+}
+
+.tour-results h2{
+    color:white;
+}
+
+@media(max-width:900px){
+
+.search-layout{
+grid-template-columns:1fr;
+}
+
+}

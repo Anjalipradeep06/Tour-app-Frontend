@@ -1,0 +1,67 @@
+.reviews-section {
+  --rv-teal: #0b4f4a;
+  --rv-teal-dark: #073733;
+  --rv-sand: #faf7f2;
+  --rv-ink: #1c2521;
+  --rv-slate: #6b7670;
+  --rv-line: #e7e2d8;
+
+  margin-top: 8px;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--rv-ink);
+}
+
+.reviews-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.reviews-summary h2 {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 500;
+  font-size: 24px;
+  margin: 0;
+  color: var(--rv-teal-dark);
+}
+
+.reviews-summary-stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.reviews-average {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 500;
+  font-size: 32px;
+  color: var(--rv-teal-dark);
+  line-height: 1;
+}
+
+.reviews-summary-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.reviews-count {
+  font-size: 13px;
+  color: var(--rv-slate);
+}
+
+.reviews-body {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+@media (max-width: 760px) {
+  .reviews-body {
+    grid-template-columns: 1fr;
+  }
+}
