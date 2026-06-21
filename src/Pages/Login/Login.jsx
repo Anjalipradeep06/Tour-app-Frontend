@@ -1,10 +1,17 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, Link } from "react-router-dom";
+import {
+  useNavigate,
+  Link,
+} from "react-router-dom";
 import { toast } from "react-toastify";
 
 import { loginUser } from "../../redux/thunks/authThunk";
-import { clearError, clearMessage } from "../../redux/slices/authSlice";
+
+import {
+  clearError,
+  clearMessage,
+} from "../../redux/slices/authSlice";
 
 import "./Login.css";
 
@@ -12,15 +19,20 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const hasNavigated = useRef(false);
-
-  const { user, loading, error, success, message } =
-    useSelector((state) => state.auth);
+  const {
+    user,
+    loading,
+    error,
+    success,
+    message,
+  } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  const { email, password } = formData;
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -31,64 +43,107 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(loginUser(formData));
+
+    dispatch(
+      loginUser({
+        email,
+        password,
+      })
+    );
   };
 
-  // SUCCESS TOAST
   useEffect(() => {
     if (success && message) {
-      toast.success(message, { toastId: "login-success" });
+      toast.success(message, {
+        toastId: "login-success",
+      });
+
       dispatch(clearMessage());
     }
   }, [success, message, dispatch]);
 
-  // ERROR TOAST
   useEffect(() => {
     if (error) {
-      toast.error(error, { toastId: "login-error" });
+      toast.error(error, {
+        toastId: "login-error",
+      });
+
       dispatch(clearError());
     }
   }, [error, dispatch]);
 
-  // SAFE REDIRECT (FIXED LOOP)
   useEffect(() => {
-    if (user?.id && !hasNavigated.current) {
-      hasNavigated.current = true;
-
-      navigate(user.role === "admin" ? "/admin" : "/", {
-        replace: true,
-      });
+    if (user) {
+      navigate(
+        user.role === "admin"
+          ? "/admin"
+          : "/"
+      );
     }
   }, [user, navigate]);
 
   return (
     <div className="login-page">
       <div className="login-card">
+        <p className="login-overline">
+          EST. ITINERARY 001
+        </p>
+
         <h1>Welcome Back</h1>
 
+        <p className="login-subtitle">
+          Continue your journey with Meridian.
+        </p>
+
         <form onSubmit={handleSubmit}>
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            onChange={handleChange}
-            required
-          />
+          <div className="form-group">
+            <label>Email Address</label>
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            onChange={handleChange}
-            required
-          />
+            <input
+              type="email"
+              name="email"
+              value={email}
+              onChange={handleChange}
+              placeholder="Enter email"
+              autoComplete="email"
+              required
+            />
+          </div>
 
-          <button type="submit" disabled={loading}>
-            {loading ? "Signing In..." : "Sign In"}
+          <div className="form-group">
+            <label>Password</label>
+
+            <input
+              type="password"
+              name="password"
+              value={password}
+              onChange={handleChange}
+              placeholder="Enter password"
+              autoComplete="current-password"
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="login-btn"
+            disabled={loading}
+          >
+            {loading
+              ? "Signing In..."
+              : "Sign In"}
           </button>
         </form>
 
-        <Link to="/register">Create Account</Link>
+        <div className="login-footer">
+          <span>
+            Don't have an account?
+          </span>
+
+          <Link to="/register">
+            Create Account
+          </Link>
+        </div>
       </div>
     </div>
   );
