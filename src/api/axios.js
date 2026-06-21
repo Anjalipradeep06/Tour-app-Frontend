@@ -5,11 +5,25 @@ const api = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
 });
 
+const getStoredToken = () => {
+  const directToken = localStorage.getItem("token");
+  if (directToken) return directToken;
 
+  const storedAuth = localStorage.getItem("auth");
+  if (storedAuth) {
+    try {
+      return JSON.parse(storedAuth)?.token || null;
+    } catch {
+      return null;
+    }
+  }
+
+  return null;
+};
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const token = getStoredToken();
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -34,9 +48,12 @@ api.interceptors.response.use(
       console.log("Unauthorized - logging out");
 
       localStorage.removeItem("token");
+      localStorage.removeItem("auth");
 
       // optional redirect to Home page
-      window.location.href = "/login";
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
+      }
     }
 
     return Promise.reject(error);
