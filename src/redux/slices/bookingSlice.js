@@ -5,11 +5,14 @@ import {
   getBookingById,
   updateBooking,
   cancelBooking,
+  checkAvailability,
 } from "../thunks/bookingThunk";
 
 const initialState = {
   bookings: [],
   selectedBooking: null,
+
+  availability: null,
 
   loading: {
     list: false,
@@ -19,16 +22,18 @@ const initialState = {
 
   error: null,
   success: false,
+  message: null,
 };
 
 const bookingSlice = createSlice({
   name: "booking",
+
   initialState,
 
   reducers: {
     resetBookingState: (state) => {
-      state.bookings = state.bookings;
       state.selectedBooking = null;
+      state.availability = null;
 
       state.loading = {
         list: false,
@@ -38,93 +43,149 @@ const bookingSlice = createSlice({
 
       state.error = null;
       state.success = false;
+      state.message = null;
+    },
+
+    clearBookingMessage: (state) => {
+      state.message = null;
+      state.success = false;
+    },
+
+    clearBookingError: (state) => {
+      state.error = null;
     },
   },
 
   extraReducers: (builder) => {
     builder
 
-      // CREATE
+      // CREATE BOOKING
       .addCase(createBooking.pending, (state) => {
         state.loading.action = true;
         state.error = null;
-        state.success = false;
       })
+
       .addCase(createBooking.fulfilled, (state, action) => {
         state.loading.action = false;
         state.success = true;
-        state.selectedBooking = action.payload;
+
+        state.selectedBooking = action.payload.booking;
+        state.message = action.payload.message;
       })
+
       .addCase(createBooking.rejected, (state, action) => {
         state.loading.action = false;
         state.error = action.payload;
       })
 
-      // GET ALL
+      // GET USER BOOKINGS
       .addCase(getUserBookings.pending, (state) => {
         state.loading.list = true;
         state.error = null;
       })
+
       .addCase(getUserBookings.fulfilled, (state, action) => {
         state.loading.list = false;
         state.bookings = action.payload;
       })
+
       .addCase(getUserBookings.rejected, (state, action) => {
         state.loading.list = false;
         state.error = action.payload;
       })
 
-      // GET BY ID
+      // GET BOOKING BY ID
       .addCase(getBookingById.pending, (state) => {
         state.loading.detail = true;
         state.error = null;
       })
+
       .addCase(getBookingById.fulfilled, (state, action) => {
         state.loading.detail = false;
         state.selectedBooking = action.payload;
       })
+
       .addCase(getBookingById.rejected, (state, action) => {
         state.loading.detail = false;
         state.error = action.payload;
       })
 
-      // UPDATE
+      // UPDATE BOOKING
       .addCase(updateBooking.pending, (state) => {
         state.loading.action = true;
         state.error = null;
       })
+
       .addCase(updateBooking.fulfilled, (state, action) => {
         state.loading.action = false;
-        state.selectedBooking = action.payload;
+        state.success = true;
 
-        state.bookings = state.bookings.map((b) =>
-          b._id === action.payload._id ? action.payload : b
+        state.selectedBooking = action.payload.booking;
+        state.message = action.payload.message;
+
+        state.bookings = state.bookings.map((booking) =>
+          booking._id === action.payload.booking._id
+            ? action.payload.booking
+            : booking
         );
       })
+
       .addCase(updateBooking.rejected, (state, action) => {
         state.loading.action = false;
         state.error = action.payload;
       })
 
-      // CANCEL
+      // CANCEL BOOKING
       .addCase(cancelBooking.pending, (state) => {
         state.loading.action = true;
         state.error = null;
       })
+
       .addCase(cancelBooking.fulfilled, (state, action) => {
         state.loading.action = false;
-        state.selectedBooking = action.payload;
+        state.success = true;
 
-        state.bookings = state.bookings.map((b) =>
-          b._id === action.payload._id ? action.payload : b
+        state.selectedBooking = action.payload.booking;
+        state.message = action.payload.message;
+
+        state.bookings = state.bookings.map((booking) =>
+          booking._id === action.payload.booking._id
+            ? action.payload.booking
+            : booking
         );
       })
+
       .addCase(cancelBooking.rejected, (state, action) => {
         state.loading.action = false;
         state.error = action.payload;
-      });
+      })
+
+      // CHECK AVAILABILITY
+      .addCase(checkAvailability.pending, (state) => {
+        state.availability = null;
+      })
+
+      .addCase(
+        checkAvailability.fulfilled,
+        (state, action) => {
+          state.availability = action.payload;
+        }
+      )
+
+      .addCase(
+        checkAvailability.rejected,
+        (state, action) => {
+          state.availability = null;
+          state.error = action.payload;
+        }
+      );
   },
 });
 
-export const { resetBookingState } = bookingSlice.actions;
+export const {
+  resetBookingState,
+  clearBookingMessage,
+  clearBookingError,
+} = bookingSlice.actions;
+
 export default bookingSlice.reducer;

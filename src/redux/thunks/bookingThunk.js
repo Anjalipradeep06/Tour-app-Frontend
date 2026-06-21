@@ -100,3 +100,30 @@ export const cancelBooking = createAsyncThunk(
     }
   }
 );
+export const checkAvailability = createAsyncThunk(
+  "booking/checkAvailability",
+  async (
+    { tourId, date, participants },
+    thunkAPI
+  ) => {
+    try {
+      const { data } = await api.get(
+        "/availability/check",
+        {
+          params: {
+            tourId,
+            date,
+            participants,
+          },
+        }
+      );
+
+      return data.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message ||
+          "Failed to check availability"
+      );
+    }
+  }
+);

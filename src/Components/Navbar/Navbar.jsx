@@ -6,6 +6,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 import { logout } from "../../redux/slices/authSlice";
 import NotificationBell from "../NotificationBell/NotificationBell";
@@ -54,15 +55,25 @@ const Navbar = () => {
 
   const handleLogout = () => {
     dispatch(logout());
+
+    toast.success("Logged out successfully", {
+      toastId: "logout-success",
+    });
+
     closeMenu();
+
     navigate("/login");
   };
 
   return (
     <header
       className={`navbar ${
-        scrolled || isAdminRoute ? "navbar-scrolled" : ""
-      } ${isAdminRoute ? "navbar-admin" : ""}`}
+        scrolled || isAdminRoute
+          ? "navbar-scrolled"
+          : ""
+      } ${
+        isAdminRoute ? "navbar-admin" : ""
+      }`}
     >
       <div className="navbar-container">
         <Link

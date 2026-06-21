@@ -1,9 +1,20 @@
 import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  useDispatch,
+  useSelector,
+} from "react-redux";
+import {
+  Link,
+  useNavigate,
+} from "react-router-dom";
+import { toast } from "react-toastify";
 
 import { registerUser } from "../../redux/thunks/authThunk";
-import { clearError } from "../../redux/slices/authSlice";
+
+import {
+  clearError,
+  clearMessage,
+} from "../../redux/slices/authSlice";
 
 import "./Register.css";
 
@@ -11,7 +22,13 @@ const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { user, loading, error } = useSelector(
+  const {
+    user,
+    loading,
+    error,
+    success,
+    message,
+  } = useSelector(
     (state) => state.auth
   );
 
@@ -32,16 +49,6 @@ const Register = () => {
     confirmPassword,
   } = formData;
 
-  useEffect(() => {
-    if (user) {
-      navigate("/");
-    }
-  }, [user, navigate]);
-
-  useEffect(() => {
-    return () => dispatch(clearError());
-  }, [dispatch]);
-
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -56,6 +63,14 @@ const Register = () => {
       setPasswordError(
         "Passwords do not match."
       );
+
+      toast.error(
+        "Passwords do not match.",
+        {
+          toastId: "password-mismatch",
+        }
+      );
+
       return;
     }
 
@@ -71,6 +86,41 @@ const Register = () => {
     );
   };
 
+  // Success/Error Toasts
+  useEffect(() => {
+    if (success && message) {
+      toast.success(message, {
+        toastId: "register-success",
+      });
+
+      dispatch(clearMessage());
+    }
+
+    if (error) {
+      toast.error(error, {
+        toastId: "register-error",
+      });
+
+      dispatch(clearError());
+    }
+  }, [
+    success,
+    message,
+    error,
+    dispatch,
+  ]);
+
+  // Redirect after successful registration
+  useEffect(() => {
+    if (user) {
+      const timer = setTimeout(() => {
+        navigate("/");
+      }, 1500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [user, navigate]);
+
   return (
     <div className="register-page">
       <div className="register-overlay" />
@@ -85,14 +135,14 @@ const Register = () => {
 
           <p>
             Discover curated experiences,
-            unforgettable destinations, and
-            seamless bookings worldwide.
+            unforgettable destinations,
+            and seamless bookings worldwide.
           </p>
         </div>
 
-        {(error || passwordError) && (
+        {passwordError && (
           <div className="register-error">
-            {passwordError || error}
+            {passwordError}
           </div>
         )}
 

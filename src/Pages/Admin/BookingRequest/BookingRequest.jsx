@@ -11,7 +11,13 @@ import {
   FaCheckCircle,
 } from "react-icons/fa";
 
-import { createBooking } from "../../../redux/thunks/bookingThunk";
+import { toast } from "react-toastify";
+
+import {
+  createBooking,
+  checkAvailability,
+} from "../../../redux/thunks/bookingThunk";
+
 import { getTourById } from "../../../redux/thunks/tourThunk";
 import { resetBookingState } from "../../../redux/slices/bookingSlice";
 
@@ -23,8 +29,13 @@ const BookingRequest = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { loading, error, success, selectedBooking } =
-    useSelector((state) => state.booking);
+  const {
+    loading,
+    error,
+    success,
+    selectedBooking,
+    availability,
+  } = useSelector((state) => state.booking);
 
   const { selectedTour: tour } = useSelector(
     (state) => state.tours
@@ -45,8 +56,36 @@ const BookingRequest = () => {
     }
   }, [dispatch, tourId]);
 
+  // LIVE AVAILABILITY CHECK
+  useEffect(() => {
+    if (
+      !tourId ||
+      !formData.bookingDate ||
+      !formData.participants
+    )
+      return;
+
+    dispatch(
+      checkAvailability({
+        tourId,
+        date: formData.bookingDate,
+        participants: formData.participants,
+      })
+    );
+  }, [
+    dispatch,
+    tourId,
+    formData.bookingDate,
+    formData.participants,
+  ]);
+
+  // SUCCESS
   useEffect(() => {
     if (success && selectedBooking?._id) {
+      toast.success(
+        "Booking created successfully!"
+      );
+
       const id = selectedBooking._id;
 
       dispatch(resetBookingState());
@@ -59,6 +98,13 @@ const BookingRequest = () => {
     navigate,
     dispatch,
   ]);
+
+  // ERROR
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -80,6 +126,15 @@ const BookingRequest = () => {
     if (!formData.bookingDate) {
       return setFormError(
         "Please select a travel date."
+      );
+    }
+
+    if (
+      availability &&
+      !availability.isAvailable
+    ) {
+      return toast.error(
+        "Selected tour is not available for the requested travelers."
       );
     }
 
@@ -115,12 +170,6 @@ const BookingRequest = () => {
 
           <div className="booking-form-card">
             <h2>Traveler details</h2>
-
-            {error && (
-              <div className="form-alert error">
-                {error}
-              </div>
-            )}
 
             {formError && (
               <div className="form-alert error">
@@ -160,6 +209,52 @@ const BookingRequest = () => {
                   onChange={handleChange}
                 />
               </div>
+
+              {/* AVAILABILITY CARD */}
+
+              {availability && (
+                <div
+                  style={{
+                    marginBottom: "20px",
+                    padding: "15px",
+                    borderRadius: "10px",
+                    background:
+                      availability.isAvailable
+                        ? "#eafaf1"
+                        : "#fff1f0",
+                    border:
+                      availability.isAvailable
+                        ? "1px solid #52c41a"
+                        : "1px solid #ff4d4f",
+                  }}
+                >
+                  <strong>
+                    {availability.isAvailable
+                      ? "✅ Tour Available"
+                      : "❌ Not Available"}
+                  </strong>
+
+                  <p
+                    style={{
+                      marginTop: "8px",
+                    }}
+                  >
+                    Remaining Slots:{" "}
+                    {
+                      availability.remainingSlots
+                    }
+                  </p>
+
+                  {!availability.isAvailable && (
+                    <p>
+                      Requested:{" "}
+                      {
+                        availability.requested
+                      }
+                    </p>
+                  )}
+                </div>
+              )}
 
               <div className="form-group">
                 <label>
@@ -201,10 +296,17 @@ const BookingRequest = () => {
               <button
                 type="submit"
                 className="reserve-btn"
-                disabled={loading?.action}
+                disabled={
+                  loading?.action ||
+                  (availability &&
+                    !availability.isAvailable)
+                }
               >
                 {loading?.action
                   ? "Processing..."
+                  : availability &&
+                    !availability.isAvailable
+                  ? "Unavailable"
                   : "Reserve now"}
               </button>
             </form>
@@ -231,7 +333,9 @@ const BookingRequest = () => {
                     ₹
                     {Number(
                       tour.price
-                    ).toLocaleString("en-IN")}
+                    ).toLocaleString(
+                      "en-IN"
+                    )}
                     <span>
                       {" "}
                       / traveler

@@ -1,10 +1,24 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import {
+  Link,
+  useNavigate,
+} from "react-router-dom";
+import { toast } from "react-toastify";
 import { FaTimesCircle } from "react-icons/fa";
 
 import "./PaymentStatus.css";
 
 const PaymentCancel = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    toast.info(
+      "Payment was cancelled. No charges were made.",
+      {
+        toastId: "payment-cancelled",
+      }
+    );
+  }, []);
 
   return (
     <div className="payment-page">
@@ -15,12 +29,15 @@ const PaymentCancel = () => {
           Payment Cancelled
         </span>
 
-        <h1>Your payment was not completed</h1>
+        <h1>
+          Your payment was not completed
+        </h1>
 
         <p>
-          No charges were made to your account.
-          You can return to your booking and try
-          again whenever you're ready.
+          No charges were made to your
+          account. You can return to your
+          booking and try again whenever
+          you're ready.
         </p>
 
         <div className="payment-actions">

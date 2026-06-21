@@ -1,5 +1,7 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 
+import "react-toastify/dist/ReactToastify.css";
+
 import Navbar from "./Components/Navbar/Navbar";
 import Footer from "./Components/Footer/Footer";
 
@@ -28,8 +30,6 @@ import AdminDashboard from "./Pages/AdminDashboard/AdminDashboard";
 import ManageTours from "./Pages/Admin/ManageTours";
 import ManageDestinations from "./Pages/Admin/ManageDestinations";
 import ManageUsers from "./Pages/Admin/ManageUsers";
-
-/* New Admin Pages */
 import ManageReviews from "./Pages/Admin/ManageReviews/ManageReviews";
 
 import "./App.css";
@@ -40,7 +40,7 @@ function App() {
 
   return (
     <>
-      <Navbar />
+      {!isAdminRoute && <Navbar />}
 
       <main>
         <Routes>
@@ -109,9 +109,11 @@ function App() {
             <Route index element={<AdminDashboard />} />
 
             <Route path="tours" element={<ManageTours />} />
-            <Route path="destinations" element={<ManageDestinations />} />
+            <Route
+              path="destinations"
+              element={<ManageDestinations />}
+            />
             <Route path="users" element={<ManageUsers />} />
-
             <Route path="reviews" element={<ManageReviews />} />
           </Route>
 
@@ -149,6 +151,7 @@ function App() {
       </main>
 
       {!isAdminRoute && <Footer />}
+
     </>
   );
 }

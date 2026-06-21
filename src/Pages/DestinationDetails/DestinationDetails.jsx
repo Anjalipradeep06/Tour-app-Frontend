@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   FaMapMarkerAlt,
   FaGlobe,
@@ -9,7 +10,13 @@ import {
   FaSuitcaseRolling,
 } from "react-icons/fa";
 
-import { getDestinationById } from "../../redux/thunks/destinationThunk";
+import {
+  getDestinationById,
+} from "../../redux/thunks/destinationThunk";
+
+import {
+  clearSelectedDestination,
+} from "../../redux/slices/destinationSlice";
 
 import TourCard from "../../Components/TourCard/TourCard";
 
@@ -28,20 +35,23 @@ const DestinationDetails = () => {
 
   useEffect(() => {
     dispatch(getDestinationById(id));
+
+    return () => {
+      dispatch(clearSelectedDestination());
+    };
   }, [dispatch, id]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
 
   if (loading) {
     return (
       <div className="destination-loading">
-        Loading destination...
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="destination-loading">
-        {error}
+        <div className="booking-spinner" />
+        <p>Loading destination...</p>
       </div>
     );
   }
@@ -49,7 +59,7 @@ const DestinationDetails = () => {
   if (!selectedDestination) {
     return (
       <div className="destination-loading">
-        Destination not found
+        Destination not found.
       </div>
     );
   }
@@ -57,7 +67,6 @@ const DestinationDetails = () => {
   return (
     <div className="destination-details">
       {/* HERO */}
-
       <section className="destination-hero">
         <img
           src={selectedDestination.bannerImage}
@@ -68,6 +77,7 @@ const DestinationDetails = () => {
           <div className="hero-content">
             <div className="hero-badge">
               <FaGlobe />
+
               <span>
                 {selectedDestination.continent}
               </span>
@@ -95,7 +105,6 @@ const DestinationDetails = () => {
       </section>
 
       {/* QUICK FACTS */}
-
       <section className="facts-wrapper">
         <div className="facts-grid">
           <div className="fact-card">
@@ -103,6 +112,7 @@ const DestinationDetails = () => {
 
             <div>
               <span>Continent</span>
+
               <h4>
                 {selectedDestination.continent}
               </h4>
@@ -114,6 +124,7 @@ const DestinationDetails = () => {
 
             <div>
               <span>Country</span>
+
               <h4>
                 {selectedDestination.country}
               </h4>
@@ -125,9 +136,9 @@ const DestinationDetails = () => {
 
             <div>
               <span>Activities</span>
+
               <h4>
-                {selectedDestination.activities
-                  ?.length || 0}
+                {selectedDestination.activities?.length || 0}
               </h4>
             </div>
           </div>
@@ -137,6 +148,7 @@ const DestinationDetails = () => {
 
             <div>
               <span>Available Tours</span>
+
               <h4>{destinationTours.length}</h4>
             </div>
           </div>
@@ -145,9 +157,10 @@ const DestinationDetails = () => {
 
       <div className="destination-container">
         {/* ABOUT */}
-
         <section className="content-section">
-          <h2>About {selectedDestination.name}</h2>
+          <h2>
+            About {selectedDestination.name}
+          </h2>
 
           <p>
             {selectedDestination.description}
@@ -155,9 +168,7 @@ const DestinationDetails = () => {
         </section>
 
         {/* ACTIVITIES */}
-
-        {selectedDestination.activities
-          ?.length > 0 && (
+        {selectedDestination.activities?.length > 0 && (
           <section className="content-section">
             <h2>Popular Activities</h2>
 
@@ -174,19 +185,13 @@ const DestinationDetails = () => {
         )}
 
         {/* GALLERY */}
-
-        {selectedDestination.galleryImages
-          ?.length > 0 && (
+        {selectedDestination.galleryImages?.length > 0 && (
           <section className="content-section">
             <div className="section-header">
               <h2>Photo Gallery</h2>
 
               <span>
-                {
-                  selectedDestination
-                    .galleryImages.length
-                }{" "}
-                photos
+                {selectedDestination.galleryImages.length} photos
               </span>
             </div>
 
@@ -197,6 +202,7 @@ const DestinationDetails = () => {
                     key={index}
                     src={image}
                     alt={`${selectedDestination.name}-${index}`}
+                    loading="lazy"
                   />
                 )
               )}
@@ -205,7 +211,6 @@ const DestinationDetails = () => {
         )}
 
         {/* TOURS */}
-
         <section className="content-section">
           <div className="section-header">
             <h2>Top Tours</h2>

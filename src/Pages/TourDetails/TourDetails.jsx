@@ -102,9 +102,11 @@ const TourDetails = () => {
         <div className="hero-overlay">
           <div className="hero-content">
             <p className="ticket">
-              ITINERARY #
-              {tour._id.slice(-6).toUpperCase()}
-            </p>
+  ITINERARY #
+  {tour?._id
+    ? tour._id.slice(-6).toUpperCase()
+    : "------"}
+</p>
 
             <h1>{tour.title}</h1>
 

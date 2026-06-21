@@ -5,6 +5,9 @@ import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import App from "./App";
 import store from "./redux/store";
 
@@ -14,6 +17,17 @@ root.render(
   <Provider store={store}>
     <BrowserRouter>
       <App />
+
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="colored"
+      />
     </BrowserRouter>
   </Provider>
 );

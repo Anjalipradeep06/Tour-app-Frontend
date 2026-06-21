@@ -15,7 +15,8 @@ export const getAllTours = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Failed to fetch tours"
+        error.response?.data?.message ||
+          "Failed to fetch tours"
       );
     }
   }
@@ -28,60 +29,70 @@ export const getTourById = createAsyncThunk(
   "tours/getTourById",
   async (id, thunkAPI) => {
     try {
-      const response = await api.get(`/tours/${id}`);
+      const response = await api.get(
+        `/tours/${id}`
+      );
 
-      return response.data;
+      // IMPORTANT FIX
+      return response.data.tour;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Failed to fetch tour"
+        error.response?.data?.message ||
+          "Failed to fetch tour"
       );
     }
   }
 );
 
 // =====================
-// Create Tour (Admin)
-// Backend returns: { message, tour }
+// Create Tour
 // =====================
 export const createTour = createAsyncThunk(
   "tours/createTour",
   async (tourData, thunkAPI) => {
     try {
-      const response = await api.post("/tours", tourData);
+      const response = await api.post(
+        "/tours",
+        tourData
+      );
 
       return response.data.tour;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Failed to create tour"
+        error.response?.data?.message ||
+          "Failed to create tour"
       );
     }
   }
 );
 
 // =====================
-// Update Tour (Admin)
-// Backend returns: { message, tour }
+// Update Tour
 // =====================
 export const updateTour = createAsyncThunk(
   "tours/updateTour",
-  async ({ id, tourData }, thunkAPI) => {
+  async (
+    { id, tourData },
+    thunkAPI
+  ) => {
     try {
-      const response = await api.put(`/tours/${id}`, tourData);
+      const response = await api.put(
+        `/tours/${id}`,
+        tourData
+      );
 
       return response.data.tour;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Failed to update tour"
+        error.response?.data?.message ||
+          "Failed to update tour"
       );
     }
   }
 );
 
 // =====================
-// Delete Tour (Admin)
-// Backend returns only: { message } — no tour data.
-// We pass the id back out explicitly so the slice can
-// remove the right item from state without relying on payload.
+// Delete Tour
 // =====================
 export const deleteTour = createAsyncThunk(
   "tours/deleteTour",
@@ -92,7 +103,8 @@ export const deleteTour = createAsyncThunk(
       return id;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message || "Failed to delete tour"
+        error.response?.data?.message ||
+          "Failed to delete tour"
       );
     }
   }

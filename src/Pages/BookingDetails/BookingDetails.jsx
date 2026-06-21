@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, Link } from "react-router-dom";
+import { toast } from "react-toastify";
+
 import {
   FaCalendarAlt,
   FaUsers,
@@ -16,7 +18,11 @@ import {
   cancelBooking,
 } from "../../redux/thunks/bookingThunk";
 
-import { resetBookingState } from "../../redux/slices/bookingSlice";
+import {
+  resetBookingState,
+  clearBookingMessage,
+  clearBookingError,
+} from "../../redux/slices/bookingSlice";
 
 import PaymentButton from "../../Components/PaymentButton/PaymentButton";
 
@@ -26,10 +32,15 @@ const BookingDetails = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
 
-  const { selectedBooking, loading, error } = useSelector(
-    (state) => state.booking
-  );
+  const {
+    selectedBooking,
+    loading,
+    error,
+    success,
+    message,
+  } = useSelector((state) => state.booking);
 
+  // Fetch booking details
   useEffect(() => {
     dispatch(getBookingById(id));
 
@@ -38,45 +49,47 @@ const BookingDetails = () => {
     };
   }, [dispatch, id]);
 
+  // Toast notifications
+  useEffect(() => {
+    if (success && message) {
+      toast.success(message);
+      dispatch(clearBookingMessage());
+    }
+
+    if (error) {
+      toast.error(error);
+      dispatch(clearBookingError());
+    }
+  }, [
+    success,
+    message,
+    error,
+    dispatch,
+  ]);
+
   const handleCancel = () => {
-    if (
-      window.confirm(
-        "Are you sure you want to cancel this booking?"
-      )
-    ) {
+    const confirmed = window.confirm(
+      "Are you sure you want to cancel this booking?"
+    );
+
+    if (confirmed) {
       dispatch(cancelBooking(id));
     }
   };
 
-  if (loading?.detail) {
+  if (loading.detail) {
     return (
       <div className="booking-page">
         <div className="booking-state">
           <div className="booking-spinner" />
+
           <p>Loading booking details...</p>
         </div>
       </div>
     );
   }
 
-  if (error) {
-    return (
-      <div className="booking-page">
-        <div className="booking-state error">
-          <p>{error}</p>
-
-          <Link
-            to="/bookings"
-            className="outline-btn"
-          >
-            Back to bookings
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  if (!selectedBooking) {
+  if (!loading.detail && !selectedBooking && !error) {
     return (
       <div className="booking-page">
         <div className="booking-state">
@@ -95,15 +108,17 @@ const BookingDetails = () => {
 
   const booking = selectedBooking;
 
-  const status = booking.status || "pending";
+  const status =
+    booking?.status || "pending";
+
   const paymentStatus =
-    booking.paymentStatus || "unpaid";
+    booking?.paymentStatus || "unpaid";
 
   const canCancel =
     status === "pending" ||
     status === "confirmed";
 
-  const formattedDate = booking.bookingDate
+  const formattedDate = booking?.bookingDate
     ? new Date(
         booking.bookingDate
       ).toLocaleDateString("en-IN", {
@@ -140,12 +155,12 @@ const BookingDetails = () => {
             </p>
 
             <h1>
-              {booking.tour?.title ||
+              {booking?.tour?.title ||
                 "Tour Booking"}
             </h1>
 
             <p className="booking-id">
-              #{booking._id}
+              #{booking?._id}
             </p>
           </div>
 
@@ -167,18 +182,21 @@ const BookingDetails = () => {
         </div>
 
         <div className="booking-layout">
-          {/* LEFT */}
+          {/* LEFT SIDE */}
 
           <div className="booking-main">
             <div className="tour-card">
               <img
                 src={
-                  booking.tour?.image ||
-                  booking.tour?.destination
+                  booking?.tour?.image ||
+                  booking?.tour?.destination
                     ?.bannerImage ||
                   "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80"
                 }
-                alt={booking.tour?.title}
+                alt={
+                  booking?.tour?.title ||
+                  "Tour"
+                }
               />
 
               <div className="tour-content">
@@ -187,7 +205,10 @@ const BookingDetails = () => {
                     <FaCalendarAlt />
 
                     <div>
-                      <span>Travel Date</span>
+                      <span>
+                        Travel Date
+                      </span>
+
                       <strong>
                         {formattedDate}
                       </strong>
@@ -199,8 +220,11 @@ const BookingDetails = () => {
 
                     <div>
                       <span>Guests</span>
+
                       <strong>
-                        {booking.participants}
+                        {
+                          booking?.participants
+                        }
                       </strong>
                     </div>
                   </div>
@@ -209,10 +233,14 @@ const BookingDetails = () => {
                     <FaMapMarkerAlt />
 
                     <div>
-                      <span>Destination</span>
+                      <span>
+                        Destination
+                      </span>
+
                       <strong>
-                        {booking.tour?.country ||
-                          booking.tour
+                        {booking?.tour
+                          ?.country ||
+                          booking?.tour
                             ?.destination
                             ?.country ||
                           "International"}
@@ -224,7 +252,10 @@ const BookingDetails = () => {
                     <FaCreditCard />
 
                     <div>
-                      <span>Payment</span>
+                      <span>
+                        Payment
+                      </span>
+
                       <strong>
                         {paymentStatus}
                       </strong>
@@ -233,7 +264,7 @@ const BookingDetails = () => {
                 </div>
 
                 <Link
-                  to={`/tour/${booking.tour?._id}`}
+                  to={`/tour/${booking?.tour?._id}`}
                   className="outline-btn"
                 >
                   View Tour Details
@@ -242,7 +273,7 @@ const BookingDetails = () => {
             </div>
           </div>
 
-          {/* RIGHT */}
+          {/* RIGHT SIDE */}
 
           <aside className="summary-card">
             <p className="summary-label">
@@ -252,8 +283,10 @@ const BookingDetails = () => {
             <h2>
               ₹
               {Number(
-                booking.totalAmount
-              ).toLocaleString("en-IN")}
+                booking?.totalAmount || 0
+              ).toLocaleString(
+                "en-IN"
+              )}
             </h2>
 
             <p className="summary-note">
@@ -263,26 +296,35 @@ const BookingDetails = () => {
             <div className="summary-divider" />
 
             <div className="action-group">
-              {paymentStatus !== "paid" && (
-                <PaymentButton
-                  bookingId={booking._id}
-                />
-              )}
+              {paymentStatus !==
+                "paid" &&
+                status !==
+                  "cancelled" && (
+                  <PaymentButton
+                    bookingId={
+                      booking?._id
+                    }
+                  />
+                )}
 
               {canCancel ? (
                 <button
                   className="danger-btn"
-                  onClick={handleCancel}
-                  disabled={loading?.action}
+                  onClick={
+                    handleCancel
+                  }
+                  disabled={
+                    loading.action
+                  }
                 >
-                  {loading?.action
+                  {loading.action
                     ? "Cancelling..."
                     : "Cancel Booking"}
                 </button>
               ) : (
                 <p className="locked-note">
-                  This booking can no longer
-                  be modified.
+                  This booking can no
+                  longer be modified.
                 </p>
               )}
             </div>
