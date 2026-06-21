@@ -1,9 +1,13 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, Link } from "react-router-dom";
+import {
+  useNavigate,
+  Link,
+} from "react-router-dom";
 import { toast } from "react-toastify";
 
 import { loginUser } from "../../redux/thunks/authThunk";
+
 import {
   clearError,
   clearMessage,
@@ -15,10 +19,13 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const hasNavigated = useRef(false);
-
-  const { user, loading, error, success, message } =
-    useSelector((state) => state.auth);
+  const {
+    user,
+    loading,
+    error,
+    success,
+    message,
+  } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -37,10 +44,14 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    dispatch(loginUser({ email, password }));
+    dispatch(
+      loginUser({
+        email,
+        password,
+      })
+    );
   };
 
-  // SUCCESS TOAST
   useEffect(() => {
     if (success && message) {
       toast.success(message, {
@@ -51,7 +62,6 @@ const Login = () => {
     }
   }, [success, message, dispatch]);
 
-  // ERROR TOAST
   useEffect(() => {
     if (error) {
       toast.error(error, {
@@ -62,17 +72,13 @@ const Login = () => {
     }
   }, [error, dispatch]);
 
-  // SAFE NAVIGATION (FIXED LOOP)
   useEffect(() => {
-    if (user?.id && !hasNavigated.current) {
-      hasNavigated.current = true;
-
-      setTimeout(() => {
-        navigate(
-          user.role === "admin" ? "/admin" : "/",
-          { replace: true }
-        );
-      }, 50);
+    if (user) {
+      navigate(
+        user.role === "admin"
+          ? "/admin"
+          : "/"
+      );
     }
   }, [user, navigate]);
 
@@ -92,6 +98,7 @@ const Login = () => {
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Email Address</label>
+
             <input
               type="email"
               name="email"
@@ -105,6 +112,7 @@ const Login = () => {
 
           <div className="form-group">
             <label>Password</label>
+
             <input
               type="password"
               name="password"
@@ -121,12 +129,17 @@ const Login = () => {
             className="login-btn"
             disabled={loading}
           >
-            {loading ? "Signing In..." : "Sign In"}
+            {loading
+              ? "Signing In..."
+              : "Sign In"}
           </button>
         </form>
 
         <div className="login-footer">
-          <span>Don't have an account?</span>
+          <span>
+            Don't have an account?
+          </span>
+
           <Link to="/register">
             Create Account
           </Link>
