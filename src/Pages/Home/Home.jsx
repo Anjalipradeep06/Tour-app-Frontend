@@ -92,9 +92,9 @@ const Home = () => {
       {/* HERO */}
 
       <section className="hero">
-        <div className="hero-overlay">
-          <div className="hero-content">
-            <span className="hero-badge">
+        <div className="home-hero-overlay">
+          <div className="home-hero-content">
+            <span className="home-hero-badge">
               Trusted by 50,000+ travelers
             </span>
 

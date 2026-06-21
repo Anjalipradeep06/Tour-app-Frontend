@@ -1,16 +1,43 @@
 .mybookings-page {
   min-height: 100vh;
   background: #f8fafc;
-  padding: 120px 24px 80px;
 }
 
-.page-header {
-  max-width: 1280px;
-  margin: 0 auto 40px;
+/* ==========================
+   HERO
+========================== */
+
+.bookings-hero {
+  position: relative;
+  height: 300px;
+
+  background:
+    linear-gradient(
+      rgba(8, 22, 48, 0.55),
+      rgba(8, 22, 48, 0.7)
+    ),
+    url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=2000&q=80")
+      center center / cover no-repeat;
 }
 
-.page-subtitle {
-  color: #2563eb;
+.bookings-hero-overlay {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  width: min(92%, 1320px);
+  margin: 0 auto;
+
+  /* clears the fixed navbar; falls back to 76px if --navbar-h
+     isn't in scope on this route */
+  padding-top: var(--navbar-h, 76px);
+
+  color: #fff;
+}
+
+.bookings-hero-subtitle {
+  color: #febb02;
   font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 3px;
@@ -18,18 +45,14 @@
   margin-bottom: 12px;
 }
 
-.page-title {
-  font-size: clamp(2.2rem, 5vw, 3.5rem);
+.bookings-hero-title {
+  font-size: clamp(2.4rem, 5vw, 3.5rem);
   font-weight: 800;
-  color: #111827;
-  margin-bottom: 12px;
+  letter-spacing: -1px;
 }
 
-.page-description {
-  color: #6b7280;
-  font-size: 1.05rem;
-  max-width: 650px;
-  line-height: 1.7;
+.mybookings-content {
+  padding: 48px 24px 80px;
 }
 
 /* GRID */
@@ -45,7 +68,7 @@
 
 /* CARD */
 
-.booking-card {
+.mybooking-card {
   background: #ffffff;
   border-radius: 28px;
   overflow: hidden;
@@ -60,7 +83,7 @@
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
 }
 
-.booking-card:hover {
+.mybooking-card:hover {
   transform: translateY(-4px);
 
   box-shadow: 0 20px 45px rgba(15, 23, 42, 0.12);
@@ -287,7 +310,7 @@
 /* RESPONSIVE */
 
 @media (max-width: 992px) {
-  .booking-card {
+  .mybooking-card {
     grid-template-columns: 1fr;
   }
 
@@ -297,8 +320,12 @@
 }
 
 @media (max-width: 768px) {
-  .mybookings-page {
-    padding: 100px 16px 60px;
+  .bookings-hero {
+    height: 240px;
+  }
+
+  .mybookings-content {
+    padding: 32px 16px 60px;
   }
 
   .booking-content {

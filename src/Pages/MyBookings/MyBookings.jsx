@@ -17,80 +17,88 @@ const MyBookings = () => {
 
   return (
     <div className="mybookings-page">
-      <h1 className="page-title">My Trips</h1>
-
-      {loading.list && <div className="loader">Loading your trips...</div>}
-
-      {error && <div className="error-box">{error}</div>}
-
-      {!loading.list && bookings.length === 0 && (
-        <div className="empty-state">
-          No bookings found. Start exploring amazing tours ✈️
+      {/* HERO */}
+      <section className="bookings-hero">
+        <div className="bookings-hero-overlay">
+          <p className="bookings-hero-subtitle">Your Journey</p>
+          <h1 className="bookings-hero-title">My Trips</h1>
         </div>
-      )}
+      </section>
 
-      <div className="bookings-grid">
-        {bookings.map((b) => (
-          <div className="booking-card" key={b._id}>
-            
-            {/* IMAGE */}
-            <div className="booking-image">
-              <img
-                src={
-                  b.tour?.image ||
-                  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e"
-                }
-                alt="tour"
-              />
-            </div>
+      <div className="mybookings-content">
+        {loading.list && <div className="loader">Loading your trips...</div>}
 
-            {/* CONTENT */}
-            <div className="booking-content">
+        {error && <div className="error-box">{error}</div>}
+
+        {!loading.list && bookings.length === 0 && (
+          <div className="empty-state">
+            No bookings found. Start exploring amazing tours ✈️
+          </div>
+        )}
+
+        <div className="bookings-grid">
+          {bookings.map((b) => (
+            <div className="mybooking-card" key={b._id}>
               
-              <div className="top-row">
-                <h2>{b.tour?.title || "Tour unavailable"}</h2>
-
-                <span className={`status ${b.status}`}>
-                  {b.status}
-                </span>
+              {/* IMAGE */}
+              <div className="booking-image">
+                <img
+                  src={
+                    b.tour?.image ||
+                    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e"
+                  }
+                  alt="tour"
+                />
               </div>
 
-              <p className="location">
-                🌍 {b.tour?.location || "International Destination"}
-              </p>
+              {/* CONTENT */}
+              <div className="booking-content">
+                
+                <div className="top-row">
+                  <h2>{b.tour?.title || "Tour unavailable"}</h2>
 
-              <div className="meta">
-                <span>👥 {b.participants} guests</span>
-                <span>📅 {new Date(b.bookingDate).toLocaleDateString()}</span>
-              </div>
+                  <span className={`status ${b.status}`}>
+                    {b.status}
+                  </span>
+                </div>
 
-              <div className="bottom-row">
-                <p className="price">
-                  ₹{b.totalAmount}
+                <p className="location">
+                  🌍 {b.tour?.location || "International Destination"}
                 </p>
 
-                <div className="bottom-row-actions">
-                  {b.status === "completed" && b.tour?._id && (
-                    <Link
-                      to={`/tour/${b.tour._id}#reviews`}
-                      className="review-btn"
-                    >
-                      Write a review
-                    </Link>
-                  )}
-
-                  <Link
-                    to={`/bookings/${b._id}`}
-                    className="view-btn"
-                  >
-                    View Details →
-                  </Link>
+                <div className="meta">
+                  <span>👥 {b.participants} guests</span>
+                  <span>📅 {new Date(b.bookingDate).toLocaleDateString()}</span>
                 </div>
-              </div>
 
+                <div className="bottom-row">
+                  <p className="price">
+                    ₹{b.totalAmount}
+                  </p>
+
+                  <div className="bottom-row-actions">
+                    {b.status === "completed" && b.tour?._id && (
+                      <Link
+                        to={`/tour/${b.tour._id}#reviews`}
+                        className="review-btn"
+                      >
+                        Write a review
+                      </Link>
+                    )}
+
+                    <Link
+                      to={`/bookings/${b._id}`}
+                      className="view-btn"
+                    >
+                      View Details →
+                    </Link>
+                  </div>
+                </div>
+
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
