@@ -11,12 +11,6 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import {
-  FaSearch,
-  FaBell,
-  FaChevronDown,
-  FaUserCircle,
-} from "react-icons/fa";
 
 import {
   getDashboardStats,
@@ -136,32 +130,6 @@ const AdminDashboard = () => {
 
   return (
     <div className="admin-shell">
-      {/* TOPBAR */}
-      <div className="admin-topbar">
-        <div className="admin-topbar-search">
-          <FaSearch className="admin-topbar-search-icon" />
-          <input
-            type="text"
-            placeholder="Search bookings, tours, travelers…"
-          />
-        </div>
-
-        <div className="admin-topbar-right">
-          <button className="admin-topbar-icon-btn" aria-label="Notifications">
-            <FaBell />
-            {stats?.pendingBookings > 0 && (
-              <span className="admin-topbar-dot" />
-            )}
-          </button>
-
-          <button className="admin-topbar-account">
-            <FaUserCircle className="admin-topbar-avatar" />
-            <span>Admin</span>
-            <FaChevronDown className="admin-topbar-caret" />
-          </button>
-        </div>
-      </div>
-
       <div className="admin-header">
         <p className="admin-eyebrow">Admin</p>
         <h1>Dashboard</h1>

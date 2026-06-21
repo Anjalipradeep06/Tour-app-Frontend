@@ -1,4 +1,6 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import {
   FaChartPie,
   FaSuitcase,
@@ -6,7 +8,14 @@ import {
   FaUsers,
   FaBell,
   FaCog,
+  FaSearch,
+  FaUserCircle,
+  FaChevronDown,
+  FaSignOutAlt,
 } from "react-icons/fa";
+
+import { logout } from "../../redux/slices/authSlice";
+import { getUnreadCount } from "../../redux/thunks/notificationThunk";
 
 import "./AdminLayout.css";
 
@@ -35,8 +44,97 @@ const NAV_ITEMS = [
 ];
 
 const AdminLayout = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const accountRef = useRef(null);
+
+  const { user } = useSelector((state) => state.auth);
+  const { unreadCount } = useSelector((state) => state.notification);
+
+  const [accountOpen, setAccountOpen] = useState(false);
+
+  useEffect(() => {
+    dispatch(getUnreadCount());
+
+    const interval = setInterval(() => {
+      dispatch(getUnreadCount());
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [dispatch]);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (accountRef.current && !accountRef.current.contains(e.target)) {
+        setAccountOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    setAccountOpen(false);
+    dispatch(logout());
+    navigate("/login");
+  };
+
   return (
     <div className="admin-layout">
+
+      {/* Topbar */}
+
+      <header className="admin-topbar">
+
+        <div className="admin-topbar-search">
+          <FaSearch className="admin-topbar-search-icon" />
+          <input
+            type="text"
+            placeholder="Search bookings, tours, travelers…"
+          />
+        </div>
+
+        <div className="admin-topbar-right">
+
+          <button
+            className="admin-topbar-icon-btn"
+            aria-label="Notifications"
+            onClick={() => navigate("/notifications")}
+          >
+            <FaBell />
+            {unreadCount > 0 && (
+              <span className="admin-topbar-dot" />
+            )}
+          </button>
+
+          <div className="admin-topbar-account-wrapper" ref={accountRef}>
+            <button
+              className="admin-topbar-account"
+              onClick={() => setAccountOpen((prev) => !prev)}
+              aria-expanded={accountOpen}
+            >
+              <FaUserCircle className="admin-topbar-avatar" />
+              <span>{user?.name || "Admin"}</span>
+              <FaChevronDown className="admin-topbar-caret" />
+            </button>
+
+            {accountOpen && (
+              <div className="admin-topbar-dropdown" role="menu">
+                <button
+                  className="admin-topbar-dropdown-item"
+                  onClick={handleLogout}
+                >
+                  <FaSignOutAlt />
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
+
+        </div>
+
+      </header>
 
       {/* Sidebar */}
 
@@ -79,7 +177,18 @@ const AdminLayout = () => {
 
         <div className="sidebar-footer">
 
-          <button className="sidebar-btn">
+          <button
+            className="sidebar-btn"
+            onClick={() => navigate("/profile")}
+          >
+            <FaUserCircle />
+            Profile
+          </button>
+
+          <button
+            className="sidebar-btn"
+            onClick={() => navigate("/notifications")}
+          >
             <FaBell />
             Notifications
           </button>

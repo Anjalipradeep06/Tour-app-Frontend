@@ -1,4 +1,4 @@
-:root {
+.tour-details {
   --primary: #006ce4;
   --primary-dark: #0057b8;
   --text: #1f2937;
@@ -8,9 +8,7 @@
   --background: #f5f7fb;
   --success: #16a34a;
   --danger: #dc2626;
-}
 
-.tour-details {
   min-height: 100vh;
   background: var(--background);
   color: var(--text);
