@@ -1,6 +1,6 @@
 import axios from "axios";
 
-// 1. Create axios instance
+// 1. Create axios instance //resolved
 const api = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
 });
