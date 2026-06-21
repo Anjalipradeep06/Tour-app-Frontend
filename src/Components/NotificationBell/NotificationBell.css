@@ -306,9 +306,6 @@
   background: #f8fafc;
 }
 
-/* ==========================
-   MOBILE
-========================== */
 
 @media (max-width: 768px) {
   .notif-dropdown {
