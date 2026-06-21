@@ -17,7 +17,7 @@ export const getNotifications = createAsyncThunk(
   async ({ page = 1, limit = 20 } = {}, thunkAPI) => {
     try {
       const { data } = await api.get(
-        `/notifications?page=${page}&limit=${limit}`,
+        `/api/notifications?page=${page}&limit=${limit}`,
         getAuthConfig()
       );
       return data;
@@ -35,7 +35,7 @@ export const getUnreadCount = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const { data } = await api.get(
-        "/notifications/unread-count",
+        "/api/notifications/unread-count",
         getAuthConfig()
       );
       return data.unreadCount;
@@ -53,7 +53,7 @@ export const markAsRead = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const { data } = await api.patch(
-        `/notifications/${id}/read`,
+        `/api/notifications/${id}/read`,
         {},
         getAuthConfig()
       );
@@ -72,7 +72,7 @@ export const markAllAsRead = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const { data } = await api.patch(
-        "/notifications/read-all",
+        "/api/notifications/read-all",
         {},
         getAuthConfig()
       );

@@ -36,7 +36,7 @@ api.interceptors.response.use(
       localStorage.removeItem("token");
 
       // optional redirect to Home page
-      window.location.href = "/login";
+      window.location.href = "/api/login";
     }
 
     return Promise.reject(error);

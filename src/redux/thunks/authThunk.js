@@ -9,7 +9,7 @@ export const registerUser = createAsyncThunk(
   async (userData, thunkAPI) => {
     try {
       const response = await api.post(
-        "/auth/register",
+        "/api/auth/register",
         userData
       );
 
@@ -30,7 +30,7 @@ export const loginUser = createAsyncThunk(
   async (userData, thunkAPI) => {
     try {
       const response = await api.post(
-        "/auth/login",
+        "/api/auth/login",
         userData
       );
 

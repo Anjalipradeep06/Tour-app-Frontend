@@ -16,7 +16,7 @@ export const getTourReviews = createAsyncThunk(
   "review/getByTour",
   async (tourId, thunkAPI) => {
     try {
-      const { data } = await api.get(`/reviews/${tourId}`);
+      const { data } = await api.get(`/api/reviews/${tourId}`);
       return data.reviews;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -32,7 +32,7 @@ export const addReview = createAsyncThunk(
   async ({ tour, rating, comment }, thunkAPI) => {
     try {
       const { data } = await api.post(
-        "/reviews",
+        "/api/reviews",
         { tour, rating, comment },
         getAuthConfig()
       );
@@ -50,7 +50,7 @@ export const deleteReview = createAsyncThunk(
   "review/delete",
   async (id, thunkAPI) => {
     try {
-      await api.delete(`/reviews/${id}`, getAuthConfig());
+      await api.delete(`/api/reviews/${id}`, getAuthConfig());
       return id;
     } catch (error) {
       return thunkAPI.rejectWithValue(

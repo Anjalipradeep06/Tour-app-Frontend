@@ -5,7 +5,7 @@ export const createStripeSession = async (
   bookingId
 ) => {
   const { data } = await API.post(
-    `/payments/create-session/${bookingId}`
+    `/api/payments/create-session/${bookingId}`
   );
 
   return data;
@@ -16,7 +16,7 @@ export const verifyStripePayment = async (
   bookingId
 ) => {
   const { data } = await API.patch(
-    `/payments/verify/${bookingId}`
+    `/api/payments/verify/${bookingId}`
   );
 
   return data;

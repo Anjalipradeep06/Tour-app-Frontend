@@ -7,7 +7,7 @@ export const getAllDestinations = createAsyncThunk(
   "destinations/getAllDestinations",
   async (params = {}, thunkAPI) => {
     try {
-      const response = await api.get("/destinations/all", {
+      const response = await api.get("/api/destinations/all", {
         params,
       });
 
@@ -28,7 +28,7 @@ export const getFeaturedDestinations =
     async (_, thunkAPI) => {
       try {
         const response = await api.get(
-          "/destinations/featured"
+          "/api/destinations/featured"
         );
 
         return response.data;
@@ -48,7 +48,7 @@ export const getDestinationsByContinent =
     async (continent, thunkAPI) => {
       try {
         const response = await api.get(
-          `/destinations/${continent}`
+          `/api/destinations/${continent}`
         );
 
         return response.data;
@@ -68,7 +68,7 @@ export const getPopularDestinations =
     async (continent, thunkAPI) => {
       try {
         const response = await api.get(
-          `/destinations/${continent}/popular`
+          `/api/destinations/${continent}/popular`
         );
 
         return response.data;
@@ -88,7 +88,7 @@ export const getDestinationById =
     async (id, thunkAPI) => {
       try {
         const response = await api.get(
-          `/destinations/details/${id}`
+          `/api/destinations/details/${id}`
         );
 
         return response.data;
@@ -129,7 +129,7 @@ export const createDestination = createAsyncThunk(
       });
 
       const response = await api.post(
-        "/destinations",
+        "/api/destinations",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

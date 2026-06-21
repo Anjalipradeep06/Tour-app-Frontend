@@ -17,7 +17,7 @@ export const createBooking = createAsyncThunk(
   async (bookingData, thunkAPI) => {
     try {
       const { data } = await api.post(
-        "/bookings",
+        "/api/bookings",
         bookingData,
         getAuthConfig()
       );
@@ -35,7 +35,7 @@ export const getUserBookings = createAsyncThunk(
   "booking/getAll",
   async (_, thunkAPI) => {
     try {
-      const { data } = await api.get("/bookings", getAuthConfig());
+      const { data } = await api.get("/api/bookings", getAuthConfig());
       return data.bookings;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -51,7 +51,7 @@ export const getBookingById = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const { data } = await api.get(
-        `/bookings/${id}`,
+        `/api/bookings/${id}`,
         getAuthConfig()
       );
       return data.booking;
@@ -69,7 +69,7 @@ export const updateBooking = createAsyncThunk(
   async ({ id, bookingData }, thunkAPI) => {
     try {
       const { data } = await api.put(
-        `/bookings/${id}`,
+        `/api/bookings/${id}`,
         bookingData,
         getAuthConfig()
       );
@@ -88,7 +88,7 @@ export const cancelBooking = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const { data } = await api.patch(
-        `/bookings/${id}/cancel`,
+        `/api/bookings/${id}/cancel`,
         {},
         getAuthConfig()
       );
@@ -108,7 +108,7 @@ export const checkAvailability = createAsyncThunk(
   ) => {
     try {
       const { data } = await api.get(
-        "/availability/check",
+        "/api/availability/check",
         {
           params: {
             tourId,

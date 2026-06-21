@@ -8,7 +8,7 @@ export const getAllTours = createAsyncThunk(
   "tours/getAllTours",
   async (params = {}, thunkAPI) => {
     try {
-      const response = await api.get("/tours", {
+      const response = await api.get("/api/tours", {
         params,
       });
 
@@ -30,7 +30,7 @@ export const getTourById = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const response = await api.get(
-        `/tours/${id}`
+        `/api/tours/${id}`
       );
 
       // IMPORTANT FIX
@@ -52,7 +52,7 @@ export const createTour = createAsyncThunk(
   async (tourData, thunkAPI) => {
     try {
       const response = await api.post(
-        "/tours",
+        "/api/tours",
         tourData
       );
 
@@ -77,7 +77,7 @@ export const updateTour = createAsyncThunk(
   ) => {
     try {
       const response = await api.put(
-        `/tours/${id}`,
+        `/api/tours/${id}`,
         tourData
       );
 
@@ -98,7 +98,7 @@ export const deleteTour = createAsyncThunk(
   "tours/deleteTour",
   async (id, thunkAPI) => {
     try {
-      await api.delete(`/tours/${id}`);
+      await api.delete(`/api/tours/${id}`);
 
       return id;
     } catch (error) {
