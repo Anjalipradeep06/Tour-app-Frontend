@@ -1,28 +1,64 @@
 .star-rating {
   display: inline-flex;
-  gap: 3px;
+  align-items: center;
+  gap: 4px;
+}
+
+.star-rating--interactive {
+  gap: 6px;
 }
 
 .star {
-  color: #e7e2d8;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #d1d5db;
   line-height: 1;
-  transition: color 0.12s ease, transform 0.1s ease;
+
+  transition:
+    color 0.2s ease,
+    transform 0.15s ease;
+
+  user-select: none;
 }
 
 .star--filled {
-  color: #d99a1f;
+  color: #febb02;
 }
+
+/* Interactive mode */
 
 .star-rating--interactive .star {
   cursor: pointer;
 }
 
 .star-rating--interactive .star:hover {
-  transform: scale(1.12);
+  transform: scale(1.15);
 }
 
 .star-rating--interactive .star:focus-visible {
-  outline: 2px solid #0b4f4a;
-  outline-offset: 2px;
-  border-radius: 3px;
+  outline: 2px solid #006ce4;
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* Disabled look */
+
+.star-rating[aria-disabled="true"] .star {
+  cursor: default;
+}
+
+/* Compact mode for review cards */
+
+.review-list .star-rating {
+  gap: 2px;
+}
+
+/* Larger touch targets on mobile */
+
+@media (max-width: 768px) {
+  .star-rating--interactive .star {
+    padding: 2px;
+  }
 }

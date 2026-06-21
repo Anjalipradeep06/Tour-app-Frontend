@@ -1,6 +1,15 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, Link } from "react-router-dom";
+import {
+  FaCalendarAlt,
+  FaUsers,
+  FaMapMarkerAlt,
+  FaCreditCard,
+  FaCheckCircle,
+  FaTimesCircle,
+  FaClock,
+} from "react-icons/fa";
 
 import {
   getBookingById,
@@ -24,34 +33,42 @@ const BookingDetails = () => {
   useEffect(() => {
     dispatch(getBookingById(id));
 
-    return () => dispatch(resetBookingState());
+    return () => {
+      dispatch(resetBookingState());
+    };
   }, [dispatch, id]);
 
   const handleCancel = () => {
-    if (window.confirm("Cancel this booking? This can't be undone.")) {
+    if (
+      window.confirm(
+        "Are you sure you want to cancel this booking?"
+      )
+    ) {
       dispatch(cancelBooking(id));
     }
   };
 
-  // ---------------- LOADING ----------------
   if (loading?.detail) {
     return (
-      <div className="booking-details-page">
-        <div className="booking-state-card">
+      <div className="booking-page">
+        <div className="booking-state">
           <div className="booking-spinner" />
-          <p>Loading your booking…</p>
+          <p>Loading booking details...</p>
         </div>
       </div>
     );
   }
 
-  // ---------------- ERROR ----------------
   if (error) {
     return (
-      <div className="booking-details-page">
-        <div className="booking-state-card booking-state-card--error">
+      <div className="booking-page">
+        <div className="booking-state error">
           <p>{error}</p>
-          <Link to="/bookings" className="booking-btn booking-btn--ghost">
+
+          <Link
+            to="/bookings"
+            className="outline-btn"
+          >
             Back to bookings
           </Link>
         </div>
@@ -59,13 +76,16 @@ const BookingDetails = () => {
     );
   }
 
-  // ---------------- EMPTY ----------------
   if (!selectedBooking) {
     return (
-      <div className="booking-details-page">
-        <div className="booking-state-card">
-          <p>No booking found.</p>
-          <Link to="/bookings" className="booking-btn booking-btn--ghost">
+      <div className="booking-page">
+        <div className="booking-state">
+          <p>Booking not found.</p>
+
+          <Link
+            to="/bookings"
+            className="outline-btn"
+          >
             Back to bookings
           </Link>
         </div>
@@ -76,122 +96,193 @@ const BookingDetails = () => {
   const booking = selectedBooking;
 
   const status = booking.status || "pending";
-  const paymentStatus = booking.paymentStatus || "unpaid";
+  const paymentStatus =
+    booking.paymentStatus || "unpaid";
 
-  const canCancel = status === "pending" || status === "confirmed";
+  const canCancel =
+    status === "pending" ||
+    status === "confirmed";
 
   const formattedDate = booking.bookingDate
-    ? new Date(booking.bookingDate).toLocaleDateString("en-IN", {
-        weekday: "short",
+    ? new Date(
+        booking.bookingDate
+      ).toLocaleDateString("en-IN", {
+        weekday: "long",
         day: "numeric",
-        month: "short",
+        month: "long",
         year: "numeric",
       })
-    : "—";
+    : "Not available";
+
+  const statusIcon =
+    status === "confirmed" ? (
+      <FaCheckCircle />
+    ) : status === "cancelled" ? (
+      <FaTimesCircle />
+    ) : (
+      <FaClock />
+    );
 
   return (
-    <div className="booking-details-page">
-      <div className="booking-details-shell">
-        <Link to="/bookings" className="booking-back-link">
-          ← Back to bookings
+    <div className="booking-page">
+      <div className="booking-container">
+        <Link
+          to="/bookings"
+          className="back-link"
+        >
+          ← Back to My Trips
         </Link>
 
         <div className="booking-header">
-          <p className="booking-eyebrow">Booking reference · {id}</p>
+          <div>
+            <p className="booking-reference">
+              Booking Reference
+            </p>
 
-          <h1>{booking.tour?.title || "Tour Booking"}</h1>
+            <h1>
+              {booking.tour?.title ||
+                "Tour Booking"}
+            </h1>
 
-          <span className={`booking-status booking-status--${status}`}>
-            <span className="booking-status-dot" />
-            {status.charAt(0).toUpperCase() + status.slice(1)}
-          </span>
+            <p className="booking-id">
+              #{booking._id}
+            </p>
+          </div>
 
-          {/* Payment Status */}
-          <span
-            className={`booking-status booking-status--${paymentStatus}`}
-            style={{ marginLeft: "10px" }}
-          >
-            Payment: {paymentStatus}
-          </span>
+          <div className="status-group">
+            <span
+              className={`status-badge status-${status}`}
+            >
+              {statusIcon}
+              {status}
+            </span>
+
+            <span
+              className={`payment-badge payment-${paymentStatus}`}
+            >
+              <FaCreditCard />
+              {paymentStatus}
+            </span>
+          </div>
         </div>
 
         <div className="booking-layout">
-          {/* LEFT SIDE */}
-          <section className="booking-card booking-card--main">
-            {booking.tour?.image && (
-              <div className="booking-card-media">
-                <img src={booking.tour.image} alt={booking.tour?.title} />
-              </div>
-            )}
+          {/* LEFT */}
 
-            <div className="booking-info-grid">
-              <div className="booking-info-item">
-                <span className="booking-info-label">Travel date</span>
-                <span className="booking-info-value">
-                  {formattedDate}
-                </span>
-              </div>
+          <div className="booking-main">
+            <div className="tour-card">
+              <img
+                src={
+                  booking.tour?.image ||
+                  booking.tour?.destination
+                    ?.bannerImage ||
+                  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80"
+                }
+                alt={booking.tour?.title}
+              />
 
-              <div className="booking-info-item">
-                <span className="booking-info-label">Participants</span>
-                <span className="booking-info-value">
-                  {booking.participants}{" "}
-                  {booking.participants === 1 ? "guest" : "guests"}
-                </span>
-              </div>
+              <div className="tour-content">
+                <div className="info-grid">
+                  <div className="info-item">
+                    <FaCalendarAlt />
 
-              <div className="booking-info-item">
-                <span className="booking-info-label">Booking ID</span>
-                <span className="booking-info-value booking-info-value--mono">
-                  {id}
-                </span>
+                    <div>
+                      <span>Travel Date</span>
+                      <strong>
+                        {formattedDate}
+                      </strong>
+                    </div>
+                  </div>
+
+                  <div className="info-item">
+                    <FaUsers />
+
+                    <div>
+                      <span>Guests</span>
+                      <strong>
+                        {booking.participants}
+                      </strong>
+                    </div>
+                  </div>
+
+                  <div className="info-item">
+                    <FaMapMarkerAlt />
+
+                    <div>
+                      <span>Destination</span>
+                      <strong>
+                        {booking.tour?.country ||
+                          booking.tour
+                            ?.destination
+                            ?.country ||
+                          "International"}
+                      </strong>
+                    </div>
+                  </div>
+
+                  <div className="info-item">
+                    <FaCreditCard />
+
+                    <div>
+                      <span>Payment</span>
+                      <strong>
+                        {paymentStatus}
+                      </strong>
+                    </div>
+                  </div>
+                </div>
+
+                <Link
+                  to={`/tour/${booking.tour?._id}`}
+                  className="outline-btn"
+                >
+                  View Tour Details
+                </Link>
               </div>
             </div>
+          </div>
 
-            <Link
-              to={`/tour/${booking.tour?._id}`}
-              className="booking-btn booking-btn--ghost booking-view-tour"
-            >
-              View tour details
-            </Link>
-          </section>
+          {/* RIGHT */}
 
-          {/* RIGHT SIDE */}
-          <aside className="booking-card booking-card--summary">
-            <div className="booking-summary-top">
-              <span className="booking-summary-label">Total amount</span>
+          <aside className="summary-card">
+            <p className="summary-label">
+              Total Amount
+            </p>
 
-              <p className="booking-summary-price">
-                <span className="booking-currency">₹</span>
-                {Number(booking.totalAmount).toLocaleString("en-IN")}
-              </p>
+            <h2>
+              ₹
+              {Number(
+                booking.totalAmount
+              ).toLocaleString("en-IN")}
+            </h2>
 
-              <span className="booking-summary-sub">
-                For {booking.participants}{" "}
-                {booking.participants === 1 ? "guest" : "guests"}
-              </span>
-            </div>
+            <p className="summary-note">
+              Includes taxes and fees
+            </p>
 
-            <div className="booking-perforation" />
+            <div className="summary-divider" />
 
-            <div className="booking-summary-bottom">
-              {/* PAYMENT BUTTON */}
+            <div className="action-group">
               {paymentStatus !== "paid" && (
-                <PaymentButton bookingId={booking._id} />
+                <PaymentButton
+                  bookingId={booking._id}
+                />
               )}
 
-              {/* CANCEL BUTTON */}
               {canCancel ? (
                 <button
+                  className="danger-btn"
                   onClick={handleCancel}
                   disabled={loading?.action}
-                  className="booking-btn booking-btn--danger"
                 >
-                  {loading?.action ? "Cancelling…" : "Cancel booking"}
+                  {loading?.action
+                    ? "Cancelling..."
+                    : "Cancel Booking"}
                 </button>
               ) : (
-                <p className="booking-locked-note">
-                  This booking is {status} and can no longer be changed.
+                <p className="locked-note">
+                  This booking can no longer
+                  be modified.
                 </p>
               )}
             </div>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
@@ -6,13 +6,13 @@ import {
   softDeleteUser,
   restoreUser,
 } from "../../redux/thunks/adminUserThunk";
+
 import { resetAdminUserError } from "../../redux/slices/adminUserSlice";
 
-import "./ManageTours.css";
 import "./ManageUsers.css";
 
-const formatDate = (dateString) =>
-  new Date(dateString).toLocaleDateString("en-IN", {
+const formatDate = (date) =>
+  new Date(date).toLocaleDateString("en-IN", {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -21,162 +21,299 @@ const formatDate = (dateString) =>
 const ManageUsers = () => {
   const dispatch = useDispatch();
 
-  const { users, loading, actionLoading, actionTargetId, error, count } =
-    useSelector((state) => state.adminUsers);
+  const {
+    users = [],
+    loading,
+    actionLoading,
+    actionTargetId,
+    error,
+    count,
+  } = useSelector((state) => state.adminUsers);
 
   const { user: currentUser } = useSelector((state) => state.auth);
 
   const [includeDeleted, setIncludeDeleted] = useState(false);
   const [confirmTarget, setConfirmTarget] = useState(null);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
-    dispatch(getAllUsers({ includeDeleted: includeDeleted || undefined }));
+    dispatch(
+      getAllUsers({
+        includeDeleted: includeDeleted || undefined,
+      })
+    );
   }, [dispatch, includeDeleted]);
 
-  const handleDeactivate = () => {
-    if (confirmTarget) {
-      dispatch(softDeleteUser(confirmTarget));
-      setConfirmTarget(null);
-    }
-  };
+  const filteredUsers = useMemo(() => {
+    return users.filter((u) =>
+      `${u.name} ${u.email}`
+        .toLowerCase()
+        .includes(search.toLowerCase())
+    );
+  }, [users, search]);
 
-  const handleRestore = (id) => {
-    dispatch(restoreUser(id));
+  const activeUsers = users.filter((u) => !u.isDeleted).length;
+  const inactiveUsers = users.filter((u) => u.isDeleted).length;
+  const admins = users.filter((u) => u.role === "admin").length;
+
+  const deactivate = () => {
+    dispatch(softDeleteUser(confirmTarget));
+    setConfirmTarget(null);
   };
 
   return (
     <div className="admin-shell">
-      <div className="admin-header mt-header">
+
+      <div className="mu-header">
+
         <div>
-          <p className="admin-eyebrow">Admin</p>
-          <h1>Users</h1>
+          <p className="admin-eyebrow">Meridian Admin</p>
+          <h1>User Management</h1>
+          <span>Manage platform members & administrators.</span>
         </div>
 
-        <label className="mu-toggle-row">
+        <label className="mu-switch">
+
           <input
             type="checkbox"
             checked={includeDeleted}
-            onChange={(e) => setIncludeDeleted(e.target.checked)}
+            onChange={(e) =>
+              setIncludeDeleted(e.target.checked)
+            }
           />
-          Show deactivated users
+
+          <span>Show Deactivated</span>
+
         </label>
+
       </div>
 
       {error && (
         <div className="admin-error-banner">
           <span>{error}</span>
-          <button onClick={() => dispatch(resetAdminUserError())}>✕</button>
+
+          <button
+            onClick={() => dispatch(resetAdminUserError())}
+          >
+            ✕
+          </button>
         </div>
       )}
 
-      <div className="mt-table-section">
-        <div className="mt-table-wrap">
-          {loading && users.length === 0 ? (
-            <div className="mt-table-state">Loading users…</div>
-          ) : users.length === 0 ? (
-            <div className="mt-table-state">No users found.</div>
-          ) : (
-            <table className="mt-table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Joined</th>
-                  <th>Status</th>
-                  <th aria-label="Actions" />
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((u) => {
-                  const isSelf = u._id === currentUser?._id;
-                  const isBusy = actionLoading && actionTargetId === u._id;
+      <div className="mu-stats">
 
-                  return (
-                    <tr key={u._id}>
-                      <td>
-                        <span className="mt-table-primary">{u.name}</span>
-                        {isSelf && (
-                          <span className="mu-you-badge">You</span>
-                        )}
-                      </td>
-                      <td>{u.email}</td>
-                      <td className="mu-role-cell">{u.role}</td>
-                      <td>{formatDate(u.createdAt)}</td>
-                      <td>
-                        <span
-                          className={`admin-status ${
-                            u.isDeleted
-                              ? "admin-status--cancelled"
-                              : "admin-status--confirmed"
-                          }`}
-                        >
-                          {u.isDeleted ? "Deactivated" : "Active"}
-                        </span>
-                      </td>
-                      <td>
-                        {isSelf ? (
-                          <span className="mu-no-action">—</span>
-                        ) : u.isDeleted ? (
-                          <button
-                            className="tf-btn tf-btn--ghost"
-                            onClick={() => handleRestore(u._id)}
-                            disabled={isBusy}
-                          >
-                            {isBusy ? "…" : "Restore"}
-                          </button>
-                        ) : (
-                          <button
-                            className="mt-delete-btn"
-                            onClick={() => setConfirmTarget(u._id)}
-                            disabled={isBusy}
-                          >
-                            {isBusy ? "…" : "Deactivate"}
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          )}
+        <div className="mu-stat">
+          <h2>{count}</h2>
+          <p>Total Users</p>
         </div>
 
-        {!loading && users.length > 0 && (
-          <p className="mt-total-count">
-            Showing {users.length} of {count} user{count !== 1 ? "s" : ""}
-          </p>
+        <div className="mu-stat">
+          <h2>{activeUsers}</h2>
+          <p>Active</p>
+        </div>
+
+        <div className="mu-stat">
+          <h2>{inactiveUsers}</h2>
+          <p>Deactivated</p>
+        </div>
+
+        <div className="mu-stat">
+          <h2>{admins}</h2>
+          <p>Admins</p>
+        </div>
+
+      </div>
+
+      <div className="mu-toolbar">
+
+        <input
+          type="text"
+          placeholder="Search users..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+
+      </div>
+
+      <div className="mu-table-card">
+
+        {loading ? (
+          <div className="mu-empty">
+            Loading users...
+          </div>
+        ) : filteredUsers.length === 0 ? (
+          <div className="mu-empty">
+            No users found.
+          </div>
+        ) : (
+
+          <table className="mu-table">
+
+            <thead>
+
+              <tr>
+                <th>User</th>
+                <th>Role</th>
+                <th>Joined</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              {filteredUsers.map((u) => {
+
+                const busy =
+                  actionLoading &&
+                  actionTargetId === u._id;
+
+                return (
+
+                  <tr key={u._id}>
+
+                    <td>
+
+                      <div className="mu-user">
+
+                        <div className="mu-avatar">
+                          {u.name.charAt(0).toUpperCase()}
+                        </div>
+
+                        <div>
+
+                          <strong>
+                            {u.name}
+
+                            {u._id === currentUser?._id &&
+                              " (You)"}
+
+                          </strong>
+
+                          <span>{u.email}</span>
+
+                        </div>
+
+                      </div>
+
+                    </td>
+
+                    <td>
+
+                      <span
+                        className={`mu-role ${u.role}`}
+                      >
+                        {u.role}
+                      </span>
+
+                    </td>
+
+                    <td>
+                      {formatDate(u.createdAt)}
+                    </td>
+
+                    <td>
+
+                      <span
+                        className={
+                          u.isDeleted
+                            ? "admin-status admin-status--cancelled"
+                            : "admin-status admin-status--confirmed"
+                        }
+                      >
+                        {u.isDeleted
+                          ? "Deactivated"
+                          : "Active"}
+                      </span>
+
+                    </td>
+
+                    <td>
+
+                      {u._id !== currentUser?._id && (
+
+                        u.isDeleted ? (
+
+                          <button
+                            className="mu-restore"
+                            disabled={busy}
+                            onClick={() =>
+                              dispatch(restoreUser(u._id))
+                            }
+                          >
+                            Restore
+                          </button>
+
+                        ) : (
+
+                          <button
+                            className="mu-delete"
+                            disabled={busy}
+                            onClick={() =>
+                              setConfirmTarget(u._id)
+                            }
+                          >
+                            Deactivate
+                          </button>
+
+                        )
+
+                      )}
+
+                    </td>
+
+                  </tr>
+
+                );
+
+              })}
+
+            </tbody>
+
+          </table>
+
         )}
+
       </div>
 
       {confirmTarget && (
-        <div className="tf-overlay" role="dialog" aria-modal="true">
-          <div className="mt-confirm-modal">
-            <h3>Deactivate this user?</h3>
+
+        <div className="mu-overlay">
+
+          <div className="mu-modal">
+
+            <h2>Deactivate User?</h2>
+
             <p>
-              They'll be signed out and blocked from logging in. You can
-              restore their account anytime from this page.
+              This user won't be able to log in until restored.
             </p>
-            <div className="tf-modal-footer">
+
+            <div className="mu-modal-buttons">
+
               <button
-                className="tf-btn tf-btn--secondary"
-                onClick={() => setConfirmTarget(null)}
-                disabled={actionLoading}
+                onClick={() =>
+                  setConfirmTarget(null)
+                }
               >
                 Cancel
               </button>
+
               <button
-                className="mt-delete-btn mt-delete-btn--confirm"
-                onClick={handleDeactivate}
-                disabled={actionLoading}
+                className="danger"
+                onClick={deactivate}
               >
-                {actionLoading ? "Deactivating…" : "Deactivate user"}
+                Confirm
               </button>
+
             </div>
+
           </div>
+
         </div>
+
       )}
+
     </div>
   );
 };

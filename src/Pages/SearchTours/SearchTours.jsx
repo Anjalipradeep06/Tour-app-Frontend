@@ -22,17 +22,53 @@ const SearchTours = () => {
 
   return (
     <div className="search-page">
+      <section className="search-hero">
+        <div className="search-hero-overlay">
+          <div className="search-hero-content">
+            <span className="search-badge">
+              DISCOVER EXPERIENCES WORLDWIDE
+            </span>
+
+            <h1>
+              Find tours crafted for every
+              kind of traveler
+            </h1>
+
+            <p>
+              Explore handpicked adventures,
+              cultural experiences, guided
+              tours, and unforgettable
+              activities across the globe.
+            </p>
+          </div>
+        </div>
+      </section>
 
       <SearchBar />
 
       <div className="search-layout">
-
         <FilterSidebar />
 
         <div className="tour-results">
+          <div className="results-header">
+            <div>
+              <h2>
+                {loading
+                  ? "Finding experiences..."
+                  : `${tours.length} experiences found`}
+              </h2>
+
+              <p>
+                Curated tours from trusted
+                operators worldwide.
+              </p>
+            </div>
+          </div>
 
           {loading ? (
-            <h2>Loading Tours...</h2>
+            <div className="loading-state">
+              Loading tours...
+            </div>
           ) : tours.length > 0 ? (
             <div className="tour-grid">
               {tours.map((tour) => (
@@ -43,13 +79,20 @@ const SearchTours = () => {
               ))}
             </div>
           ) : (
-            <h2>No Tours Found</h2>
+            <div className="empty-state">
+              <h3>
+                No experiences found
+              </h3>
+
+              <p>
+                Try adjusting your search or
+                filters to discover more
+                destinations.
+              </p>
+            </div>
           )}
-
         </div>
-
       </div>
-
     </div>
   );
 };

@@ -1,151 +1,296 @@
-/* ==========================================================================
-   Admin Layout — sidebar shell wrapping all /admin/* pages.
-   Reuses the same --teal/--sand/--ink token system as the rest of the
-   admin area (originally declared in AdminDashboard.css under .admin-page).
-   Re-declared here too since this is now the outermost .admin-page wrapper.
-   ========================================================================== */
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@500;700&family=Inter:wght@400;500;600;700&display=swap");
 
-.admin-layout {
-  --teal: #0b4f4a;
-  --teal-dark: #073733;
-  --sand: #faf7f2;
-  --card: #ffffff;
-  --ink: #1c2521;
-  --slate: #6b7670;
-  --line: #e7e2d8;
-  --confirmed: #1b7a4d;
-  --confirmed-bg: #e8f4ec;
-  --pending: #b8770a;
-  --pending-bg: #fbf0dd;
-  --cancelled: #c03b2b;
-  --cancelled-bg: #fbe9e6;
-  --completed: #6b7670;
-  --completed-bg: #ececea;
+:root{
 
-  display: flex;
-  min-height: 100vh;
-  padding: 0;
-  background: var(--sand);
+--bg:#0B0E11;
+--panel:#15191E;
+--panel2:#1B2027;
+--gold:#C9A669;
+--text:#F4F1EA;
+--muted:#8E959B;
+--border:#252B33;
+--navbar-h:76px;
+
 }
 
-.admin-layout * ,
-.admin-layout *::before,
-.admin-layout *::after {
-  box-sizing: border-box;
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
 }
 
-/* ---------- Sidebar ---------- */
+.admin-layout{
 
-.admin-sidebar {
-  width: 220px;
-  flex-shrink: 0;
-  background: var(--teal-dark);
-  color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  padding: 28px 18px;
-  position: sticky;
-  top: 0;
-  height: 100vh;
+display:flex;
+min-height:100vh;
+background:var(--bg);
+font-family:Inter,sans-serif;
+padding-top:var(--navbar-h);
+
 }
 
-.admin-sidebar-brand {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin-bottom: 32px;
-  padding: 0 8px;
+/* SIDEBAR */
+
+.admin-sidebar{
+
+width:270px;
+background:linear-gradient(180deg,#101317,#171C21);
+
+border-right:1px solid var(--border);
+
+display:flex;
+flex-direction:column;
+
+padding:30px 22px;
+
+position:fixed;
+top:var(--navbar-h);
+left:0;
+height:calc(100vh - var(--navbar-h));
+overflow-y:auto;
+
 }
 
-.admin-sidebar-eyebrow {
-  font-family: "Inter", sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
+/* LOGO */
+
+.sidebar-logo{
+
+margin-bottom:45px;
+
 }
 
-.admin-sidebar-title {
-  font-family: "Fraunces", Georgia, serif;
-  font-weight: 500;
-  font-size: 21px;
-  color: #ffffff;
+.sidebar-small{
+
+color:var(--gold);
+
+font-size:12px;
+
+letter-spacing:4px;
+
+text-transform:uppercase;
+
+margin-bottom:6px;
+
 }
 
-.admin-sidebar-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+.sidebar-logo h2{
+
+font-family:Fraunces,serif;
+
+font-size:34px;
+
+color:white;
+
 }
 
-.admin-sidebar-link {
-  display: block;
-  padding: 11px 12px;
-  border-radius: 9px;
-  font-family: "Inter", sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.75);
-  text-decoration: none;
-  transition: background 0.15s ease, color 0.15s ease;
+/* MENU */
+
+.sidebar-menu{
+
+display:flex;
+
+flex-direction:column;
+
+gap:10px;
+
 }
 
-.admin-sidebar-link:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #ffffff;
+/* LINKS */
+
+.sidebar-link{
+
+display:flex;
+
+align-items:center;
+
+gap:15px;
+
+padding:15px 18px;
+
+border-radius:14px;
+
+text-decoration:none;
+
+color:var(--muted);
+
+transition:.25s;
+
+font-size:15px;
+
+font-weight:600;
+
 }
 
-.admin-sidebar-link--active {
-  background: #ffffff;
-  color: var(--teal-dark);
-  font-weight: 600;
+.sidebar-link:hover{
+
+background:#1F252C;
+
+color:white;
+
+transform:translateX(4px);
+
 }
 
-/* ---------- Content area ---------- */
+.sidebar-link.active{
 
-.admin-layout-content {
-  flex: 1;
-  min-width: 0;
-  padding: 40px 24px 80px;
-  overflow-x: hidden;
+background:linear-gradient(90deg,#C9A669,#B78E4F);
+
+color:#111;
+
+font-weight:700;
+
+box-shadow:0 10px 20px rgba(0,0,0,.25);
+
 }
 
-/* ---------- Responsive: sidebar collapses to a top bar ---------- */
+.sidebar-icon{
 
-@media (max-width: 860px) {
-  .admin-layout {
-    flex-direction: column;
-  }
+font-size:18px;
 
-  .admin-sidebar {
-    width: 100%;
-    height: auto;
-    position: relative;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 18px;
-  }
+width:22px;
 
-  .admin-sidebar-brand {
-    margin-bottom: 0;
-    padding: 0;
-  }
+display:flex;
 
-  .admin-sidebar-nav {
-    flex-direction: row;
-    gap: 4px;
-    overflow-x: auto;
-  }
+justify-content:center;
 
-  .admin-sidebar-link {
-    white-space: nowrap;
-    padding: 8px 12px;
-    font-size: 13px;
-  }
+}
 
-  .admin-layout-content {
-    padding: 24px 14px 60px;
-  }
+/* FOOTER */
+
+.sidebar-footer{
+
+margin-top:auto;
+
+display:flex;
+
+flex-direction:column;
+
+gap:12px;
+
+}
+
+.sidebar-btn{
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+padding:14px 18px;
+
+background:#1A1F25;
+
+border:1px solid var(--border);
+
+color:#ddd;
+
+border-radius:12px;
+
+cursor:pointer;
+
+transition:.25s;
+
+font-size:14px;
+
+}
+
+.sidebar-btn:hover{
+
+background:var(--gold);
+
+color:#111;
+
+}
+
+/* CONTENT */
+
+.admin-content{
+
+flex:1;
+
+margin-left:270px;
+
+padding:35px;
+
+background:#F7F8FA;
+
+overflow-x:hidden;
+
+min-height:calc(100vh - var(--navbar-h));
+
+}
+
+/* SCROLLBAR */
+
+::-webkit-scrollbar{
+
+width:8px;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+background:#555;
+
+border-radius:20px;
+
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+.admin-sidebar{
+
+width:80px;
+
+padding:25px 12px;
+
+}
+
+.sidebar-logo h2{
+
+display:none;
+
+}
+
+.sidebar-small{
+
+display:none;
+
+}
+
+.sidebar-link span:last-child{
+
+display:none;
+
+}
+
+.sidebar-btn{
+
+justify-content:center;
+
+}
+
+.sidebar-btn{
+
+font-size:0;
+
+}
+
+.sidebar-btn svg{
+
+font-size:18px;
+
+}
+
+.admin-content{
+
+margin-left:80px;
+
+padding:20px;
+
+}
+
 }

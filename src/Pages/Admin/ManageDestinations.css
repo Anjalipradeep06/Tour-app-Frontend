@@ -1,36 +1,210 @@
+/* ==========================================================================
+   Manage Destinations — extends .admin-shell tokens from AdminDashboard.css
+   (--gold, --line, --card, --ink, --slate, etc.) Only adds md-* classes.
+   ========================================================================== */
+
+.md-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.md-header h1 {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(26px, 3.6vw, 32px);
+  color: var(--ink);
+  margin: 4px 0 6px;
+}
+
+.md-subtitle {
+  font-size: 13.5px;
+  color: var(--slate);
+}
+
+.md-create-btn {
+  background: linear-gradient(90deg, #C9A669, #B78E4F);
+  color: #1C1F23;
+  border: none;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 13px 22px;
+  border-radius: 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 10px 20px rgba(201, 166, 105, 0.25);
+  transition: opacity 0.15s ease;
+}
+
+.md-create-btn:hover {
+  opacity: 0.9;
+}
+
+/* ---------- Filters ---------- */
+
+.md-filter-card {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.md-filter-card input {
+  flex: 1;
+  max-width: 380px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 13.5px;
+  font-family: inherit;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.md-filter-card select {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 13.5px;
+  font-family: inherit;
+  color: var(--ink);
+  outline: none;
+  cursor: pointer;
+  min-width: 170px;
+}
+
+.md-filter-card input:focus,
+.md-filter-card select:focus {
+  border-color: var(--gold);
+}
+
+/* ---------- Total ---------- */
+
+.md-total {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--slate);
+  margin-bottom: 16px;
+}
+
+/* ---------- Loading / Empty ---------- */
+
+.md-loading {
+  text-align: center;
+  padding: 70px 20px;
+  color: var(--slate);
+  font-size: 14px;
+}
+
+/* ---------- Grid / Cards ---------- */
+
 .md-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
 }
 
 .md-card {
-  background: #fff;
+  background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: 14px;
   overflow: hidden;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
-.md-card-img {
+.md-card:hover {
+  box-shadow: 0 14px 30px rgba(28, 31, 35, 0.1);
+  transform: translateY(-2px);
+}
+
+.md-image {
+  position: relative;
+  height: 140px;
+}
+
+.md-image img {
   width: 100%;
-  height: 150px;
+  height: 100%;
   object-fit: cover;
   display: block;
 }
 
-.md-card-body {
-  padding: 14px 16px;
+.md-featured {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(28, 31, 35, 0.85);
+  color: #F4F1EA;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 9px;
+  border-radius: 999px;
 }
 
-.md-card-body h3 {
-  margin: 0 0 4px;
-  font-size: 1rem;
+.md-body {
+  padding: 14px 16px 16px;
+}
+
+.md-body h3 {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 500;
+  font-size: 16.5px;
   color: var(--ink);
+  margin: 0 0 4px;
 }
 
-.md-card-sub {
-  margin: 0 0 8px;
-  font-size: 0.85rem;
+.md-body p {
+  font-size: 13px;
   color: var(--slate);
+  margin: 0 0 8px;
+}
+
+.md-body span {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: #FBF1E0;
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 1100px) {
+  .md-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 800px) {
+  .md-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .md-filter-card {
+    flex-wrap: wrap;
+  }
+
+  .md-filter-card input {
+    max-width: none;
+    flex: 1 1 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .md-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .md-grid {
+    grid-template-columns: 1fr;
+  }
 }

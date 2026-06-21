@@ -3,6 +3,7 @@ import {
   Link,
   NavLink,
   useNavigate,
+  useLocation,
 } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -14,8 +15,11 @@ import "./Navbar.css";
 const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { user } = useSelector((state) => state.auth);
+
+  const isAdminRoute = location.pathname.startsWith("/admin");
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -57,8 +61,8 @@ const Navbar = () => {
   return (
     <header
       className={`navbar ${
-        scrolled ? "navbar-scrolled" : ""
-      }`}
+        scrolled || isAdminRoute ? "navbar-scrolled" : ""
+      } ${isAdminRoute ? "navbar-admin" : ""}`}
     >
       <div className="navbar-container">
         <Link

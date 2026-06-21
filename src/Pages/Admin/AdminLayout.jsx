@@ -1,43 +1,106 @@
 import { NavLink, Outlet } from "react-router-dom";
+import {
+  FaChartPie,
+  FaSuitcase,
+  FaGlobeAsia,
+  FaUsers,
+  FaBell,
+  FaCog,
+} from "react-icons/fa";
+
 import "./AdminLayout.css";
 
 const NAV_ITEMS = [
-  { to: "/admin", label: "Dashboard", end: true },
-  { to: "/admin/tours", label: "Tours" },
-  { to: "/admin/destinations", label: "Destinations" },
-  { to: "/admin/users", label: "Users" },
+  {
+    to: "/admin",
+    label: "Dashboard",
+    icon: <FaChartPie />,
+    end: true,
+  },
+  {
+    to: "/admin/tours",
+    label: "Tours",
+    icon: <FaSuitcase />,
+  },
+  {
+    to: "/admin/destinations",
+    label: "Destinations",
+    icon: <FaGlobeAsia />,
+  },
+  {
+    to: "/admin/users",
+    label: "Users",
+    icon: <FaUsers />,
+  },
 ];
 
 const AdminLayout = () => {
   return (
-    <div className="admin-page admin-layout">
+    <div className="admin-layout">
+
+      {/* Sidebar */}
+
       <aside className="admin-sidebar">
-        <div className="admin-sidebar-brand">
-          <span className="admin-sidebar-eyebrow">Meridian</span>
-          <span className="admin-sidebar-title">Admin</span>
+
+        <div className="sidebar-logo">
+
+          <p className="sidebar-small">
+            MERIDIAN
+          </p>
+
+          <h2>
+            Travel Admin
+          </h2>
+
         </div>
 
-        <nav className="admin-sidebar-nav">
+        <nav className="sidebar-menu">
+
           {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
               end={item.end}
               className={({ isActive }) =>
-                `admin-sidebar-link ${
-                  isActive ? "admin-sidebar-link--active" : ""
-                }`
+                isActive
+                  ? "sidebar-link active"
+                  : "sidebar-link"
               }
             >
-              {item.label}
+              <span className="sidebar-icon">
+                {item.icon}
+              </span>
+
+              <span>{item.label}</span>
             </NavLink>
           ))}
+
         </nav>
+
+        <div className="sidebar-footer">
+
+          <button className="sidebar-btn">
+            <FaBell />
+            Notifications
+          </button>
+
+          <button className="sidebar-btn">
+            <FaCog />
+            Settings
+          </button>
+
+        </div>
+
       </aside>
 
-      <div className="admin-layout-content">
+      {/* Content */}
+
+      <main className="admin-content">
+
         <Outlet />
-      </div>
+
+      </main>
+
     </div>
   );
 };

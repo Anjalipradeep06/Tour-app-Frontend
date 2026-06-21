@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 
 import Navbar from "./Components/Navbar/Navbar";
 import Footer from "./Components/Footer/Footer";
@@ -10,25 +10,34 @@ import Profile from "./Pages/Profile/Profile";
 import SearchTours from "./Pages/SearchTours/SearchTours";
 import TourDetails from "./Pages/TourDetails/TourDetails";
 
-import BookingRequest from "./Pages/BookingRequest/BookingRequest";
+import BookingRequest from "./Pages/Admin/BookingRequest/BookingRequest";
 import BookingDetails from "./Pages/BookingDetails/BookingDetails";
 import MyBookings from "./Pages/MyBookings/MyBookings";
 import DestinationDetails from "./Pages/DestinationDetails/DestinationDetails";
-import ProtectedRoute from "./Routes/ProtectedRoute";
-import AdminRoute from "./Routes/AdminRoute";
-import PaymentSuccess from "./Pages/PaymentSuccess/PaymentSuccess";
-import PaymentCancel from "./Pages/PaymentCancel/PaymentCancel";
 import Notifications from "./Pages/Notifications/Notifications";
 
+import PaymentSuccess from "./Pages/PaymentSuccess/PaymentSuccess";
+import PaymentCancel from "./Pages/PaymentCancel/PaymentCancel";
+
+import ProtectedRoute from "./Routes/ProtectedRoute";
+import AdminRoute from "./Routes/AdminRoute";
+
+/* Admin */
 import AdminLayout from "./Pages/Admin/AdminLayout";
 import AdminDashboard from "./Pages/AdminDashboard/AdminDashboard";
 import ManageTours from "./Pages/Admin/ManageTours";
 import ManageDestinations from "./Pages/Admin/ManageDestinations";
 import ManageUsers from "./Pages/Admin/ManageUsers";
 
+/* New Admin Pages */
+import ManageReviews from "./Pages/Admin/ManageReviews/ManageReviews";
+
 import "./App.css";
 
 function App() {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith("/admin");
+
   return (
     <>
       <Navbar />
@@ -88,9 +97,7 @@ function App() {
             }
           />
 
-          {/* Admin Routes — single AdminRoute gate wraps the whole
-              layout, so every nested page below inherits the same
-              "must be logged in + must be admin" check. */}
+          {/* Admin Routes */}
           <Route
             path="/admin"
             element={
@@ -100,20 +107,40 @@ function App() {
             }
           >
             <Route index element={<AdminDashboard />} />
+
             <Route path="tours" element={<ManageTours />} />
             <Route path="destinations" element={<ManageDestinations />} />
             <Route path="users" element={<ManageUsers />} />
+
+            <Route path="reviews" element={<ManageReviews />} />
           </Route>
 
-          <Route path="/destinations/:id" element={<DestinationDetails />} />
-          <Route path="/payment-success/:bookingId" element={<PaymentSuccess />} />
-          <Route path="/payment-cancel" element={<PaymentCancel />} />
+          <Route
+            path="/destinations/:id"
+            element={<DestinationDetails />}
+          />
+
+          <Route
+            path="/payment-success/:bookingId"
+            element={<PaymentSuccess />}
+          />
+
+          <Route
+            path="/payment-cancel"
+            element={<PaymentCancel />}
+          />
 
           {/* 404 */}
           <Route
             path="*"
             element={
-              <h1 style={{ color: "white", textAlign: "center", marginTop: "120px" }}>
+              <h1
+                style={{
+                  color: "white",
+                  textAlign: "center",
+                  marginTop: "120px",
+                }}
+              >
                 404 - Page Not Found
               </h1>
             }
@@ -121,7 +148,7 @@ function App() {
         </Routes>
       </main>
 
-      <Footer />
+      {!isAdminRoute && <Footer />}
     </>
   );
 }

@@ -1,41 +1,42 @@
 /* ==========================================================================
-   Tour Form Modal — create/edit overlay, same teal/sand/ink tokens
-   as the rest of the admin area.
+   Shared form-modal stylesheet — used by TourFormModal AND
+   DestinationFormModal, which use slightly different class names for
+   the same concepts. Both sets are supported here.
+   Gold/charcoal/Fraunces system, same as the rest of the admin.
    ========================================================================== */
 
 .tf-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(7, 55, 51, 0.45);
+  background: rgba(11, 14, 17, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
-  z-index: 1200;
+  z-index: 1100;              /* was 200 — must beat .navbar's z-index: 1000 */
+  padding: 100px 16px 24px;   /* top padding clears the 76px fixed navbar */
+  overflow-y: auto;
 }
 
 .tf-modal {
-  --teal: #0b4f4a;
-  --teal-dark: #073733;
-  --sand: #faf7f2;
-  --card: #ffffff;
-  --ink: #1c2521;
-  --slate: #6b7670;
-  --line: #e7e2d8;
-  --cancelled: #c03b2b;
-  --cancelled-bg: #fbe9e6;
+  --line: #E6E4DD;
+  --card: #FFFFFF;
+  --ink: #1C1F23;
+  --slate: #6B6F76;
+  --cancelled: #C03B2B;
+  --cancelled-bg: #FBE6E3;
 
-  width: 100%;
-  max-width: 720px;
-  max-height: 90vh;
   background: var(--card);
   border-radius: 16px;
-  overflow: hidden;
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   color: var(--ink);
-  box-shadow: 0 24px 60px rgba(7, 55, 51, 0.3);
+  box-shadow: 0 30px 60px rgba(11, 14, 17, 0.35);
+  margin: auto;
 }
 
 .tf-modal *,
@@ -44,11 +45,13 @@
   box-sizing: border-box;
 }
 
+/* ---------- Header ---------- */
+
 .tf-modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 22px;
+  padding: 22px 26px;
   border-bottom: 1px solid var(--line);
   flex-shrink: 0;
 }
@@ -56,19 +59,47 @@
 .tf-modal-header h2 {
   font-family: "Fraunces", Georgia, serif;
   font-weight: 500;
-  font-size: 20px;
+  font-size: 22px;
+  color: var(--ink);
   margin: 0;
-  color: var(--teal-dark);
 }
 
+.tf-close-btn,
+.tf-icon-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+  background: #F7F8FA;
+  color: var(--slate);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.tf-close-btn:hover,
+.tf-icon-btn:hover {
+  background: var(--cancelled-bg);
+  color: var(--cancelled);
+}
+
+/* ---------- Form body (both naming variants) ---------- */
+
+.tf-form,
 .tf-modal-body {
-  padding: 22px;
+  padding: 22px 26px 26px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 18px;
 }
 
+.tf-error,
 .tf-form-error {
   background: var(--cancelled-bg);
   color: var(--cancelled);
@@ -77,7 +108,13 @@
   border-radius: 9px;
 }
 
-/* ---------- Layout helpers ---------- */
+/* ---------- Grids ---------- */
+
+.tf-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
 
 .tf-grid-2 {
   display: grid;
@@ -88,7 +125,7 @@
 .tf-grid-3 {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 12px;
+  gap: 16px;
 }
 
 /* ---------- Fields ---------- */
@@ -99,127 +136,339 @@
   gap: 6px;
 }
 
+.tf-field label,
 .tf-label {
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
   color: var(--slate);
 }
 
+.tf-field input[type="text"],
+.tf-field input[type="number"],
+.tf-field input:not([type]),
+.tf-field select,
+.tf-field textarea,
 .tf-input,
-.tf-textarea {
+.tf-textarea,
+select.tf-input {
   width: 100%;
+  background: #FBFBFA;
   border: 1px solid var(--line);
   border-radius: 9px;
-  padding: 9px 12px;
-  font-size: 14px;
+  padding: 10px 12px;
+  font-size: 13.5px;
   font-family: inherit;
   color: var(--ink);
-  background: var(--card);
+  outline: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
 }
 
+.tf-field input:focus,
+.tf-field select:focus,
+.tf-field textarea:focus,
 .tf-input:focus,
 .tf-textarea:focus {
-  outline: none;
-  border-color: var(--teal);
-  box-shadow: 0 0 0 3px rgba(11, 79, 74, 0.12);
+  border-color: var(--gold);
+  background: #FFFFFF;
 }
 
-.tf-textarea {
-  resize: vertical;
+.tf-field input::placeholder,
+.tf-input::placeholder,
+.tf-textarea::placeholder {
+  color: #A8ACB1;
 }
+
+.tf-textarea,
+.tf-field textarea {
+  resize: vertical;
+  min-height: 70px;
+  font-family: inherit;
+}
+
+.tf-field select,
+select.tf-input {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%236B6F76' d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+.tf-field select:disabled,
+select.tf-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Meeting point / mixed-input rows that put tf-input directly under
+   a label without a wrapping tf-field (TourFormModal's pattern) */
+
+.tf-field > .tf-grid-3,
+.tf-field > .tf-grid-2 {
+  margin-top: 2px;
+}
+
+/* ---------- File inputs ---------- */
+
+.tf-field input[type="file"] {
+  font-size: 12.5px;
+  color: var(--slate);
+  padding: 8px 4px;
+  border: 1px dashed var(--line);
+  border-radius: 9px;
+  background: #FBFBFA;
+  cursor: pointer;
+}
+
+.tf-field input[type="file"]::file-selector-button {
+  background: #1C1F23;
+  color: #fff;
+  border: none;
+  padding: 7px 14px;
+  border-radius: 7px;
+  font-size: 12.5px;
+  font-weight: 600;
+  margin-right: 10px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.tf-field input[type="file"]::file-selector-button:hover {
+  background: #2A2E35;
+}
+
+.tf-image-preview {
+  margin-top: 8px;
+  width: 100%;
+  max-height: 130px;
+  object-fit: cover;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+}
+
+.tf-file-count {
+  font-size: 12px;
+  color: var(--slate);
+  margin-top: 4px;
+}
+
+/* ---------- Checkboxes ---------- */
 
 .tf-checkbox-row {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 14px;
+  font-size: 13.5px;
+  font-weight: 600;
   color: var(--ink);
   cursor: pointer;
 }
 
-/* ---------- Tag list (activities/highlights/inclusions/exclusions) ---------- */
+.tf-checkbox-row input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--gold);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ---------- Footer ---------- */
+
+.tf-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  border-top: 1px solid var(--line);
+  margin-top: 4px;
+  padding-top: 18px;
+}
+
+.tf-btn {
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 11px 22px;
+  border-radius: 9px;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+.tf-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.tf-btn--secondary {
+  background: #F7F8FA;
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+
+.tf-btn--secondary:hover:not(:disabled) {
+  background: #EFEFEF;
+}
+
+.tf-btn--primary {
+  background: linear-gradient(90deg, #C9A669, #B78E4F);
+  color: #1C1F23;
+}
+
+.tf-btn--primary:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 640px) {
+  .tf-grid,
+  .tf-grid-2,
+  .tf-grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .tf-modal {
+    max-height: 94vh;
+  }
+
+  .tf-modal-header,
+  .tf-form,
+  .tf-modal-body {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+}
+/* ==========================================================================
+   Additions for TagListInput, ItineraryEditor, StartDatesEditor
+   ========================================================================== */
+
+/* ---------- Ghost button (Add / + Add day / + Add date) ---------- */
+
+.tf-btn--ghost {
+  background: #F7F8FA;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.tf-btn--ghost:hover {
+  background: #FBF1E0;
+  border-color: var(--gold);
+}
+
+/* ---------- Tag input row (TagListInput) ---------- */
 
 .tf-tag-input-row {
   display: flex;
   gap: 8px;
 }
 
+.tf-tag-input-row .tf-input {
+  flex: 1;
+}
+
+/* ---------- Tag chips ---------- */
+
 .tf-tag-list {
   list-style: none;
-  margin: 4px 0 0;
-  padding: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding: 0;
 }
 
 .tf-tag {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #f1f7f6;
-  color: var(--teal-dark);
+  background: #FBF1E0;
+  color: #8A6418;
   font-size: 12.5px;
   font-weight: 600;
-  padding: 5px 6px 5px 10px;
+  padding: 5px 6px 5px 12px;
   border-radius: 999px;
 }
 
 .tf-tag-remove {
-  background: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
   border: none;
-  color: var(--teal-dark);
-  font-size: 15px;
+  background: rgba(138, 100, 24, 0.12);
+  color: #8A6418;
+  font-size: 13px;
   line-height: 1;
   cursor: pointer;
-  padding: 0 4px;
-  opacity: 0.6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s ease;
 }
 
 .tf-tag-remove:hover {
-  opacity: 1;
+  background: rgba(192, 59, 43, 0.18);
+  color: var(--cancelled);
 }
 
-/* ---------- Itinerary ---------- */
+/* ---------- Section header (Itinerary / Start dates) ---------- */
 
 .tf-itinerary-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.tf-itinerary-header .tf-label {
+  margin: 0;
 }
 
 .tf-empty-hint {
   font-size: 13px;
   color: var(--slate);
+  background: #FBFBFA;
+  border: 1px dashed var(--line);
+  border-radius: 9px;
+  padding: 14px;
+  text-align: center;
   margin: 4px 0 0;
 }
+
+/* ---------- Itinerary rows ---------- */
 
 .tf-itinerary-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-top: 8px;
+  gap: 12px;
+  margin-top: 4px;
 }
 
 .tf-itinerary-row {
   display: flex;
-  gap: 10px;
   align-items: flex-start;
-  background: var(--sand);
+  gap: 12px;
+  background: #FBFBFA;
   border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 12px;
+  border-radius: 12px;
+  padding: 14px;
 }
 
 .tf-itinerary-day-badge {
   flex-shrink: 0;
-  background: var(--teal);
-  color: #ffffff;
-  font-size: 11.5px;
+  background: linear-gradient(135deg, #C9A669, #B78E4F);
+  color: #1C1F23;
+  font-size: 12px;
   font-weight: 700;
-  padding: 5px 9px;
+  padding: 6px 12px;
   border-radius: 999px;
   white-space: nowrap;
   margin-top: 2px;
@@ -233,119 +482,59 @@
   min-width: 0;
 }
 
-/* ---------- Start dates ---------- */
+/* ---------- Start-date rows ---------- */
 
 .tf-date-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 .tf-date-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .tf-date-row .tf-input {
   flex: 1;
 }
 
-/* ---------- Buttons ---------- */
-
-.tf-btn {
-  font-size: 13.5px;
-  font-weight: 600;
-  padding: 9px 16px;
-  border-radius: 9px;
-  border: none;
-  cursor: pointer;
-  transition: opacity 0.15s ease, background 0.15s ease;
-}
-
-.tf-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.tf-btn--primary {
-  background: var(--teal);
-  color: #ffffff;
-}
-
-.tf-btn--primary:hover:not(:disabled) {
-  background: var(--teal-dark);
-}
-
-.tf-btn--secondary {
-  background: var(--sand);
-  color: var(--ink);
-  border: 1px solid var(--line);
-}
-
-.tf-btn--secondary:hover:not(:disabled) {
-  background: #f1ede4;
-}
-
-.tf-btn--ghost {
-  background: none;
-  color: var(--teal-dark);
-  border: 1px solid var(--line);
-  padding: 7px 12px;
-  font-size: 12.5px;
-}
-
-.tf-btn--ghost:hover {
-  background: #f1f7f6;
-}
-
-.tf-icon-btn {
-  background: none;
-  border: none;
-  font-size: 20px;
-  line-height: 1;
-  color: var(--slate);
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 6px;
-}
-
-.tf-icon-btn:hover {
-  background: #f1ede4;
-}
+/* ---------- Danger icon button (remove day / remove date) ---------- */
 
 .tf-icon-btn--danger {
-  color: var(--cancelled);
-  align-self: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: #FFFFFF;
+  color: var(--slate);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  margin-top: 2px;
 }
 
 .tf-icon-btn--danger:hover {
   background: var(--cancelled-bg);
-}
-
-.tf-modal-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  padding-top: 8px;
-  border-top: 1px solid var(--line);
-  margin-top: 4px;
+  color: var(--cancelled);
+  border-color: var(--cancelled-bg);
 }
 
 /* ---------- Responsive ---------- */
 
 @media (max-width: 640px) {
-  .tf-grid-2,
-  .tf-grid-3 {
-    grid-template-columns: 1fr;
+  .tf-itinerary-row {
+    flex-direction: column;
   }
 
-  .tf-modal {
-    max-height: 95vh;
-  }
-
-  .tf-modal-body {
-    padding: 16px;
+  .tf-itinerary-day-badge {
+    align-self: flex-start;
   }
 }

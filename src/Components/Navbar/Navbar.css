@@ -2,276 +2,284 @@
    NAVBAR
 ========================== */
 
-.navbar{
-
-position:fixed;
-
-top:0;
-
-left:0;
-
-width:100%;
-
-z-index:1000;
-
-transition:.35s;
-
-padding:18px 0;
-
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 76px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  padding: 0;
+  background: transparent;
+  transition: all 0.3s ease;
 }
 
-.navbar-scrolled{
-
-background:#0B0E11;
-
-border-bottom:1px solid rgba(201,166,105,.18);
-
-backdrop-filter:blur(10px);
-
+.navbar-scrolled {
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+  border-bottom: 1px solid #e5e7eb;
 }
 
-/* ==========================
-CONTAINER
-========================== */
-
-.navbar-container{
-
-width:90%;
-
-max-width:1400px;
-
-margin:auto;
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
+/* Admin pages always show the solid navbar — scroll-based transparency
+   won't trigger there since admin content scrolls in its own container,
+   not the window. */
+.navbar-admin {
+  position: fixed;
 }
 
 /* ==========================
-LOGO
+   CONTAINER
 ========================== */
 
-.logo{
-
-font-family:"Fraunces",serif;
-
-font-size:2rem;
-
-letter-spacing:2px;
-
-color:#E8E3D9;
-
-text-decoration:none;
-
-transition:.3s;
-
+.navbar-container {
+  width: 100%;
+  padding: 0 24px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.logo:hover{
-
-color:#C9A669;
-
+/* Keep the original centered max-width layout on public pages only.
+   Admin pages use the full-width container above instead, so the
+   navbar content aligns with the sidebar/topbar edges. */
+.navbar:not(.navbar-admin) .navbar-container {
+  width: min(92%, 1320px);
+  margin: 0 auto;
+  padding: 0;
 }
 
 /* ==========================
-NAV LINKS
+   LOGO
 ========================== */
 
-.nav-links{
-
-display:flex;
-
-align-items:center;
-
-gap:35px;
-
+.logo {
+  text-decoration: none;
+  font-family: "Inter", sans-serif;
+  font-size: 1.7rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #003b95;
+  transition: color 0.2s ease;
 }
 
-.nav-links a{
-
-position:relative;
-
-text-decoration:none;
-
-font-family:"Inter",sans-serif;
-
-font-size:.95rem;
-
-letter-spacing:1px;
-
-text-transform:uppercase;
-
-color:#E8E3D9;
-
-transition:.3s;
-
+.logo:hover {
+  color: #0057b8;
 }
 
-.nav-links a::after{
+/* ==========================
+   LINKS
+========================== */
 
-content:"";
-
-position:absolute;
-
-bottom:-8px;
-
-left:0;
-
-width:0;
-
-height:1px;
-
-background:#C9A669;
-
-transition:.3s;
-
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
 }
 
-.nav-links a:hover{
+.nav-links a {
+  position: relative;
+  text-decoration: none;
+  color: #1f2937;
+  font-family: "Inter", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
 
-color:#C9A669;
+.nav-links a:hover {
+  color: #003b95;
+}
 
+.nav-links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -8px;
+  width: 0;
+  height: 2px;
+  background: #003b95;
+  transition: width 0.25s ease;
 }
 
 .nav-links a:hover::after,
-
-.nav-links .active::after{
-
-width:100%;
-
+.nav-links .active::after {
+  width: 100%;
 }
 
-.nav-links .active{
-
-color:#C9A669;
-
+.nav-links .active {
+  color: #003b95;
 }
 
 /* ==========================
-REGISTER BUTTON
+   REGISTER BUTTON
 ========================== */
 
-.register-btn{
-
-padding:10px 22px;
-
-border:1px solid #C9A669;
-
+.register-btn {
+  background: #003b95;
+  color: #ffffff !important;
+  padding: 12px 22px;
+  border-radius: 12px;
+  transition: all 0.25s ease;
 }
 
-.register-btn:hover{
+.register-btn::after {
+  display: none;
+}
 
-background:#C9A669;
-
-color:#0B0E11 !important;
-
+.register-btn:hover {
+  background: #0057b8;
+  transform: translateY(-1px);
 }
 
 /* ==========================
-USER
+   USER
 ========================== */
 
-.user-name{
-
-font-family:"JetBrains Mono",monospace;
-
-color:#C9A669;
-
-font-size:.85rem;
-
-letter-spacing:1px;
-
-}
-
-.logout-btn{
-
-background:none;
-
-border:1px solid #C9A669;
-
-padding:10px 18px;
-
-color:#C9A669;
-
-cursor:pointer;
-
-transition:.3s;
-
-font-family:Inter,sans-serif;
-
-}
-
-.logout-btn:hover{
-
-background:#C9A669;
-
-color:#0B0E11;
-
+.user-name {
+  color: #475569;
+  font-size: 0.95rem;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 /* ==========================
-MENU BUTTON
+   LOGOUT
 ========================== */
 
-.menu-toggle{
+.logout-btn {
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #1f2937;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-family: "Inter", sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
 
-display:none;
-
-background:none;
-
-border:none;
-
-color:#E8E3D9;
-
-font-size:2rem;
-
-cursor:pointer;
-
+.logout-btn:hover {
+  border-color: #003b95;
+  color: #003b95;
+  background: #eff6ff;
 }
 
 /* ==========================
-MOBILE
+   MENU BUTTON
 ========================== */
 
-@media(max-width:900px){
-
-.menu-toggle{
-
-display:block;
-
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: #1f2937;
+  font-size: 1.9rem;
+  cursor: pointer;
 }
 
-.nav-links{
+/* ==========================
+   MOBILE
+========================== */
 
-position:absolute;
+@media (max-width: 900px) {
+  .menu-toggle {
+    display: block;
+  }
 
-top:80px;
+  .nav-links {
+    position: fixed;
+    top: 78px;
+    left: 0;
+    width: 100%;
+    background: #ffffff;
+    border-top: 1px solid #e5e7eb;
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
 
-left:0;
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
 
-width:100%;
+    padding: 24px;
+    gap: 22px;
+  }
 
-background:#15191E;
+  .nav-links.open {
+    display: flex;
+  }
 
-border-top:1px solid rgba(201,166,105,.15);
+  .register-btn {
+    width: 100%;
+    text-align: center;
+  }
 
-display:none;
+  .logout-btn {
+    width: 100%;
+  }
 
-flex-direction:column;
+  .user-name {
+    margin-top: 4px;
+  }
+}
+/* ==========================
+   TRANSPARENT-HERO VARIANT
+   (default state: not scrolled, not admin —
+   i.e. sitting over a dark hero image like Home)
+========================== */
 
-padding:30px 0;
-
-gap:25px;
-
+.navbar:not(.navbar-scrolled):not(.navbar-admin) .logo {
+  color: #ffffff;
 }
 
-.nav-links.open{
-
-display:flex;
-
+.navbar:not(.navbar-scrolled):not(.navbar-admin) .logo:hover {
+  color: #e5edff;
 }
 
+.navbar:not(.navbar-scrolled):not(.navbar-admin) .nav-links a {
+  color: #ffffff;
+}
+
+.navbar:not(.navbar-scrolled):not(.navbar-admin) .nav-links a:hover {
+  color: #febb02;
+}
+
+.navbar:not(.navbar-scrolled):not(.navbar-admin) .nav-links a::after {
+  background: #febb02;
+}
+
+.navbar:not(.navbar-scrolled):not(.navbar-admin) .nav-links .active {
+  color: #febb02;
+}
+
+.navbar:not(.navbar-scrolled):not(.navbar-admin) .user-name {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.navbar:not(.navbar-scrolled):not(.navbar-admin) .logout-btn {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.navbar:not(.navbar-scrolled):not(.navbar-admin) .logout-btn:hover {
+  border-color: #febb02;
+  background: rgba(255, 255, 255, 0.18);
+  color: #febb02;
+}
+
+.navbar:not(.navbar-scrolled):not(.navbar-admin) .register-btn {
+  background: #febb02;
+  color: #111827 !important;
+}
+
+.navbar:not(.navbar-scrolled):not(.navbar-admin) .register-btn:hover {
+  background: #ffd454;
+}
+
+.navbar:not(.navbar-scrolled):not(.navbar-admin) .menu-toggle {
+  color: #ffffff;
 }

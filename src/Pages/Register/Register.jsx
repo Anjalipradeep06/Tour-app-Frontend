@@ -15,23 +15,21 @@ const Register = () => {
     (state) => state.auth
   );
 
+  const [passwordError, setPasswordError] =
+    useState("");
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
-    role: "user",
   });
-
-  const [passwordError, setPasswordError] =
-    useState("");
 
   const {
     name,
     email,
     password,
     confirmPassword,
-    role,
   } = formData;
 
   useEffect(() => {
@@ -68,26 +66,29 @@ const Register = () => {
         name,
         email,
         password,
-        role,
+        role: "user",
       })
     );
   };
 
   return (
     <div className="register-page">
+      <div className="register-overlay" />
 
       <div className="register-card">
+        <div className="register-header">
+          <span className="register-badge">
+            START YOUR JOURNEY
+          </span>
 
-        <p className="register-overline">
-          EST. ITINERARY 002
-        </p>
+          <h1>Create your account</h1>
 
-        <h1>Create Account</h1>
-
-        <p className="register-subtitle">
-          Join Meridian and begin planning
-          unforgettable journeys.
-        </p>
+          <p>
+            Discover curated experiences,
+            unforgettable destinations, and
+            seamless bookings worldwide.
+          </p>
+        </div>
 
         {(error || passwordError) && (
           <div className="register-error">
@@ -95,8 +96,10 @@ const Register = () => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
-
+        <form
+          onSubmit={handleSubmit}
+          className="register-form"
+        >
           <div className="form-group">
             <label>Full Name</label>
 
@@ -118,7 +121,7 @@ const Register = () => {
               name="email"
               value={email}
               onChange={handleChange}
-              placeholder="Enter email"
+              placeholder="Enter your email"
               required
             />
           </div>
@@ -131,7 +134,7 @@ const Register = () => {
               name="password"
               value={password}
               onChange={handleChange}
-              placeholder="Create password"
+              placeholder="Create a password"
               required
             />
           </div>
@@ -144,27 +147,9 @@ const Register = () => {
               name="confirmPassword"
               value={confirmPassword}
               onChange={handleChange}
-              placeholder="Confirm password"
+              placeholder="Confirm your password"
               required
             />
-          </div>
-
-          <div className="form-group">
-            <label>Account Type</label>
-
-            <select
-              name="role"
-              value={role}
-              onChange={handleChange}
-            >
-              <option value="user">
-                Traveler
-              </option>
-
-              <option value="admin">
-                Admin
-              </option>
-            </select>
           </div>
 
           <button
@@ -173,22 +158,19 @@ const Register = () => {
             disabled={loading}
           >
             {loading
-              ? "Creating Account..."
+              ? "Creating account..."
               : "Create Account"}
           </button>
-
         </form>
 
         <div className="register-footer">
           Already have an account?
 
           <Link to="/login">
-            Sign In
+            Sign in
           </Link>
         </div>
-
       </div>
-
     </div>
   );
 };

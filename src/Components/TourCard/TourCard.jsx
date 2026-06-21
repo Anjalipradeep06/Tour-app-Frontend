@@ -1,90 +1,100 @@
 import { Link } from "react-router-dom";
-import { FaMapMarkerAlt, FaClock, FaStar } from "react-icons/fa";
+import {
+  FaMapMarkerAlt,
+  FaClock,
+  FaStar,
+} from "react-icons/fa";
 
 import "./TourCard.css";
 
 const TourCard = ({ tour }) => {
-  return (
-    <div className="tour-card">
+  const image =
+    tour.destination?.bannerImage ||
+    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1000&q=80";
 
-      <div className="tour-image">
+  return (
+    <article className="tour-card">
+
+      <div className="tour-card-image">
 
         <img
-          src={
-            tour.destination?.bannerImage ||
-            "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800"
-          }
+          src={image}
           alt={tour.title}
         />
 
-        <span className="tour-price">
-          ${tour.price}
-        </span>
+        <div className="tour-rating-badge">
+          <FaStar />
+
+          <span>
+            {tour.averageRating?.toFixed(1) || "4.8"}
+          </span>
+        </div>
 
       </div>
 
-      <div className="tour-content">
+      <div className="tour-card-body">
 
-        <p className="ticket-number">
-          ITINERARY #{tour._id.slice(-6).toUpperCase()}
-        </p>
-
-        <h2>{tour.title}</h2>
-
-        <div className="tour-location">
-
+        <div className="tour-card-location">
           <FaMapMarkerAlt />
 
           <span>
-            {tour.country},{" "}
-            {tour.continent}
+            {tour.destination?.country || "International"}{" "}
+            {tour.destination?.continent &&
+              `• ${tour.destination.continent}`}
           </span>
-
         </div>
 
-        <p className="tour-description">
-          {tour.description.length > 120
-            ? tour.description.substring(0, 120) +
-              "..."
+        <h3 className="tour-card-title">
+          {tour.title}
+        </h3>
+
+        <p className="tour-card-description">
+          {tour.description?.length > 110
+            ? `${tour.description.slice(0, 110)}...`
             : tour.description}
         </p>
 
-        <div className="tour-meta">
+        <div className="tour-card-meta">
 
           <span>
             <FaClock />
-            {tour.duration} Days
+            {tour.duration} days
           </span>
 
           <span>
-            <FaStar />
-            {tour.averageRating || 0}
+            {tour.activities?.slice(0, 2).join(" • ")}
           </span>
 
         </div>
 
-        <div className="activity-list">
+        <div className="tour-card-footer">
 
-          {tour.activities
-            ?.slice(0, 3)
-            .map((activity, index) => (
-              <span key={index}>
-                {activity}
-              </span>
-            ))}
+          <div className="tour-price">
+
+            <span className="price-label">
+              From
+            </span>
+
+            <h4>
+              ₹{Number(tour.price).toLocaleString()}
+            </h4>
+
+            <small>per person</small>
+
+          </div>
+
+          <Link
+            to={`/tour/${tour._id}`}
+            className="tour-card-btn"
+          >
+            View deal
+          </Link>
 
         </div>
 
-        <Link
-          to={`/tour/${tour._id}`}
-          className="details-btn"
-        >
-          View Details
-        </Link>
-
       </div>
 
-    </div>
+    </article>
   );
 };
 

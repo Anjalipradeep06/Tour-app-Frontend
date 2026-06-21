@@ -1,44 +1,76 @@
 .mybookings-page {
-  max-width: 1100px;
-  margin: auto;
-  padding: 40px 20px;
-  font-family: "Segoe UI", sans-serif;
+  min-height: 100vh;
+  background: #f8fafc;
+  padding: 120px 24px 80px;
+}
+
+.page-header {
+  max-width: 1280px;
+  margin: 0 auto 40px;
+}
+
+.page-subtitle {
+  color: #2563eb;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
 }
 
 .page-title {
-  font-size: 32px;
-  font-weight: 700;
-  margin-bottom: 25px;
-  color: #1a1a1a;
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 12px;
+}
+
+.page-description {
+  color: #6b7280;
+  font-size: 1.05rem;
+  max-width: 650px;
+  line-height: 1.7;
 }
 
 /* GRID */
+
 .bookings-grid {
+  max-width: 1280px;
+  margin: 0 auto;
+
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
 }
 
 /* CARD */
+
 .booking-card {
-  display: flex;
-  background: #fff;
-  border-radius: 16px;
+  background: #ffffff;
+  border-radius: 28px;
   overflow: hidden;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+
+  display: grid;
+  grid-template-columns: 340px 1fr;
+
+  border: 1px solid #e5e7eb;
+
   transition: all 0.3s ease;
+
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
 }
 
 .booking-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.12);
 }
 
 /* IMAGE */
+
 .booking-image {
-  width: 240px;
-  height: 170px;
-  flex-shrink: 0;
+  position: relative;
+  min-height: 260px;
 }
 
 .booking-image img {
@@ -47,127 +79,251 @@
   object-fit: cover;
 }
 
+.booking-ref {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+
+  padding: 8px 14px;
+
+  border-radius: 999px;
+
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(12px);
+
+  color: #fff;
+
+  font-size: 0.75rem;
+  font-weight: 700;
+
+  letter-spacing: 1px;
+}
+
 /* CONTENT */
+
 .booking-content {
-  padding: 16px 18px;
+  padding: 28px 32px;
+
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  flex: 1;
 }
 
 .top-row {
   display: flex;
   justify-content: space-between;
-  align-items: start;
+  gap: 20px;
+  align-items: flex-start;
 }
 
 .top-row h2 {
-  font-size: 18px;
-  margin: 0;
-  color: #111;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.3;
+}
+
+/* STATUS */
+
+.status {
+  padding: 8px 14px;
+  border-radius: 999px;
+
+  font-size: 0.75rem;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: 1px;
+
+  white-space: nowrap;
+}
+
+.status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status.confirmed {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status.completed {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.status.cancelled {
+  background: #fee2e2;
+  color: #b91c1c;
 }
 
 /* LOCATION */
+
 .location {
-  font-size: 13px;
-  color: #666;
-  margin: 6px 0;
+  margin-top: 14px;
+
+  color: #6b7280;
+  font-size: 1rem;
 }
 
 /* META */
+
 .meta {
   display: flex;
-  gap: 20px;
-  font-size: 13px;
-  color: #555;
+  flex-wrap: wrap;
+  gap: 24px;
+
+  margin: 24px 0;
+  padding-top: 24px;
+
+  border-top: 1px solid #e5e7eb;
 }
 
-/* PRICE + BUTTON */
+.meta span {
+  color: #4b5563;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+/* FOOTER */
+
 .bottom-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 10px;
+
+  gap: 20px;
 }
 
 .price {
-  font-size: 18px;
-  font-weight: 700;
-  color: #0f9d58;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #111827;
 }
 
-/* BUTTON */
-.view-btn {
-  text-decoration: none;
-  background: #1a73e8;
-  color: white;
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-size: 13px;
-  transition: 0.2s;
+.price span {
+  display: block;
+
+  font-size: 0.85rem;
+  font-weight: 500;
+
+  color: #6b7280;
 }
 
-.view-btn:hover {
-  background: #0f5bd3;
-}
-
-/* STATUS BADGE */
-.status {
-  padding: 5px 12px;
-  font-size: 11px;
-  border-radius: 999px;
-  font-weight: 600;
-  text-transform: capitalize;
-}
-
-/* COLORS */
-.status.pending {
-  background: #fff3cd;
-  color: #856404;
-}
-
-.status.confirmed {
-  background: #d1e7dd;
-  color: #0f5132;
-}
-
-.status.cancelled {
-  background: #f8d7da;
-  color: #842029;
-}
-
-/* STATES */
-.loader,
-.error-box,
-.empty-state {
-  padding: 20px;
-  text-align: center;
-  color: #555;
-  font-size: 15px;
-}
-/* ===== ADD THIS to your existing MyBookings.css ===== */
-/* Wraps "Write a review" + "View Details" so they sit side by side */
+/* ACTIONS */
 
 .bottom-row-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .review-btn {
-  font-size: 13px;
-  font-weight: 600;
-  color: #0b4f4a;
-  border: 1.5px solid #0b4f4a;
-  border-radius: 8px;
-  padding: 7px 12px;
+  padding: 12px 18px;
+
+  border-radius: 12px;
+
+  border: 1px solid #d1d5db;
+
+  color: #374151;
   text-decoration: none;
-  white-space: nowrap;
-  transition: background 0.15s ease, color 0.15s ease;
+
+  font-size: 0.9rem;
+  font-weight: 600;
+
+  transition: all 0.2s ease;
 }
 
 .review-btn:hover {
-  background: #0b4f4a;
-  color: #ffffff;
+  background: #f3f4f6;
+}
+
+.view-btn {
+  padding: 12px 18px;
+
+  background: #2563eb;
+  color: #fff;
+
+  border-radius: 12px;
+
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+
+  transition: all 0.2s ease;
+}
+
+.view-btn:hover {
+  background: #1d4ed8;
+  transform: translateY(-2px);
+}
+
+/* STATES */
+
+.loader,
+.error-box,
+.empty-state {
+  max-width: 1280px;
+  margin: 0 auto;
+
+  padding: 60px 24px;
+
+  background: #fff;
+
+  border-radius: 24px;
+
+  text-align: center;
+
+  color: #6b7280;
+
+  border: 1px solid #e5e7eb;
+}
+
+.error-box {
+  color: #dc2626;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 992px) {
+  .booking-card {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-image {
+    height: 260px;
+  }
+}
+
+@media (max-width: 768px) {
+  .mybookings-page {
+    padding: 100px 16px 60px;
+  }
+
+  .booking-content {
+    padding: 22px;
+  }
+
+  .top-row,
+  .bottom-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .bottom-row-actions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .review-btn,
+  .view-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .meta {
+    flex-direction: column;
+    gap: 12px;
+  }
 }

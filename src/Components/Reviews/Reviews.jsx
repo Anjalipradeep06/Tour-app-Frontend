@@ -2,23 +2,32 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { getTourReviews } from "../../redux/thunks/reviewThunk";
-import { clearReviews, resetReviewState } from "../../redux/slices/reviewSlice";
+import {
+  clearReviews,
+  resetReviewState,
+} from "../../redux/slices/reviewSlice";
+
 import StarRating from "../StarRating/StarRating";
 import ReviewList from "../ReviewList/ReviewList";
 import ReviewForm from "../ReviewForm/ReviewForm";
 
 import "./Reviews.css";
 
-/**
- * tourId: the tour to show/add reviews for
- * averageRating, totalReviews: from the Tour document (already aggregated server-side)
- */
-const Reviews = ({ tourId, averageRating = 0, totalReviews = 0 }) => {
+const Reviews = ({
+  tourId,
+  averageRating = 0,
+  totalReviews = 0,
+}) => {
   const dispatch = useDispatch();
-  const { reviews, loading } = useSelector((state) => state.review);
+
+  const { reviews, loading } = useSelector(
+    (state) => state.review
+  );
 
   useEffect(() => {
-    dispatch(getTourReviews(tourId));
+    if (tourId) {
+      dispatch(getTourReviews(tourId));
+    }
 
     return () => {
       dispatch(clearReviews());
@@ -28,23 +37,47 @@ const Reviews = ({ tourId, averageRating = 0, totalReviews = 0 }) => {
 
   return (
     <section className="reviews-section">
-      <div className="reviews-summary">
-        <h2>Reviews</h2>
+      <div className="reviews-header">
+        <div className="reviews-title">
+          <span className="reviews-label">
+            Traveler Feedback
+          </span>
 
-        <div className="reviews-summary-stats">
-          <span className="reviews-average">{averageRating || 0}</span>
+          <h2>Guest Reviews</h2>
+        </div>
+
+        <div className="reviews-summary">
+          <span className="reviews-average">
+            {Number(averageRating).toFixed(1)}
+          </span>
+
           <div className="reviews-summary-meta">
-            <StarRating value={averageRating} size={16} />
+            <StarRating
+              value={averageRating}
+              size={18}
+            />
+
             <span className="reviews-count">
-              {totalReviews} {totalReviews === 1 ? "review" : "reviews"}
+              {totalReviews}{" "}
+              {totalReviews === 1
+                ? "verified review"
+                : "verified reviews"}
             </span>
           </div>
         </div>
       </div>
 
       <div className="reviews-body">
-        <ReviewList reviews={reviews} loading={loading.list} />
-        <ReviewForm tourId={tourId} />
+        <div className="reviews-list-wrapper">
+          <ReviewList
+            reviews={reviews}
+            loading={loading?.list}
+          />
+        </div>
+
+        <aside className="reviews-form-wrapper">
+          <ReviewForm tourId={tourId} />
+        </aside>
       </div>
     </section>
   );

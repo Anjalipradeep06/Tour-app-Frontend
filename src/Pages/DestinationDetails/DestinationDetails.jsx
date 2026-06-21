@@ -1,20 +1,22 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
   FaMapMarkerAlt,
   FaGlobe,
   FaStar,
-  FaClock,
+  FaCamera,
+  FaSuitcaseRolling,
 } from "react-icons/fa";
 
 import { getDestinationById } from "../../redux/thunks/destinationThunk";
+
+import TourCard from "../../Components/TourCard/TourCard";
 
 import "./DestinationDetails.css";
 
 const DestinationDetails = () => {
   const { id } = useParams();
-
   const dispatch = useDispatch();
 
   const {
@@ -22,9 +24,7 @@ const DestinationDetails = () => {
     destinationTours,
     loading,
     error,
-  } = useSelector(
-    (state) => state.destinations
-  );
+  } = useSelector((state) => state.destinations);
 
   useEffect(() => {
     dispatch(getDestinationById(id));
@@ -58,51 +58,108 @@ const DestinationDetails = () => {
     <div className="destination-details">
       {/* HERO */}
 
-      <div className="destination-hero">
+      <section className="destination-hero">
         <img
           src={selectedDestination.bannerImage}
           alt={selectedDestination.name}
         />
 
-        <div className="destination-overlay">
-          <h1>{selectedDestination.name}</h1>
-
-          <p>
-            <FaMapMarkerAlt />
-            {" "}
-            {selectedDestination.country}
-            {" • "}
-            <FaGlobe />
-            {" "}
-            {selectedDestination.continent}
-          </p>
-
-          {selectedDestination.rating > 0 && (
-            <div className="destination-rating">
-              <FaStar />
+        <div className="hero-overlay">
+          <div className="hero-content">
+            <div className="hero-badge">
+              <FaGlobe />
               <span>
-                {selectedDestination.rating}
+                {selectedDestination.continent}
               </span>
             </div>
-          )}
-        </div>
-      </div>
 
-      {/* CONTENT */}
+            <h1>{selectedDestination.name}</h1>
+
+            <div className="hero-meta">
+              <span>
+                <FaMapMarkerAlt />
+                {selectedDestination.country}
+              </span>
+
+              <span>
+                <FaStar />
+                {selectedDestination.rating || 4.8}
+              </span>
+
+              <span>
+                {destinationTours.length} tours
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* QUICK FACTS */}
+
+      <section className="facts-wrapper">
+        <div className="facts-grid">
+          <div className="fact-card">
+            <FaGlobe />
+
+            <div>
+              <span>Continent</span>
+              <h4>
+                {selectedDestination.continent}
+              </h4>
+            </div>
+          </div>
+
+          <div className="fact-card">
+            <FaMapMarkerAlt />
+
+            <div>
+              <span>Country</span>
+              <h4>
+                {selectedDestination.country}
+              </h4>
+            </div>
+          </div>
+
+          <div className="fact-card">
+            <FaCamera />
+
+            <div>
+              <span>Activities</span>
+              <h4>
+                {selectedDestination.activities
+                  ?.length || 0}
+              </h4>
+            </div>
+          </div>
+
+          <div className="fact-card">
+            <FaSuitcaseRolling />
+
+            <div>
+              <span>Available Tours</span>
+              <h4>{destinationTours.length}</h4>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <div className="destination-container">
-        <section className="destination-section">
-          <h2>About</h2>
+        {/* ABOUT */}
+
+        <section className="content-section">
+          <h2>About {selectedDestination.name}</h2>
 
           <p>
             {selectedDestination.description}
           </p>
         </section>
 
+        {/* ACTIVITIES */}
+
         {selectedDestination.activities
           ?.length > 0 && (
-          <section className="destination-section">
-            <h2>Activities</h2>
+          <section className="content-section">
+            <h2>Popular Activities</h2>
 
             <div className="activity-list">
               {selectedDestination.activities.map(
@@ -116,10 +173,22 @@ const DestinationDetails = () => {
           </section>
         )}
 
+        {/* GALLERY */}
+
         {selectedDestination.galleryImages
           ?.length > 0 && (
-          <section className="destination-section">
-            <h2>Gallery</h2>
+          <section className="content-section">
+            <div className="section-header">
+              <h2>Photo Gallery</h2>
+
+              <span>
+                {
+                  selectedDestination
+                    .galleryImages.length
+                }{" "}
+                photos
+              </span>
+            </div>
 
             <div className="gallery-grid">
               {selectedDestination.galleryImages.map(
@@ -135,50 +204,29 @@ const DestinationDetails = () => {
           </section>
         )}
 
-        <section className="destination-section">
-          <h2>
-            Available Tours (
-            {destinationTours.length})
-          </h2>
+        {/* TOURS */}
+
+        <section className="content-section">
+          <div className="section-header">
+            <h2>Top Tours</h2>
+
+            <span>
+              {destinationTours.length} experiences
+            </span>
+          </div>
 
           {destinationTours.length === 0 ? (
-            <p>
-              No tours available for this
-              destination yet.
-            </p>
+            <div className="empty-state">
+              No tours available yet.
+            </div>
           ) : (
             <div className="tour-grid">
-              {destinationTours.map(
-                (tour) => (
-                  <div
-                    key={tour._id}
-                    className="tour-card"
-                  >
-                    <h3>{tour.title}</h3>
-
-                    <p>{tour.description}</p>
-
-                    <div className="tour-meta">
-                      <span>
-                        <FaClock />
-                        {" "}
-                        {tour.duration} Days
-                      </span>
-
-                      <span>
-                        ₹{tour.price}
-                      </span>
-                    </div>
-
-                    <Link
-                      to={`/tour/${tour._id}`}
-                      className="tour-btn"
-                    >
-                      View Tour
-                    </Link>
-                  </div>
-                )
-              )}
+              {destinationTours.map((tour) => (
+                <TourCard
+                  key={tour._id}
+                  tour={tour}
+                />
+              ))}
             </div>
           )}
         </section>

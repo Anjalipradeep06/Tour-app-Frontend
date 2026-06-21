@@ -5,6 +5,7 @@ import {
   FaTwitter,
   FaMapMarkerAlt,
   FaEnvelope,
+  FaPhoneAlt,
 } from "react-icons/fa";
 
 import "./Footer.css";
@@ -12,54 +13,71 @@ import "./Footer.css";
 const Footer = () => {
   return (
     <footer className="footer">
-
       <div className="footer-container">
 
-        {/* Brand */}
+        <div className="footer-brand">
+          <Link to="/" className="footer-logo">
+            MERIDIAN
+          </Link>
 
-        <div className="footer-section">
-
-          <h2>MERIDIAN</h2>
-
-          <p className="footer-tag">
-            EST. ITINERARY 001
+          <p className="footer-description">
+            Discover curated tours, immersive experiences, and unforgettable
+            adventures across the world's most iconic destinations.
           </p>
 
-          <p>
-            Curating unforgettable journeys,
-            luxury escapes, and authentic
-            travel experiences across the
-            world.
-          </p>
+          <div className="social-icons">
+            <a
+              href="https://facebook.com"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Facebook"
+            >
+              <FaFacebookF />
+            </a>
 
+            <a
+              href="https://instagram.com"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Instagram"
+            >
+              <FaInstagram />
+            </a>
+
+            <a
+              href="https://twitter.com"
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Twitter"
+            >
+              <FaTwitter />
+            </a>
+          </div>
         </div>
 
-        {/* Explore */}
-
-        <div className="footer-section">
-
+        <div className="footer-links">
           <h3>Explore</h3>
 
           <Link to="/">Home</Link>
-
-          <Link to="/search">
-            Tours
-          </Link>
-
-          <Link to="/profile">
-            Profile
-          </Link>
-
-          <Link to="/login">
-            Login
-          </Link>
-
+          <Link to="/search">Tours</Link>
+          <Link to="/bookings">My Bookings</Link>
+          <Link to="/profile">Profile</Link>
         </div>
 
-        {/* Contact */}
+        <div className="footer-links">
+          <h3>Popular Destinations</h3>
 
-        <div className="footer-section">
+          <Link to="/search?destination=dubai">Dubai</Link>
+          <Link to="/search?destination=switzerland">
+            Switzerland
+          </Link>
+          <Link to="/search?destination=japan">Japan</Link>
+          <Link to="/search?destination=maldives">
+            Maldives
+          </Link>
+        </div>
 
+        <div className="footer-contact">
           <h3>Contact</h3>
 
           <p>
@@ -72,41 +90,23 @@ const Footer = () => {
             support@meridian.com
           </p>
 
+          <p>
+            <FaPhoneAlt />
+            +1 (800) 555-0148
+          </p>
         </div>
-
-        {/* Social */}
-
-        <div className="footer-section">
-
-          <h3>Follow Us</h3>
-
-          <div className="social-icons">
-
-            <a href="https://maps.google.com/">
-              <FaFacebookF />
-            </a>
-
-            <a href="https://maps.google.com/">
-              <FaInstagram />
-            </a>
-
-            <a href="https://maps.google.com/">
-              <FaTwitter />
-            </a>
-
-          </div>
-
-        </div>
-
       </div>
 
       <div className="footer-bottom">
+        <p>
+          © {new Date().getFullYear()} Meridian. All rights reserved.
+        </p>
 
-        © {new Date().getFullYear()} Meridian.
-        Crafted for unforgettable journeys.
-
+        <div className="footer-bottom-links">
+          <Link to="/privacy">Privacy Policy</Link>
+          <Link to="/terms">Terms of Service</Link>
+        </div>
       </div>
-
     </footer>
   );
 };

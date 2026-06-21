@@ -1,30 +1,36 @@
-/* =========================
-   PAGE
-========================= */
+:root {
+  --primary: #006ce4;
+  --primary-dark: #0057b8;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --surface: #ffffff;
+  --background: #f5f7fb;
+  --success: #16a34a;
+  --danger: #dc2626;
+}
 
 .tour-details {
-  background: #0b0e11;
-  color: #e8e3d9;
   min-height: 100vh;
+  background: var(--background);
+  color: var(--text);
 }
 
 .tour-loading {
   min-height: 100vh;
   display: flex;
-  justify-content: center;
   align-items: center;
-  color: #c9a669;
-  font-size: 1.2rem;
-  font-family: "JetBrains Mono", monospace;
+  justify-content: center;
+  font-size: 1.1rem;
+  color: var(--muted);
 }
 
-/* =========================
-   HERO
-========================= */
+/* HERO */
 
 .tour-hero {
   position: relative;
-  height: 70vh;
+  height: 72vh;
+  min-height: 560px;
   overflow: hidden;
 }
 
@@ -34,174 +40,209 @@
   object-fit: cover;
 }
 
+.tour-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(11, 18, 32, 0.9) 5%,
+    rgba(11, 18, 32, 0.45) 50%,
+    rgba(11, 18, 32, 0.2) 100%
+  );
+}
+
 .hero-overlay {
   position: absolute;
   inset: 0;
-
-  background: linear-gradient(
-    rgba(0, 0, 0, 0.25),
-    rgba(11, 14, 17, 0.9)
-  );
+  z-index: 2;
 
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  align-items: flex-end;
+}
 
-  padding: 0px;
+.hero-content {
+  width: 90%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding-bottom: 5rem;
+  color: #fff;
 }
 
 .ticket {
-  font-family: "JetBrains Mono", monospace;
-  letter-spacing: 3px;
-  color: #c9a669;
-  margin-bottom: 15px;
+  display: inline-flex;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+
+  background: rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(10px);
+
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+
+  margin-bottom: 1.25rem;
 }
 
-.hero-overlay h1 {
-  font-family: "Fraunces", serif;
-  font-size: 4rem;
-  margin-bottom: 20px;
+.hero-content h1 {
+  max-width: 800px;
+  font-size: clamp(2.5rem, 5vw, 4.8rem);
+  line-height: 1.1;
+  margin-bottom: 1rem;
+  font-weight: 800;
 }
 
-.hero-overlay p {
+.hero-location {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.75rem;
 
-  color: #e8e3d9;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.92);
 }
 
-/* =========================
-   CONTAINER
-========================= */
+.hero-location svg {
+  color: #fff;
+}
+
+/* LAYOUT */
 
 .details-container {
   width: 90%;
-  max-width: 1400px;
+  max-width: 1320px;
 
-  margin: 70px auto;
+  margin: -70px auto 0;
 
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 50px;
+  grid-template-columns: minmax(0, 2fr) 380px;
+  gap: 2rem;
+
+  position: relative;
+  z-index: 10;
 }
 
-/* =========================
-   LEFT SIDE
-========================= */
+.details-left {
+  min-width: 0;
+}
 
 .details-left section {
-  margin-bottom: 60px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .details-left h2 {
-  font-family: "Fraunces", serif;
-  color: #c9a669;
-  font-size: 2rem;
-  margin-bottom: 20px;
+  font-size: 1.6rem;
+  margin-bottom: 1.25rem;
+  color: #111827;
 }
 
-.details-left p {
-  line-height: 1.9;
-  color: #cfcfcf;
+.details-left p,
+.details-left li {
+  color: var(--muted);
+  line-height: 1.8;
 }
 
 .details-left ul {
-  padding-left: 20px;
+  padding-left: 1.2rem;
 }
 
-.details-left li {
-  margin-bottom: 12px;
-  color: #cfcfcf;
+.details-left li:not(:last-child) {
+  margin-bottom: 0.9rem;
 }
 
-/* =========================
-   CHIPS
-========================= */
+/* ACTIVITIES */
 
 .chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .chips span {
-  padding: 8px 16px;
-  border-radius: 30px;
-
-  border: 1px solid rgba(201, 166, 105, 0.3);
-
-  background: #15191e;
-
-  color: #c9a669;
-
-  font-size: 14px;
+  padding: 0.75rem 1rem;
+  background: #eef5ff;
+  color: var(--primary);
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.9rem;
 }
 
-/* =========================
-   ITINERARY
-========================= */
+/* ITINERARY */
 
 .itinerary-card {
-  background: #15191e;
+  position: relative;
 
-  border-left: 3px solid #c9a669;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
 
-  padding: 25px;
+  background: #fafafa;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+}
 
-  margin-bottom: 20px;
+.itinerary-card::before {
+  content: "";
+  position: absolute;
 
-  border-radius: 0 10px 10px 0;
+  left: 0;
+  top: 0;
+  bottom: 0;
+
+  width: 5px;
+  border-radius: 18px 0 0 18px;
+
+  background: var(--primary);
 }
 
 .itinerary-card h3 {
-  color: #c9a669;
-  margin-bottom: 8px;
-
-  font-family: "JetBrains Mono", monospace;
+  color: var(--primary);
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
 }
 
 .itinerary-card h4 {
-  margin-bottom: 10px;
-  font-family: "Fraunces", serif;
-  font-size: 1.3rem;
+  margin-bottom: 0.75rem;
+  color: #111827;
 }
 
-/* =========================
-   INCLUSION EXCLUSION
-========================= */
+/* INCLUDED / EXCLUDED */
 
 .two-column {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
 }
 
 .two-column div {
-  background: #15191e;
-
-  border: 1px solid rgba(201, 166, 105, 0.15);
-
-  padding: 25px;
-
-  border-radius: 12px;
+  background: #fafafa;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 1.5rem;
 }
 
 .two-column p {
   display: flex;
-  gap: 10px;
-  margin-bottom: 12px;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .two-column svg {
-  color: #c9a669;
-  min-width: 18px;
+  margin-top: 4px;
 }
 
-/* =========================
-   RIGHT SIDE
-========================= */
+.two-column div:first-child svg {
+  color: var(--success);
+}
+
+.two-column div:last-child svg {
+  color: var(--danger);
+}
+
+/* RIGHT SIDE */
 
 .details-right {
   position: sticky;
@@ -209,129 +250,100 @@
   height: fit-content;
 }
 
-/* =========================
-   BOOKING CARD
-========================= */
+/* BOOKING CARD */
 
 .booking-card {
-  background: #15191e;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 2rem;
 
-  border: 1px solid rgba(201, 166, 105, 0.25);
-
-  border-radius: 14px;
-
-  padding: 35px;
-
-  margin-bottom: 25px;
-
-  position: relative;
-}
-
-.booking-card::before {
-  content: "";
-
-  position: absolute;
-
-  top: 0;
-  left: 0;
-
-  width: 100%;
-  height: 4px;
-
-  background: #c9a669;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
 }
 
 .booking-card h2 {
-  font-family: "Fraunces", serif;
-  font-size: 3rem;
-  color: #c9a669;
+  font-size: 2.75rem;
+  color: #111827;
+  margin-bottom: 0.35rem;
 }
 
 .booking-card p {
-  color: #7c8a8d;
-  margin-bottom: 25px;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
 }
 
 .info {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-
-  margin-bottom: 30px;
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
 .info span {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.9rem;
+
+  color: var(--text);
+  font-weight: 500;
 }
 
 .info svg {
-  color: #c9a669;
+  color: var(--primary);
 }
 
-/* =========================
-   BUTTON
-========================= */
-
 .book-btn {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  text-align: center;
+  width: 100%;
+  padding: 1rem;
 
-  padding: 16px;
+  border-radius: 14px;
+
+  background: var(--primary);
+  color: #fff;
 
   text-decoration: none;
-
-  border-radius: 10px;
-
-  background: #c9a669;
-
-  color: #0b0e11;
-
   font-weight: 700;
 
-  transition: 0.3s;
+  transition: 0.2s ease;
 }
 
 .book-btn:hover {
-  transform: translateY(-3px);
-  background: #d7b77f;
+  background: var(--primary-dark);
+  transform: translateY(-2px);
 }
 
-/* =========================
-   MEETING POINT
-========================= */
+/* MEETING POINT */
 
 .meeting {
-  background: #15191e;
+  margin-top: 1.5rem;
 
-  border: 1px solid rgba(201, 166, 105, 0.15);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
 
-  border-radius: 12px;
-
-  padding: 25px;
+  padding: 1.5rem;
 }
 
 .meeting h3 {
-  color: #c9a669;
-  margin-bottom: 15px;
-
-  font-family: "Fraunces", serif;
+  margin-bottom: 1rem;
+  color: #111827;
 }
 
 .meeting p {
-  color: #cfcfcf;
-  line-height: 1.8;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 1rem;
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
+/* RESPONSIVE */
 
 @media (max-width: 1100px) {
   .details-container {
     grid-template-columns: 1fr;
+    margin-top: -40px;
   }
 
   .details-right {
@@ -340,41 +352,36 @@
 }
 
 @media (max-width: 768px) {
-  .hero-overlay {
-    padding: 40px 25px;
+  .tour-hero {
+    height: 60vh;
+    min-height: 460px;
   }
 
-  .hero-overlay h1 {
-    font-size: 2.4rem;
+  .hero-content {
+    padding-bottom: 3rem;
   }
 
   .two-column {
     grid-template-columns: 1fr;
   }
 
-  .booking-card h2 {
-    font-size: 2.2rem;
+  .details-container {
+    width: 94%;
+  }
+
+  .details-left section,
+  .booking-card,
+  .meeting {
+    padding: 1.5rem;
   }
 }
 
-@media (max-width: 500px) {
-  .tour-hero {
-    height: 55vh;
+@media (max-width: 480px) {
+  .hero-content h1 {
+    font-size: 2.2rem;
   }
 
-  .hero-overlay h1 {
-    font-size: 2rem;
-  }
-
-  .details-container {
-    width: 95%;
-    gap: 30px;
-  }
-
-  .booking-card,
-  .meeting,
-  .two-column div,
-  .itinerary-card {
-    padding: 20px;
+  .booking-card h2 {
+    font-size: 2.25rem;
   }
 }

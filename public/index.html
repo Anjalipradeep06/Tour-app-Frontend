@@ -25,6 +25,18 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>MERIDIAN</title>
+
+    <style>
+      /* Prevents FOUC: hides hero content until CSS has attached,
+         so the unstyled <h1> can never flash at the top of the page
+         on first paint. CRA's dev server injects CSS via JS after the
+         bundle runs, so there's a real gap on first load otherwise.
+         Home.css sets opacity:1 + transition once it loads, which
+         overrides this and fades the hero in. */
+      .hero-content {
+        opacity: 0;
+      }
+    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

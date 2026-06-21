@@ -1,199 +1,459 @@
 /* ==========================================================================
-   Manage Tours — list page. Reuses --teal/--sand/--ink tokens declared
-   in AdminLayout.css (inherited via the .admin-page ancestor), and
-   the .admin-shell/.admin-header/.admin-eyebrow rules from
-   AdminDashboard.css for header consistency across admin pages.
+   Manage Tours — same gold/charcoal/Fraunces system as the rest of
+   the admin (uses the global --gold/--panel/--border/--muted/--text
+   from AdminLayout.css, plus light-card tokens scoped here).
    ========================================================================== */
 
-.mt-header {
+.manageTours {
+  --line: #E6E4DD;
+  --card: #FFFFFF;
+  --ink: #1C1F23;
+  --slate: #6B6F76;
+
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--ink);
+}
+
+.manageTours *,
+.manageTours *::before,
+.manageTours *::after {
+  box-sizing: border-box;
+}
+
+/* ---------- Hero ---------- */
+
+.manageToursHero {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 16px;
+  gap: 20px;
+  margin-bottom: 24px;
 }
 
-.mt-create-btn {
-  background: var(--teal);
-  color: #ffffff;
-  border: none;
-  font-size: 13.5px;
+.heroBadge {
+  display: inline-block;
+  font-size: 11.5px;
   font-weight: 600;
-  padding: 10px 18px;
-  border-radius: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.heroLeft h1 {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(26px, 3.6vw, 34px);
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+
+.heroLeft p {
+  font-size: 14px;
+  color: var(--slate);
+  max-width: 480px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.createTourBtn {
+  background: linear-gradient(90deg, #C9A669, #B78E4F);
+  color: #1C1F23;
+  border: none;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 13px 22px;
+  border-radius: 10px;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.15s ease;
+  box-shadow: 0 10px 20px rgba(201, 166, 105, 0.25);
+  transition: opacity 0.15s ease;
 }
 
-.mt-create-btn:hover {
-  background: var(--teal-dark);
+.createTourBtn:hover {
+  opacity: 0.9;
 }
 
-.mt-search-row {
+/* ---------- Search ---------- */
+
+.manageToursSearch {
   display: flex;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
-.mt-search-input {
+.manageToursSearch input {
   flex: 1;
+  background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 9px;
-  padding: 10px 14px;
-  font-size: 14px;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 13.5px;
   font-family: inherit;
   color: var(--ink);
-  background: var(--card);
-}
-
-.mt-search-input:focus {
   outline: none;
-  border-color: var(--teal);
-  box-shadow: 0 0 0 3px rgba(11, 79, 74, 0.12);
+  transition: border-color 0.15s ease;
 }
 
-.mt-table-section {
+.manageToursSearch input:focus {
+  border-color: var(--gold);
+}
+
+.manageToursSearch button {
+  background: #1C1F23;
+  color: white;
+  border: none;
+  font-weight: 600;
+  font-size: 13.5px;
+  padding: 12px 22px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.manageToursSearch button:hover {
+  background: #2A2E35;
+}
+
+/* ---------- Stats ---------- */
+
+.tourStats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.tourStatCard {
   background: var(--card);
   border: 1px solid var(--line);
-  border-radius: 14px;
-  overflow: hidden;
+  border-top: 3px solid var(--gold);
+  border-radius: 12px;
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
-.mt-table-wrap {
-  overflow-x: auto;
-}
-
-.mt-table-state {
-  padding: 48px 16px;
-  text-align: center;
-  color: var(--slate);
-  font-size: 14px;
-}
-
-.mt-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 13.5px;
-}
-
-.mt-table thead th {
-  text-align: left;
+.tourStatCard span {
   font-size: 11.5px;
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--slate);
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--line);
-  white-space: nowrap;
+  display: block;
+  margin-bottom: 6px;
 }
 
-.mt-table tbody td {
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--line);
-  vertical-align: middle;
-  white-space: nowrap;
-}
-
-.mt-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.mt-table tbody tr:hover {
-  background: #faf9f6;
-}
-
-.mt-table-primary {
-  font-weight: 600;
+.tourStatCard h2 {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 500;
+  font-size: 24px;
   color: var(--ink);
-  margin-right: 8px;
+  margin: 0;
 }
 
-.mt-featured-badge {
-  display: inline-block;
-  background: #fbf0dd;
-  color: var(--pending);
-  font-size: 11px;
-  font-weight: 700;
-  padding: 2px 8px;
+.tourStatIcon {
+  font-size: 22px;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: #FBF1E0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ---------- Grid / Cards ---------- */
+
+.tourGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.tourCard {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.tourCard:hover {
+  box-shadow: 0 14px 30px rgba(28, 31, 35, 0.1);
+  transform: translateY(-2px);
+}
+
+.tourImageWrapper {
+  position: relative;
+  height: 170px;
+}
+
+.tourImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.featuredBadge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(28, 31, 35, 0.85);
+  color: #F4F1EA;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 5px 10px;
   border-radius: 999px;
 }
 
-.mt-row-actions {
+.tourPriceBadge {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: linear-gradient(90deg, #C9A669, #B78E4F);
+  color: #1C1F23;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+
+.tourContent {
+  padding: 16px 18px 18px;
   display: flex;
-  gap: 6px;
+  flex-direction: column;
+  flex: 1;
 }
 
-.mt-delete-btn {
-  background: var(--cancelled-bg);
-  color: var(--cancelled);
-  border: none;
-  font-size: 12.5px;
+.tourContent h3 {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 500;
+  font-size: 18px;
+  color: var(--ink);
+  margin: 0 0 4px;
+}
+
+.tourLocation {
+  font-size: 13px;
+  color: var(--slate);
+  margin: 0 0 14px;
+}
+
+.tourInfo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 16px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.tourInfo > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tourInfo span {
+  font-size: 10.5px;
   font-weight: 600;
-  padding: 7px 12px;
-  border-radius: 9px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--slate);
+}
+
+.tourInfo strong {
+  font-size: 13.5px;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.tourInfo strong small {
+  font-size: 11px;
+  color: var(--slate);
+  font-weight: 500;
+}
+
+.tourActions {
+  display: flex;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.editBtn,
+.deleteBtn {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 0;
+  border-radius: 8px;
+  border: none;
   cursor: pointer;
-  transition: background 0.15s ease;
+  transition: opacity 0.15s ease;
 }
 
-.mt-delete-btn:hover:not(:disabled) {
-  background: #f6d9d4;
+.editBtn {
+  background: #1C1F23;
+  color: white;
 }
 
-.mt-delete-btn:disabled {
+.editBtn:hover {
+  background: #2A2E35;
+}
+
+.deleteBtn {
+  background: var(--cancelled-bg, #FBE6E3);
+  color: var(--cancelled, #C03B2B);
+}
+
+.deleteBtn:hover:not(:disabled) {
+  background: #F6D9D4;
+}
+
+.deleteBtn:disabled,
+.editBtn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-.mt-delete-btn--confirm {
-  padding: 9px 16px;
-  font-size: 13.5px;
-}
+/* ---------- Loading / Empty ---------- */
 
-.mt-total-count {
-  padding: 12px 16px;
-  font-size: 12.5px;
+.loadingState {
+  text-align: center;
+  padding: 70px 20px;
   color: var(--slate);
-  margin: 0;
-  border-top: 1px solid var(--line);
+  font-size: 14px;
 }
 
-/* ---------- Delete confirm modal ---------- */
-
-.mt-confirm-modal {
-  background: var(--card);
-  border-radius: 14px;
-  padding: 22px;
-  max-width: 400px;
-  width: 100%;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
-}
-
-.mt-confirm-modal h3 {
+.loadingState h2 {
   font-family: "Fraunces", Georgia, serif;
   font-weight: 500;
-  font-size: 19px;
-  margin: 0 0 8px;
-  color: var(--teal-dark);
+  color: var(--ink);
+  font-size: 20px;
+  margin-bottom: 8px;
 }
 
-.mt-confirm-modal p {
+/* ---------- Footer ---------- */
+
+.tourFooter {
+  text-align: center;
+  font-size: 13px;
+  color: var(--slate);
+  padding: 8px 0 4px;
+}
+
+.tourFooter strong {
+  color: var(--ink);
+}
+
+/* ---------- Delete modal ---------- */
+
+.deleteOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 14, 17, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 16px;
+}
+
+.deleteModal {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 30px 26px;
+  max-width: 380px;
+  width: 100%;
+  text-align: center;
+}
+
+.deleteIcon {
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+.deleteModal h2 {
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 500;
+  font-size: 21px;
+  color: var(--ink);
+  margin: 0 0 10px;
+}
+
+.deleteModal p {
   font-size: 13.5px;
   color: var(--slate);
   line-height: 1.5;
-  margin: 0 0 18px;
+  margin: 0 0 22px;
+}
+
+.deleteActions {
+  display: flex;
+  gap: 10px;
+}
+
+.deleteActions button {
+  flex: 1;
+  padding: 10px 0;
+  border-radius: 9px;
+  font-weight: 600;
+  font-size: 13.5px;
+  cursor: pointer;
+}
+
+.cancelBtn {
+  background: #F7F8FA;
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+
+.confirmDeleteBtn {
+  background: var(--cancelled, #C03B2B);
+  border: 1px solid var(--cancelled, #C03B2B);
+  color: white;
+}
+
+.cancelBtn:disabled,
+.confirmDeleteBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* ---------- Responsive ---------- */
 
+@media (max-width: 1100px) {
+  .tourGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .tourStats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 640px) {
-  .mt-header {
+  .manageToursHero {
     flex-direction: column;
     align-items: flex-start;
-    gap: 12px;
   }
 
-  .mt-search-row {
-    flex-direction: column;
+  .tourGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .tourStats {
+    gap: 10px;
   }
 }

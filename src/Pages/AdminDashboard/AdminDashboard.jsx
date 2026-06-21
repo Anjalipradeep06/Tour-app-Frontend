@@ -11,6 +11,12 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import {
+  FaSearch,
+  FaBell,
+  FaChevronDown,
+  FaUserCircle,
+} from "react-icons/fa";
 
 import {
   getDashboardStats,
@@ -34,10 +40,10 @@ const TABS = [
 // recharts can't read CSS vars directly, so the hex values are
 // duplicated here deliberately.
 const STATUS_COLORS = {
-  pending: "#b8770a",
-  confirmed: "#1b7a4d",
-  completed: "#6b7670",
-  cancelled: "#c03b2b",
+  pending: "#B8770A",
+  confirmed: "#1B7A4D",
+  completed: "#8E959B",
+  cancelled: "#C03B2B",
 };
 
 const formatDate = (dateString) =>
@@ -95,15 +101,15 @@ const AdminDashboard = () => {
       : allBookings.filter((b) => b.status === activeTab);
 
   const statCards = [
-    { label: "Total Users", value: stats?.users ?? "—" },
-    { label: "Total Tours", value: stats?.tours ?? "—" },
-    { label: "Total Bookings", value: stats?.bookings ?? "—" },
+    { label: "Total users", value: stats?.users ?? "—" },
+    { label: "Total tours", value: stats?.tours ?? "—" },
+    { label: "Total bookings", value: stats?.bookings ?? "—" },
     { label: "Pending", value: stats?.pendingBookings ?? "—", accent: "pending" },
     { label: "Confirmed", value: stats?.confirmedBookings ?? "—", accent: "confirmed" },
     { label: "Completed", value: stats?.completedBookings ?? "—", accent: "completed" },
     { label: "Cancelled", value: stats?.cancelledBookings ?? "—", accent: "cancelled" },
     {
-      label: "Total Revenue",
+      label: "Total revenue",
       value: stats ? formatCurrency(stats.totalRevenue) : "—",
       accent: "revenue",
     },
@@ -130,6 +136,32 @@ const AdminDashboard = () => {
 
   return (
     <div className="admin-shell">
+      {/* TOPBAR */}
+      <div className="admin-topbar">
+        <div className="admin-topbar-search">
+          <FaSearch className="admin-topbar-search-icon" />
+          <input
+            type="text"
+            placeholder="Search bookings, tours, travelers…"
+          />
+        </div>
+
+        <div className="admin-topbar-right">
+          <button className="admin-topbar-icon-btn" aria-label="Notifications">
+            <FaBell />
+            {stats?.pendingBookings > 0 && (
+              <span className="admin-topbar-dot" />
+            )}
+          </button>
+
+          <button className="admin-topbar-account">
+            <FaUserCircle className="admin-topbar-avatar" />
+            <span>Admin</span>
+            <FaChevronDown className="admin-topbar-caret" />
+          </button>
+        </div>
+      </div>
+
       <div className="admin-header">
         <p className="admin-eyebrow">Admin</p>
         <h1>Dashboard</h1>
@@ -214,18 +246,18 @@ const AdminDashboard = () => {
             <BarChart data={entityChartData} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
               <XAxis
                 dataKey="name"
-                tick={{ fontSize: 12, fill: "#6b7670" }}
-                axisLine={{ stroke: "#e7e2d8" }}
+                tick={{ fontSize: 12, fill: "#8E959B" }}
+                axisLine={{ stroke: "#E6E4DD" }}
                 tickLine={false}
               />
               <YAxis
-                tick={{ fontSize: 12, fill: "#6b7670" }}
+                tick={{ fontSize: 12, fill: "#8E959B" }}
                 axisLine={false}
                 tickLine={false}
                 allowDecimals={false}
               />
-              <Tooltip content={<ChartTooltip />} cursor={{ fill: "rgba(11,79,74,0.06)" }} />
-              <Bar dataKey="value" fill="#0b4f4a" radius={[6, 6, 0, 0]} maxBarSize={56} />
+              <Tooltip content={<ChartTooltip />} cursor={{ fill: "rgba(201,166,105,0.08)" }} />
+              <Bar dataKey="value" fill="#C9A669" radius={[6, 6, 0, 0]} maxBarSize={56} />
             </BarChart>
           </ResponsiveContainer>
         </div>

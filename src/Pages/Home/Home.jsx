@@ -5,6 +5,14 @@ import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
 
+import {
+  FaGlobeAmericas,
+  FaHeadset,
+  FaShieldAlt,
+  FaStar,
+  FaSearch,
+} from "react-icons/fa";
+
 import "swiper/css";
 import "swiper/css/navigation";
 
@@ -24,6 +32,33 @@ const continents = [
   "North America",
   "South America",
   "Australia",
+];
+
+const trustItems = [
+  {
+    icon: <FaStar />,
+    title: "4.8 Average Rating",
+    description:
+      "Thousands of verified traveler reviews.",
+  },
+  {
+    icon: <FaGlobeAmericas />,
+    title: "500+ Experiences",
+    description:
+      "Curated tours across iconic destinations.",
+  },
+  {
+    icon: <FaShieldAlt />,
+    title: "Secure Payments",
+    description:
+      "Safe booking with trusted payment methods.",
+  },
+  {
+    icon: <FaHeadset />,
+    title: "24/7 Support",
+    description:
+      "Dedicated assistance whenever you need it.",
+  },
 ];
 
 const Home = () => {
@@ -53,78 +88,148 @@ const Home = () => {
   }, [dispatch, selectedContinent]);
 
   return (
-    <div className="home">
-      {/* HERO SECTION */}
+    <main className="home">
+      {/* HERO */}
 
       <section className="hero">
         <div className="hero-overlay">
           <div className="hero-content">
+            <span className="hero-badge">
+              Trusted by 50,000+ travelers
+            </span>
+
             <h1>
-              Discover Amazing Tours Around
-              The World
+              Discover extraordinary experiences
+              around the world
             </h1>
 
             <p>
-              Find unforgettable experiences,
-              adventures, cultural trips and
-              activities at your favorite
+              Book curated tours, adventures,
+              cultural experiences, and hidden
+              gems in the world's most iconic
               destinations.
             </p>
 
-            <Link
-              to="/search"
-              className="hero-btn"
-            >
-              Explore Tours
-            </Link>
+            <div className="hero-search">
+              <input
+                type="text"
+                placeholder="Where do you want to go?"
+              />
+
+              <Link
+                to="/search"
+                className="search-btn"
+              >
+                <FaSearch />
+
+                <span>
+                  Search Experiences
+                </span>
+              </Link>
+            </div>
+
+            <div className="hero-actions">
+              <Link
+                to="/search"
+                className="hero-btn primary"
+              >
+                Explore Tours
+              </Link>
+
+              <Link
+                to="/search"
+                className="hero-btn secondary"
+              >
+                View Destinations
+              </Link>
+            </div>
+
+            <div className="hero-stats">
+              <div>
+                <strong>50K+</strong>
+                <span>Travelers</span>
+              </div>
+
+              <div>
+                <strong>500+</strong>
+                <span>Experiences</span>
+              </div>
+
+              <div>
+                <strong>4.8★</strong>
+                <span>Average Rating</span>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* FEATURED DESTINATIONS */}
+      {/* TRUST */}
 
-      <section className="featured">
-        <div className="section-title">
+      <section className="trust-section">
+        <div className="trust-grid">
+          {trustItems.map((item) => (
+            <div
+              key={item.title}
+              className="trust-card"
+            >
+              <div className="trust-icon">
+                {item.icon}
+              </div>
+
+              <h3>{item.title}</h3>
+
+              <p>{item.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* FEATURED */}
+
+      <section className="section">
+        <div className="section-header">
           <div>
-            <h2>
-              Featured Destinations
-            </h2>
+            <span className="section-label">
+              Featured
+            </span>
+
+            <h2>Featured Destinations</h2>
 
             <p>
-              Handpicked experiences for your
-              next adventure.
+              Handpicked destinations designed
+              for unforgettable journeys.
             </p>
           </div>
 
-          <Link to="/search">
+          <Link
+            to="/search"
+            className="section-link"
+          >
             View All
           </Link>
         </div>
 
         {loading ? (
-          <h3 className="loading">
+          <p className="loading">
             Loading destinations...
-          </h3>
+          </p>
         ) : !featuredDestinations?.length ? (
-          <h3 className="loading">
-            No destinations available
-          </h3>
+          <p className="loading">
+            No destinations available.
+          </p>
         ) : (
           <Swiper
-            modules={[
-              Navigation,
-              Autoplay,
-            ]}
+            modules={[Navigation, Autoplay]}
             navigation
             autoplay={{
               delay: 4000,
               disableOnInteraction: false,
             }}
-            spaceBetween={24}
             loop={
-              featuredDestinations.length >
-              3
+              featuredDestinations.length > 3
             }
+            spaceBetween={28}
             breakpoints={{
               0: {
                 slidesPerView: 1,
@@ -132,11 +237,11 @@ const Home = () => {
               768: {
                 slidesPerView: 2,
               },
-              1024: {
+              1200: {
                 slidesPerView: 3,
               },
             }}
-            className="featured-slider"
+            className="destination-slider"
           >
             {featuredDestinations.map(
               (destination) => (
@@ -144,9 +249,7 @@ const Home = () => {
                   key={destination._id}
                 >
                   <DestinationCard
-                    destination={
-                      destination
-                    }
+                    destination={destination}
                   />
                 </SwiperSlide>
               )
@@ -155,71 +258,66 @@ const Home = () => {
         )}
       </section>
 
-      {/* POPULAR DESTINATIONS */}
+      {/* POPULAR */}
 
-      <section className="featured">
-        <div className="section-title">
+      <section className="section">
+        <div className="section-header">
           <div>
+            <span className="section-label">
+              Trending
+            </span>
+
             <h2>
-              Popular in{" "}
-              {selectedContinent}
+              Popular in {selectedContinent}
             </h2>
 
             <p>
-              Explore trending destinations
-              by continent.
+              Explore top-rated destinations
+              across every continent.
             </p>
           </div>
         </div>
 
         <div className="continent-tabs">
-          {continents.map(
-            (continent) => (
-              <button
-                key={continent}
-                className={
-                  selectedContinent ===
+          {continents.map((continent) => (
+            <button
+              key={continent}
+              className={
+                selectedContinent === continent
+                  ? "active"
+                  : ""
+              }
+              onClick={() =>
+                setSelectedContinent(
                   continent
-                    ? "active"
-                    : ""
-                }
-                onClick={() =>
-                  setSelectedContinent(
-                    continent
-                  )
-                }
-              >
-                {continent}
-              </button>
-            )
-          )}
+                )
+              }
+            >
+              {continent}
+            </button>
+          ))}
         </div>
 
         {loading ? (
-          <h3 className="loading">
+          <p className="loading">
             Loading destinations...
-          </h3>
+          </p>
         ) : !popularDestinations?.length ? (
-          <h3 className="loading">
-            No popular destinations
-            available
-          </h3>
+          <p className="loading">
+            No popular destinations available.
+          </p>
         ) : (
           <Swiper
-            modules={[
-              Navigation,
-              Autoplay,
-            ]}
+            modules={[Navigation, Autoplay]}
             navigation
             autoplay={{
               delay: 4500,
               disableOnInteraction: false,
             }}
-            spaceBetween={24}
             loop={
-              popularDestinations.length >
-              3
+              popularDestinations.length > 3
             }
+            spaceBetween={28}
             breakpoints={{
               0: {
                 slidesPerView: 1,
@@ -227,11 +325,11 @@ const Home = () => {
               768: {
                 slidesPerView: 2,
               },
-              1024: {
+              1200: {
                 slidesPerView: 3,
               },
             }}
-            className="featured-slider"
+            className="destination-slider"
           >
             {popularDestinations.map(
               (destination) => (
@@ -239,9 +337,7 @@ const Home = () => {
                   key={destination._id}
                 >
                   <DestinationCard
-                    destination={
-                      destination
-                    }
+                    destination={destination}
                   />
                 </SwiperSlide>
               )
@@ -250,15 +346,19 @@ const Home = () => {
         )}
       </section>
 
-      {/* GLOBAL MAP */}
+      {/* MAP */}
 
-      <section className="global-map-section">
-        <div className="section-title center">
+      <section className="map-section">
+        <div className="section-header center">
+          <span className="section-label">
+            Explore
+          </span>
+
           <h2>Explore the World</h2>
 
           <p>
-            Discover unforgettable
-            destinations across continents.
+            Discover experiences across every
+            continent.
           </p>
         </div>
 
@@ -272,7 +372,7 @@ const Home = () => {
           />
         </div>
       </section>
-    </div>
+    </main>
   );
 };
 

@@ -1,4 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
+import { FaCheckCircle, FaTrashAlt } from "react-icons/fa";
 
 import { deleteReview } from "../../redux/thunks/reviewThunk";
 import StarRating from "../StarRating/StarRating";
@@ -12,8 +13,18 @@ const formatDate = (dateString) =>
     year: "numeric",
   });
 
-const ReviewList = ({ reviews, loading }) => {
+const getInitials = (name = "Traveler") => {
+  return name
+    .split(" ")
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase();
+};
+
+const ReviewList = ({ reviews = [], loading }) => {
   const dispatch = useDispatch();
+
   const { user } = useSelector((state) => state.auth);
 
   const handleDelete = (id) => {
@@ -23,48 +34,87 @@ const ReviewList = ({ reviews, loading }) => {
   };
 
   if (loading) {
-    return <p className="review-list-state">Loading reviews…</p>;
+    return (
+      <div className="review-list-state">
+        Loading reviews…
+      </div>
+    );
   }
 
-  if (reviews.length === 0) {
+  if (!reviews.length) {
     return (
-      <p className="review-list-state">
-        No reviews yet. Be the first to share your experience.
-      </p>
+      <div className="review-list-state">
+        <h3>No reviews yet</h3>
+
+        <p>
+          Be the first traveler to share your
+          experience.
+        </p>
+      </div>
     );
   }
 
   return (
     <ul className="review-list">
       {reviews.map((review) => {
+        const name =
+          review.user?.name || "Anonymous Traveler";
+
         const canDelete =
           user &&
-          (user._id === review.user?._id || user.role === "admin");
+          (user._id === review.user?._id ||
+            user.role === "admin");
 
         return (
-          <li key={review._id} className="review-list-item">
-            <div className="review-list-item-header">
-              <div>
-                <span className="review-author">
-                  {review.user?.name || "Anonymous traveler"}
-                </span>
-                <span className="review-date">
-                  {formatDate(review.createdAt)}
-                </span>
+          <li
+            key={review._id}
+            className="review-card"
+          >
+            <div className="review-header">
+              <div className="review-user">
+                <div className="review-avatar">
+                  {getInitials(name)}
+                </div>
+
+                <div className="review-user-info">
+                  <div className="review-name-row">
+                    <span className="review-author">
+                      {name}
+                    </span>
+
+                    <span className="review-badge">
+                      <FaCheckCircle />
+                      Verified traveler
+                    </span>
+                  </div>
+
+                  <span className="review-date">
+                    {formatDate(review.createdAt)}
+                  </span>
+                </div>
               </div>
-              <StarRating value={review.rating} size={15} />
+
+              <StarRating
+                value={review.rating}
+                size={16}
+              />
             </div>
 
             {review.comment && (
-              <p className="review-comment">{review.comment}</p>
+              <p className="review-comment">
+                {review.comment}
+              </p>
             )}
 
             {canDelete && (
               <button
                 className="review-delete-btn"
-                onClick={() => handleDelete(review._id)}
+                onClick={() =>
+                  handleDelete(review._id)
+                }
               >
-                Delete
+                <FaTrashAlt />
+                Delete review
               </button>
             )}
           </li>

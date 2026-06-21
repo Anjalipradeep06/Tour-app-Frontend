@@ -1,29 +1,61 @@
 import { useDispatch, useSelector } from "react-redux";
+import {
+  FaLock,
+  FaCreditCard,
+  FaSpinner,
+} from "react-icons/fa";
+
 import { startPayment } from "../../redux/slices/paymentSlice";
+
+import "./PaymentButton.css";
 
 const PaymentButton = ({ bookingId }) => {
   const dispatch = useDispatch();
-  const { loading } = useSelector((state) => state.payment);
+
+  const { loading } = useSelector(
+    (state) => state.payment
+  );
 
   const handlePayment = async () => {
     try {
-      const res = await dispatch(startPayment(bookingId)).unwrap();
+      const checkoutUrl = await dispatch(
+        startPayment(bookingId)
+      ).unwrap();
 
-      // redirect to Stripe Checkout
-      window.location.href = res;
+      window.location.href = checkoutUrl;
     } catch (err) {
       console.error("Payment error:", err);
     }
   };
 
   return (
-    <button
-      onClick={handlePayment}
-      disabled={loading}
-      className="pay-btn"
-    >
-      {loading ? "Redirecting..." : "Pay Now"}
-    </button>
+    <div className="payment-wrapper">
+      <button
+        onClick={handlePayment}
+        disabled={loading}
+        className="pay-btn"
+      >
+        {loading ? (
+          <>
+            <FaSpinner className="pay-spinner" />
+            Redirecting...
+          </>
+        ) : (
+          <>
+            <FaCreditCard />
+            Pay Securely
+          </>
+        )}
+      </button>
+
+      <div className="payment-note">
+        <FaLock />
+
+        <span>
+          Secure checkout powered by Stripe
+        </span>
+      </div>
+    </div>
   );
 };
 

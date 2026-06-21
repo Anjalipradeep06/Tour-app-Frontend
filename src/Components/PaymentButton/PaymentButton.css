@@ -1,0 +1,67 @@
+.payment-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.pay-btn {
+  width: 100%;
+  height: 56px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+
+  border: none;
+  border-radius: 16px;
+
+  background: #003b95;
+  color: #ffffff;
+
+  font-size: 1rem;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: all 0.25s ease;
+}
+
+.pay-btn:hover:not(:disabled) {
+  background: #0057b8;
+  transform: translateY(-2px);
+}
+
+.pay-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.payment-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.payment-note svg {
+  color: #16a34a;
+}
+
+.pay-spinner {
+  animation: payment-spin 0.8s linear infinite;
+}
+
+@keyframes payment-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
