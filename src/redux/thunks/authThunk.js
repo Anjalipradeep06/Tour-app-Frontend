@@ -1,18 +1,12 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../api/axios";
 
-// =====================
-// Register User
-// =====================
+// REGISTER
 export const registerUser = createAsyncThunk(
   "auth/registerUser",
   async (userData, thunkAPI) => {
     try {
-      const response = await api.post(
-        "/auth/register",
-        userData
-      );
-
+      const response = await api.post("/auth/register", userData);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -22,18 +16,12 @@ export const registerUser = createAsyncThunk(
   }
 );
 
-// =====================
-// Login User
-// =====================
+// LOGIN
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (userData, thunkAPI) => {
     try {
-      const response = await api.post(
-        "/auth/login",
-        userData
-      );
-
+      const response = await api.post("/auth/login", userData);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(

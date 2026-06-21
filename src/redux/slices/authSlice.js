@@ -1,19 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
-import {
-  loginUser,
-  registerUser,
-} from "../thunks/authThunk";
+import { loginUser, registerUser } from "../thunks/authThunk";
 
 const storedAuth = localStorage.getItem("auth");
 
-const initialState = {
-  user: storedAuth
-    ? JSON.parse(storedAuth).user
-    : null,
+const parsedAuth = storedAuth ? JSON.parse(storedAuth) : null;
 
-  token: storedAuth
-    ? JSON.parse(storedAuth).token
-    : null,
+const initialState = {
+  user: parsedAuth?.user || null,
+  token: parsedAuth?.token || null,
 
   loading: false,
   error: null,
@@ -23,9 +17,7 @@ const initialState = {
 
 const authSlice = createSlice({
   name: "auth",
-
   initialState,
-
   reducers: {
     clearError: (state) => {
       state.error = null;
@@ -54,75 +46,54 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
+      .addCase(registerUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
 
-      .addCase(
-        registerUser.fulfilled,
-        (state, action) => {
-          state.loading = false;
-          state.success = true;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.message = action.payload.message;
 
-          state.user = action.payload.user;
-          state.token = action.payload.token;
-          state.message = action.payload.message;
-
-          localStorage.setItem(
-            "auth",
-            JSON.stringify({
-              user: action.payload.user,
-              token: action.payload.token,
-            })
-          );
-        }
-      )
-
-      .addCase(
-        registerUser.rejected,
-        (state, action) => {
-          state.loading = false;
-          state.error = action.payload;
-        }
-      )
+        localStorage.setItem(
+          "auth",
+          JSON.stringify({
+            user: action.payload.user,
+            token: action.payload.token,
+          })
+        );
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
 
       // LOGIN
       .addCase(loginUser.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
 
-      .addCase(
-        loginUser.fulfilled,
-        (state, action) => {
-          state.loading = false;
-          state.success = true;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.message = action.payload.message;
 
-          state.user = action.payload.user;
-          state.token = action.payload.token;
-          state.message = action.payload.message;
-
-          localStorage.setItem(
-            "auth",
-            JSON.stringify({
-              user: action.payload.user,
-              token: action.payload.token,
-            })
-          );
-        }
-      )
-
-      .addCase(
-        loginUser.rejected,
-        (state, action) => {
-          state.loading = false;
-          state.error = action.payload;
-        }
-      );
+        localStorage.setItem(
+          "auth",
+          JSON.stringify({
+            user: action.payload.user,
+            token: action.payload.token,
+          })
+        );
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 
-export const {
-  clearError,
-  clearMessage,
-  logout,
-} = authSlice.actions;
-
+export const { clearError, clearMessage, logout } = authSlice.actions;
 export default authSlice.reducer;
