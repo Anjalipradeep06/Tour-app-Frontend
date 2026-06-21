@@ -2,7 +2,7 @@ import axios from "axios";
 
 // 1. Create axios instance
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
+  baseURL: process.env.REACT_APP_API_URL + "api",
 });
 
 
@@ -36,7 +36,7 @@ api.interceptors.response.use(
       localStorage.removeItem("token");
 
       // optional redirect to Home page
-      window.location.href = "/api/login";
+      window.location.href = "/login";
     }
 
     return Promise.reject(error);

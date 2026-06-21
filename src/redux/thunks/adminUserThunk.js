@@ -7,7 +7,7 @@ export const getAllUsers = createAsyncThunk(
   "adminUsers/getAllUsers",
   async (params = {}, thunkAPI) => {
     try {
-      const response = await api.get("/api/admin/users", { params });
+      const response = await api.get("/admin/users", { params });
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -23,7 +23,7 @@ export const softDeleteUser = createAsyncThunk(
   "adminUsers/softDeleteUser",
   async (id, thunkAPI) => {
     try {
-      const response = await api.patch(`/api/admin/users/${id}/delete`);
+      const response = await api.patch(`/admin/users/${id}/delete`);
       return response.data.user;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -39,7 +39,7 @@ export const restoreUser = createAsyncThunk(
   "adminUsers/restoreUser",
   async (id, thunkAPI) => {
     try {
-      const response = await api.patch(`/api/admin/users/${id}/restore`);
+      const response = await api.patch(`/admin/users/${id}/restore`);
       return response.data.user;
     } catch (error) {
       return thunkAPI.rejectWithValue(

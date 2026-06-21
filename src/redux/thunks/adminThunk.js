@@ -17,7 +17,7 @@ export const getDashboardStats = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const { data } = await api.get(
-        "/api/admin/dashboard",
+        "/admin/dashboard",
         getAuthConfig()
       );
       return data.stats;
@@ -35,7 +35,7 @@ export const getAllBookings = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const { data } = await api.get(
-        "/api/admin/bookings",
+        "/admin/bookings",
         getAuthConfig()
       );
       return data.bookings;
@@ -53,7 +53,7 @@ export const getPendingBookings = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const { data } = await api.get(
-        "/api/admin/bookings/pending",
+        "/admin/bookings/pending",
         getAuthConfig()
       );
       return data.bookings;
@@ -71,7 +71,7 @@ export const approveBooking = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const { data } = await api.patch(
-        `/api/admin/bookings/${id}/approve`,
+        `/admin/bookings/${id}/approve`,
         {},
         getAuthConfig()
       );
@@ -90,7 +90,7 @@ export const rejectBooking = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       const { data } = await api.patch(
-        `/api/admin/bookings/${id}/reject`,
+        `/admin/bookings/${id}/reject`,
         {},
         getAuthConfig()
       );

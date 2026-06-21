@@ -7,7 +7,7 @@ export const getAllDestinations = createAsyncThunk(
   "destinations/getAllDestinations",
   async (params = {}, thunkAPI) => {
     try {
-      const response = await api.get("/api/destinations/all", {
+      const response = await api.get("/destinations/all", {
         params,
       });
 
@@ -28,7 +28,7 @@ export const getFeaturedDestinations =
     async (_, thunkAPI) => {
       try {
         const response = await api.get(
-          "/api/destinations/featured"
+          "/destinations/featured"
         );
 
         return response.data;
@@ -48,7 +48,7 @@ export const getDestinationsByContinent =
     async (continent, thunkAPI) => {
       try {
         const response = await api.get(
-          `/api/destinations/${continent}`
+          `/destinations/${continent}`
         );
 
         return response.data;
@@ -68,7 +68,7 @@ export const getPopularDestinations =
     async (continent, thunkAPI) => {
       try {
         const response = await api.get(
-          `/api/destinations/${continent}/popular`
+          `/destinations/${continent}/popular`
         );
 
         return response.data;
