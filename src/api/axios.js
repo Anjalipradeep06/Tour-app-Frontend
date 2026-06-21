@@ -1,13 +1,9 @@
 import axios from "axios";
 
-// 1. Create axios instance
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
+  baseURL: import.meta.env.VITE_API_URL,
 });
 
-
-
-// Automatically attach token to every request
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
@@ -18,25 +14,14 @@ api.interceptors.request.use(
 
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// 3. RESPONSE INTERCEPTOR
-// Handle global errors (like expired token)
 api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   (error) => {
-    // If token expired or invalid
     if (error.response?.status === 401) {
-      console.log("Unauthorized - logging out");
-
       localStorage.removeItem("token");
-
-      // optional redirect to Home page
       window.location.href = "/login";
     }
 
