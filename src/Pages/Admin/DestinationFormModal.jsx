@@ -24,7 +24,7 @@ const emptyForm = {
 
 const DestinationFormModal = ({ onClose }) => {
   const dispatch = useDispatch();
-  const { actionLoading, actionError, actionSuccess } = useSelector(
+  const { actionLoading, actionError } = useSelector(
     (state) => state.destinations
   );
 
