@@ -149,7 +149,9 @@
 
 .hero-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
+
   margin-bottom: 3rem;
 }
 
@@ -158,11 +160,15 @@
   align-items: center;
   justify-content: center;
 
+  min-height: 56px;
   padding: 1rem 1.8rem;
+
   border-radius: 14px;
 
   text-decoration: none;
   font-weight: 700;
+
+  white-space: nowrap;
 
   transition: all 0.25s ease;
 }
@@ -268,7 +274,6 @@
   width: min(92%, 1320px);
   margin: 0 auto;
   padding: 5rem 0;
-  height: 772px;
 }
 
 .section:first-of-type {

@@ -20,9 +20,7 @@
   box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
 }
 
-/* ==========================
-   IMAGE
-========================== */
+/* IMAGE */
 
 .tour-card-image {
   position: relative;
@@ -36,9 +34,7 @@
   object-fit: cover;
 }
 
-/* ==========================
-   RATING BADGE
-========================== */
+/* RATING */
 
 .tour-rating-badge {
   position: absolute;
@@ -64,21 +60,18 @@
   color: #febb02;
 }
 
-/* ==========================
-   BODY
-========================== */
+/* BODY */
 
 .tour-card-body {
   padding: 22px;
 
   display: flex;
   flex-direction: column;
+
   flex: 1;
 }
 
-/* ==========================
-   LOCATION
-========================== */
+/* LOCATION */
 
 .tour-card-location {
   display: flex;
@@ -97,9 +90,7 @@
   flex-shrink: 0;
 }
 
-/* ==========================
-   TITLE
-========================== */
+/* TITLE */
 
 .tour-card-title {
   margin: 0 0 12px;
@@ -118,9 +109,7 @@
   min-height: calc(1.4em * 2);
 }
 
-/* ==========================
-   DESCRIPTION
-========================== */
+/* DESCRIPTION */
 
 .tour-card-description {
   margin: 0 0 18px;
@@ -138,9 +127,7 @@
   min-height: calc(1.7em * 3);
 }
 
-/* ==========================
-   META
-========================== */
+/* META */
 
 .tour-card-meta {
   display: flex;
@@ -165,9 +152,7 @@
   flex-shrink: 0;
 }
 
-/* ==========================
-   FOOTER
-========================== */
+/* FOOTER */
 
 .tour-card-footer {
   margin-top: auto;
@@ -185,11 +170,8 @@
 }
 
 .price-label {
-  display: block;
-
   color: #6b7280;
   font-size: 0.8rem;
-
   margin-bottom: 4px;
 }
 
@@ -206,9 +188,7 @@
   margin-top: 4px;
 }
 
-/* ==========================
-   BUTTON
-========================== */
+/* BUTTON */
 
 .tour-card-btn {
   display: inline-flex;
@@ -225,6 +205,7 @@
 
   text-decoration: none;
   font-weight: 700;
+
   white-space: nowrap;
 
   transition: background-color 0.2s ease,
@@ -236,9 +217,7 @@
   transform: translateY(-1px);
 }
 
-/* ==========================
-   RESPONSIVE
-========================== */
+/* RESPONSIVE */
 
 @media (max-width: 768px) {
   .tour-card-image {
