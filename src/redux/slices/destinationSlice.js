@@ -8,16 +8,18 @@ import {
   getDestinationById,
   createDestination,
 } from "../thunks/destinationThunk";
+const storedAuth = localStorage.getItem("auth");
 
+const parsedAuth = storedAuth ? JSON.parse(storedAuth) : null;
 const initialState = {
-  featuredDestinations: [],
-  destinations: [],
-  popularDestinations: [],
+  featuredDestinations: parsedAuth?.featuredDestinations||null,
+  destinations: parsedAuth?.destinations || null,
+  popularDestinations: parsedAuth?.popularDestinations || null ,
 
-  allDestinations: [],
+  allDestinations:parsedAuth?.allDestinations || null,
 
-  selectedDestination: null,
-  destinationTours: [],
+  selectedDestination: parsedAuth?.selectedDestination || null,
+  destinationTours: parsedAuth?.destinationTours || null,
 
   total: 0,
   page: 1,
