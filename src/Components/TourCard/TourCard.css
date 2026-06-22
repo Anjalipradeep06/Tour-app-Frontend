@@ -7,24 +7,27 @@
   display: flex;
   flex-direction: column;
 
-  transition: all 0.25s ease;
+  height: 100%;
+
+  transition: transform 0.25s ease,
+    box-shadow 0.25s ease;
 
   box-shadow: 0 4px 18px rgba(15, 23, 42, 0.06);
-
-  height: 100%;
 }
 
 .tour-card:hover {
   transform: translateY(-4px);
-
   box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
 }
 
-/* IMAGE */
+/* ==========================
+   IMAGE
+========================== */
 
 .tour-card-image {
   position: relative;
   height: 240px;
+  flex-shrink: 0;
 }
 
 .tour-card-image img {
@@ -33,7 +36,9 @@
   object-fit: cover;
 }
 
-/* RATING */
+/* ==========================
+   RATING BADGE
+========================== */
 
 .tour-rating-badge {
   position: absolute;
@@ -47,7 +52,7 @@
   padding: 8px 12px;
 
   background: #003b95;
-  color: #fff;
+  color: #ffffff;
 
   border-radius: 10px;
 
@@ -59,74 +64,90 @@
   color: #febb02;
 }
 
-/* BODY */
+/* ==========================
+   BODY
+========================== */
 
 .tour-card-body {
   padding: 22px;
 
   display: flex;
   flex-direction: column;
-
   flex: 1;
 }
 
-/* LOCATION */
+/* ==========================
+   LOCATION
+========================== */
 
 .tour-card-location {
   display: flex;
   align-items: center;
   gap: 8px;
 
-  color: #6b7280;
-
-  font-size: 0.95rem;
-
+  min-height: 24px;
   margin-bottom: 12px;
+
+  color: #6b7280;
+  font-size: 0.95rem;
 }
 
 .tour-card-location svg {
   color: #006ce4;
+  flex-shrink: 0;
 }
 
-/* TITLE */
+/* ==========================
+   TITLE
+========================== */
 
 .tour-card-title {
-  font-size: 1.3rem;
-  line-height: 1.4;
-  color: #111827;
+  margin: 0 0 12px;
 
-  margin-bottom: 12px;
+  color: #111827;
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.4;
 
   display: -webkit-box;
-  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 
   overflow: hidden;
+
+  min-height: calc(1.4em * 2);
 }
 
-/* DESCRIPTION */
+/* ==========================
+   DESCRIPTION
+========================== */
 
 .tour-card-description {
-  color: #6b7280;
-  line-height: 1.7;
-  font-size: 0.95rem;
+  margin: 0 0 18px;
 
-  margin-bottom: 18px;
+  color: #6b7280;
+  font-size: 0.95rem;
+  line-height: 1.7;
 
   display: -webkit-box;
-  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 
   overflow: hidden;
+
+  min-height: calc(1.7em * 3);
 }
 
-/* META */
+/* ==========================
+   META
+========================== */
 
 .tour-card-meta {
   display: flex;
   flex-wrap: wrap;
   gap: 14px;
 
+  min-height: 24px;
   margin-bottom: 24px;
 
   color: #4b5563;
@@ -141,9 +162,12 @@
 
 .tour-card-meta svg {
   color: #006ce4;
+  flex-shrink: 0;
 }
 
-/* FOOTER */
+/* ==========================
+   FOOTER
+========================== */
 
 .tour-card-footer {
   margin-top: auto;
@@ -153,6 +177,11 @@
   align-items: flex-end;
 
   gap: 20px;
+}
+
+.tour-price {
+  display: flex;
+  flex-direction: column;
 }
 
 .price-label {
@@ -165,6 +194,8 @@
 }
 
 .tour-price h4 {
+  margin: 0;
+
   color: #111827;
   font-size: 1.8rem;
   font-weight: 800;
@@ -172,30 +203,42 @@
 
 .tour-price small {
   color: #6b7280;
+  margin-top: 4px;
 }
 
-/* BUTTON */
+/* ==========================
+   BUTTON
+========================== */
 
 .tour-card-btn {
-  background: #0071c2;
-  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-  text-decoration: none;
-
+  min-height: 46px;
   padding: 12px 18px;
+
+  background: #0071c2;
+  color: #ffffff;
 
   border-radius: 10px;
 
+  text-decoration: none;
   font-weight: 700;
+  white-space: nowrap;
 
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .tour-card-btn:hover {
   background: #005999;
+  transform: translateY(-1px);
 }
 
-/* RESPONSIVE */
+/* ==========================
+   RESPONSIVE
+========================== */
 
 @media (max-width: 768px) {
   .tour-card-image {
@@ -204,11 +247,10 @@
 
   .tour-card-footer {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
   }
 
   .tour-card-btn {
     width: 100%;
-    text-align: center;
   }
 }
