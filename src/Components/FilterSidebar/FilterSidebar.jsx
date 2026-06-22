@@ -36,12 +36,33 @@ const FilterSidebar = () => {
   };
 
   const applyFilters = () => {
-    dispatch(getAllTours(filters));
+    const cleanedFilters = Object.fromEntries(
+      Object.entries(filters).filter(
+        ([_, value]) =>
+          value !== "" &&
+          value !== null &&
+          value !== undefined
+      )
+    );
+
+    dispatch(
+      getAllTours({
+        ...cleanedFilters,
+        page: 1,
+        limit: 12,
+      })
+    );
   };
 
   const resetFilters = () => {
     setFilters(initialFilters);
-    dispatch(getAllTours({}));
+
+    dispatch(
+      getAllTours({
+        page: 1,
+        limit: 12,
+      })
+    );
   };
 
   return (
@@ -56,6 +77,7 @@ const FilterSidebar = () => {
         </div>
 
         <button
+          type="button"
           className="reset-btn"
           onClick={resetFilters}
         >
@@ -79,26 +101,13 @@ const FilterSidebar = () => {
             All Continents
           </option>
 
-          <option value="Asia">
-            Asia
-          </option>
-
-          <option value="Europe">
-            Europe
-          </option>
-
-          <option value="Africa">
-            Africa
-          </option>
-
-          <option value="Australia">
-            Australia
-          </option>
-
+          <option value="Asia">Asia</option>
+          <option value="Europe">Europe</option>
+          <option value="Africa">Africa</option>
+          <option value="Australia">Australia</option>
           <option value="North America">
             North America
           </option>
-
           <option value="South America">
             South America
           </option>
@@ -191,6 +200,7 @@ const FilterSidebar = () => {
       </div>
 
       <button
+        type="button"
         className="apply-btn"
         onClick={applyFilters}
       >
