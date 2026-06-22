@@ -15,8 +15,9 @@ import {
   FaReceipt,
 } from "react-icons/fa";
 
+import { verifyPayment } from "../../redux/thunks/paymentThunk";
+
 import {
-  verifyPayment,
   clearPaymentError,
   clearPaymentMessage,
 } from "../../redux/slices/paymentSlice";
@@ -34,13 +35,11 @@ const PaymentSuccess = () => {
     loading,
     error,
     message,
-  } = useSelector(
-    (state) => state.payment
-  );
+  } = useSelector((state) => state.payment);
 
   useEffect(() => {
     dispatch(verifyPayment(bookingId));
-  }, [bookingId, dispatch]);
+  }, [dispatch, bookingId]);
 
   useEffect(() => {
     if (message) {
@@ -80,8 +79,8 @@ const PaymentSuccess = () => {
             <h2>Verifying payment...</h2>
 
             <p>
-              Please wait while we confirm
-              your transaction.
+              Please wait while we confirm your
+              transaction.
             </p>
           </>
         )}
@@ -94,27 +93,19 @@ const PaymentSuccess = () => {
               Payment Confirmed
             </span>
 
-            <h1>
-              Your booking is confirmed!
-            </h1>
+            <h1>Your booking is confirmed!</h1>
 
             <p>
-              Your payment was processed
-              successfully. You will be
-              redirected to your booking
+              Your payment was processed successfully.
+              You will be redirected to your booking
               details shortly.
             </p>
 
             <div className="payment-reference">
-              <span>
-                Booking Reference
-              </span>
+              <span>Booking Reference</span>
 
               <strong>
-                #
-                {bookingId
-                  .slice(-6)
-                  .toUpperCase()}
+                #{bookingId.slice(-6).toUpperCase()}
               </strong>
             </div>
 
@@ -124,7 +115,6 @@ const PaymentSuccess = () => {
                 className="primary-btn"
               >
                 <FaReceipt />
-
                 View Booking
               </Link>
 
@@ -148,9 +138,7 @@ const PaymentSuccess = () => {
               Verification Failed
             </span>
 
-            <h1>
-              Unable to verify payment
-            </h1>
+            <h1>Unable to verify payment</h1>
 
             <p>{error}</p>
 

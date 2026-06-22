@@ -5,7 +5,7 @@ import {
   FaSpinner,
 } from "react-icons/fa";
 
-import { startPayment } from "../../redux/slices/paymentSlice";
+import { startPayment } from "../../redux/thunks/paymentThunk";
 
 import "./PaymentButton.css";
 
@@ -18,11 +18,11 @@ const PaymentButton = ({ bookingId }) => {
 
   const handlePayment = async () => {
     try {
-      const checkoutUrl = await dispatch(
+      const response = await dispatch(
         startPayment(bookingId)
       ).unwrap();
 
-      window.location.href = checkoutUrl;
+      window.location.href = response.url;
     } catch (err) {
       console.error("Payment error:", err);
     }

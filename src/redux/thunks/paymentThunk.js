@@ -1,23 +1,52 @@
+import { createAsyncThunk } from "@reduxjs/toolkit";
 import API from "../../api/axios";
 
-// Create Stripe Session
-export const createStripeSession = async (
-  bookingId
-) => {
-  const { data } = await API.post(
-    `/payments/create-session/${bookingId}`
-  );
+const getAuthConfig = () => {
+  const token = localStorage.getItem("token");
 
-  return data;
+  return {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
 };
 
-// Verify Stripe Payment
-export const verifyStripePayment = async (
-  bookingId
-) => {
-  const { data } = await API.patch(
-    `/payments/verify/${bookingId}`
-  );
+export const startPayment = createAsyncThunk(
+  "payment/startPayment",
+  async (bookingId, { rejectWithValue }) => {
+    try {
+      const { data } = await API.post(
+        `/payments/create-session/${bookingId}`,
+        {},
+        getAuthConfig()
+      );
 
-  return data;
-};
+      return data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+          "Failed to start payment"
+      );
+    }
+  }
+);
+
+export const verifyPayment = createAsyncThunk(
+  "payment/verifyPayment",
+  async (bookingId, { rejectWithValue }) => {
+    try {
+      const { data } = await API.patch(
+        `/payments/verify/${bookingId}`,
+        {},
+        getAuthConfig()
+      );
+
+      return data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+          "Failed to verify payment"
+      );
+    }
+  }
+);

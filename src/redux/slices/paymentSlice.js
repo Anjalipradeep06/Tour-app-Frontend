@@ -1,50 +1,9 @@
-import {
-  createSlice,
-  createAsyncThunk,
-} from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 import {
-  createStripeSession,
-  verifyStripePayment,
-} from "../../redux/thunks/paymentThunk";
-
-// -------------------- START PAYMENT --------------------
-
-export const startPayment = createAsyncThunk(
-  "payment/startPayment",
-  async (bookingId, { rejectWithValue }) => {
-    try {
-      return await createStripeSession(
-        bookingId
-      );
-    } catch (err) {
-      return rejectWithValue(
-        err.response?.data?.message ||
-          "Payment failed"
-      );
-    }
-  }
-);
-
-// -------------------- VERIFY PAYMENT --------------------
-
-export const verifyPayment = createAsyncThunk(
-  "payment/verifyPayment",
-  async (bookingId, { rejectWithValue }) => {
-    try {
-      return await verifyStripePayment(
-        bookingId
-      );
-    } catch (err) {
-      return rejectWithValue(
-        err.response?.data?.message ||
-          "Verification failed"
-      );
-    }
-  }
-);
-
-// -------------------- SLICE --------------------
+  startPayment,
+  verifyPayment,
+} from "../thunks/paymentThunk";
 
 const initialState = {
   loading: false,
@@ -86,71 +45,44 @@ const paymentSlice = createSlice({
   extraReducers: (builder) => {
     builder
 
-      // -------- CREATE SESSION --------
+      // START PAYMENT
+      .addCase(startPayment.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.message = null;
+      })
 
-      .addCase(
-        startPayment.pending,
-        (state) => {
-          state.loading = true;
-          state.error = null;
-          state.message = null;
-        }
-      )
+      .addCase(startPayment.fulfilled, (state, action) => {
+        state.loading = false;
 
-      .addCase(
-        startPayment.fulfilled,
-        (state, action) => {
-          state.loading = false;
+        state.sessionUrl = action.payload.url;
+        state.message = action.payload.message;
+      })
 
-          state.sessionUrl =
-            action.payload.url;
+      .addCase(startPayment.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
 
-          state.message =
-            action.payload.message;
-        }
-      )
+      // VERIFY PAYMENT
+      .addCase(verifyPayment.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.message = null;
+      })
 
-      .addCase(
-        startPayment.rejected,
-        (state, action) => {
-          state.loading = false;
-          state.error = action.payload;
-        }
-      )
+      .addCase(verifyPayment.fulfilled, (state, action) => {
+        state.loading = false;
 
-      // -------- VERIFY PAYMENT --------
+        state.success = true;
+        state.booking = action.payload.booking;
+        state.message = action.payload.message;
+      })
 
-      .addCase(
-        verifyPayment.pending,
-        (state) => {
-          state.loading = true;
-          state.error = null;
-          state.message = null;
-        }
-      )
-
-      .addCase(
-        verifyPayment.fulfilled,
-        (state, action) => {
-          state.loading = false;
-
-          state.success = true;
-
-          state.booking =
-            action.payload.booking;
-
-          state.message =
-            action.payload.message;
-        }
-      )
-
-      .addCase(
-        verifyPayment.rejected,
-        (state, action) => {
-          state.loading = false;
-          state.error = action.payload;
-        }
-      );
+      .addCase(verifyPayment.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 
