@@ -22,16 +22,7 @@ const paymentSlice = createSlice({
   initialState,
 
   reducers: {
-    resetPayment: (state) => {
-      state.loading = false;
-      state.error = null;
-      state.message = null;
-
-      state.sessionUrl = null;
-
-      state.success = false;
-      state.booking = null;
-    },
+    resetPayment: () => initialState,
 
     clearPaymentError: (state) => {
       state.error = null;
@@ -54,7 +45,6 @@ const paymentSlice = createSlice({
 
       .addCase(startPayment.fulfilled, (state, action) => {
         state.loading = false;
-
         state.sessionUrl = action.payload.url;
         state.message = action.payload.message;
       })
@@ -69,18 +59,20 @@ const paymentSlice = createSlice({
         state.loading = true;
         state.error = null;
         state.message = null;
+        state.success = false;
       })
 
       .addCase(verifyPayment.fulfilled, (state, action) => {
         state.loading = false;
-
         state.success = true;
         state.booking = action.payload.booking;
         state.message = action.payload.message;
+        state.error = null;
       })
 
       .addCase(verifyPayment.rejected, (state, action) => {
         state.loading = false;
+        state.success = false;
         state.error = action.payload;
       });
   },
