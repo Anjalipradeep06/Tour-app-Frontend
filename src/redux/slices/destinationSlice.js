@@ -12,14 +12,15 @@ const storedAuth = localStorage.getItem("auth");
 
 const parsedAuth = storedAuth ? JSON.parse(storedAuth) : null;
 const initialState = {
-  featuredDestinations: parsedAuth?.featuredDestinations||null,
-  destinations: parsedAuth?.destinations || null,
-  popularDestinations: parsedAuth?.popularDestinations || null ,
+  featuredDestinations: parsedAuth?.featuredDestinations || [],
+  destinations: parsedAuth?.destinations || [],
+  popularDestinations: parsedAuth?.popularDestinations || [],
 
-  allDestinations:parsedAuth?.allDestinations || null,
+  allDestinations: parsedAuth?.allDestinations || [],
 
   selectedDestination: parsedAuth?.selectedDestination || null,
-  destinationTours: parsedAuth?.destinationTours || null,
+
+  destinationTours: parsedAuth?.destinationTours || [],
 
   total: 0,
   page: 1,
