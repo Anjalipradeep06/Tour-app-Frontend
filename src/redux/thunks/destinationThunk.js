@@ -129,7 +129,7 @@ export const createDestination = createAsyncThunk(
       });
 
       const response = await api.post(
-        "/api/destinations",
+        "/destinations",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
