@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import {
   PieChart,
   Pie,
@@ -80,12 +81,24 @@ const AdminDashboard = () => {
   }, [dispatch]);
 
   const handleApprove = (id) => {
-    dispatch(approveBooking(id));
+    dispatch(approveBooking(id)).then((result) => {
+      if (approveBooking.fulfilled.match(result)) {
+        toast.success("Booking approved successfully!");
+      } else {
+        toast.error(result.payload || "Failed to approve booking");
+      }
+    });
   };
 
   const handleReject = (id) => {
     if (window.confirm("Reject this booking? The traveler will be notified.")) {
-      dispatch(rejectBooking(id));
+      dispatch(rejectBooking(id)).then((result) => {
+        if (rejectBooking.fulfilled.match(result)) {
+          toast.success("Booking rejected.");
+        } else {
+          toast.error(result.payload || "Failed to reject booking");
+        }
+      });
     }
   };
 

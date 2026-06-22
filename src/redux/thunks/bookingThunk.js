@@ -21,7 +21,7 @@ export const createBooking = createAsyncThunk(
         bookingData,
         getAuthConfig()
       );
-      return data.booking;
+      return { booking: data.booking, message: data.message };
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to create booking"
@@ -73,7 +73,7 @@ export const updateBooking = createAsyncThunk(
         bookingData,
         getAuthConfig()
       );
-      return data.booking;
+      return { booking: data.booking, message: data.message };
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to update booking"
@@ -92,7 +92,7 @@ export const cancelBooking = createAsyncThunk(
         {},
         getAuthConfig()
       );
-      return data.booking;
+      return { booking: data.booking, message: data.message };
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to cancel booking"

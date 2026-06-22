@@ -20,6 +20,7 @@ import { verifyPayment } from "../../redux/thunks/paymentThunk";
 import {
   clearPaymentError,
   clearPaymentMessage,
+  resetPayment,
 } from "../../redux/slices/paymentSlice";
 
 import "./PaymentStatus.css";
@@ -38,6 +39,8 @@ const PaymentSuccess = () => {
   } = useSelector((state) => state.payment);
 
   useEffect(() => {
+    // Reset any stale payment state first, then verify
+    dispatch(resetPayment());
     dispatch(verifyPayment(bookingId));
   }, [dispatch, bookingId]);
 

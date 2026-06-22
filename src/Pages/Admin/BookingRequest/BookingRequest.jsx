@@ -83,14 +83,17 @@ const BookingRequest = () => {
   useEffect(() => {
     if (success && selectedBooking?._id) {
       toast.success(
-        "Booking created successfully!"
+        "Booking reserved! Redirecting..."
       );
 
       const id = selectedBooking._id;
 
-      dispatch(resetBookingState());
+      const timer = setTimeout(() => {
+        dispatch(resetBookingState());
+        navigate(`/bookings/${id}`);
+      }, 1500);
 
-      navigate(`/bookings/${id}`);
+      return () => clearTimeout(timer);
     }
   }, [
     success,
@@ -298,12 +301,15 @@ const BookingRequest = () => {
                 className="reserve-btn"
                 disabled={
                   loading?.action ||
+                  success ||
                   (availability &&
                     !availability.isAvailable)
                 }
               >
-                {loading?.action
-                  ? "Processing..."
+                {success
+                  ? "Reserved ✓"
+                  : loading?.action
+                  ? "Reserving..."
                   : availability &&
                     !availability.isAvailable
                   ? "Unavailable"
