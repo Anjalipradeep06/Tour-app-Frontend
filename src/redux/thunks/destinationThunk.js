@@ -88,7 +88,7 @@ export const getDestinationById =
     async (id, thunkAPI) => {
       try {
         const response = await api.get(
-          `/api/destinations/details/${id}`
+          `/destinations/details/${id}`
         );
 
         return response.data;
