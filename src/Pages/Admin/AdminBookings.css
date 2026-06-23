@@ -61,3 +61,145 @@
   font-weight: 400;
   color: var(--slate);
 }
+/* ── Complete button (pencil icon) ── */
+.admin-btn--icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.admin-btn--icon:hover {
+  background: #f3f4f6;
+  color: #111827;
+  border-color: #9ca3af;
+}
+
+/* ── Modal backdrop ── */
+.admin-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+/* ── Modal card ── */
+.admin-modal {
+  background: #fff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+}
+
+.admin-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.125rem 1.25rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+.admin-modal-header h2 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  color: #111827;
+}
+.admin-modal-close {
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: #9ca3af;
+  cursor: pointer;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+.admin-modal-close:hover { color: #111827; }
+
+.admin-modal-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+.admin-modal-body p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.admin-modal-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 1rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.875rem 1rem;
+  font-size: 0.85rem;
+  color: #374151;
+}
+.admin-modal-meta span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.admin-modal-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #9ca3af;
+}
+
+.admin-modal-note {
+  font-size: 0.8rem !important;
+  color: #6b7280 !important;
+}
+
+.admin-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.625rem;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Ghost button */
+.admin-btn--ghost {
+  background: transparent;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  padding: 0.45rem 1rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.admin-btn--ghost:hover { background: #f3f4f6; }
+
+/* Complete button */
+.admin-btn--complete {
+  background: #111827;
+  border: 1px solid #111827;
+  color: #fff;
+  padding: 0.45rem 1rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.admin-btn--complete:hover:not(:disabled) { background: #1f2937; }
+.admin-btn--complete:disabled { opacity: 0.6; cursor: not-allowed; }

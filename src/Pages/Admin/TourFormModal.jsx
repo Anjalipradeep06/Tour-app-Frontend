@@ -29,16 +29,8 @@ const emptyTour = {
   isFeatured: false,
 };
 
-// Converts a Tour document (from the API) into the shape this
-// form's controlled inputs expect — mainly: dates as YYYY-MM-DD
-// strings for <input type="date">, destination as just the id
-// (it may arrive populated as an object).
 const toFormState = (tour) => {
   if (!tour) return emptyTour;
-
-  // TEMP DEBUG — remove once the crash is identified.
-  console.log("toFormState received tour:", tour);
-  console.log("activities:", tour.activities, "highlights:", tour.highlights, "itinerary:", tour.itinerary, "startDates:", tour.startDates, "meetingPoint:", tour.meetingPoint);
 
   return {
     title: tour.title || "",
@@ -67,8 +59,6 @@ const toFormState = (tour) => {
   };
 };
 
-// Converts form state back into the payload shape the backend
-// expects — numbers as numbers, dates as Date-parseable strings.
 const toPayload = (form) => ({
   title: form.title.trim(),
   destination: form.destination,
@@ -105,9 +95,8 @@ const TourFormModal = ({ tour, onClose }) => {
   const { allDestinations = [], loading: destinationsLoading } = useSelector(
     (state) => state.destinations
   );
-  const { actionLoading, actionError, actionSuccess,actionMessage } = useSelector(
-    (state) => state.tours
-  );
+  const { actionLoading, actionError, actionSuccess, actionMessage } =
+    useSelector((state) => state.tours);
 
   const [form, setForm] = useState(() => toFormState(tour));
   const [validationError, setValidationError] = useState("");
@@ -116,19 +105,19 @@ const TourFormModal = ({ tour, onClose }) => {
     dispatch(getAllDestinations({ limit: 100 }));
   }, [dispatch]);
 
-  // Close automatically once the create/update actually succeeds.
+  // Show toast and close after successful save
   useEffect(() => {
     if (actionSuccess) {
-       toast.success(
-              actionMessage ||
-                "Tour created successfully"
-            );
+      toast.success(
+        actionMessage ||
+          (isEditMode ? "Tour updated successfully" : "Tour created successfully")
+      );
       dispatch(resetTourActionState());
-      onClose();
+      onClose(true); // true = did save, so ManageTours will re-fetch
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actionSuccess,actionMessage,dispatch,onClose]);
+  }, [actionSuccess, actionMessage, isEditMode, dispatch, onClose]);
 
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
       dispatch(resetTourActionState());
@@ -189,7 +178,7 @@ const TourFormModal = ({ tour, onClose }) => {
           <button
             type="button"
             className="tf-icon-btn"
-            onClick={onClose}
+            onClick={() => onClose(false)}
             aria-label="Close"
           >
             ×
@@ -276,9 +265,7 @@ const TourFormModal = ({ tour, onClose }) => {
                 min="0"
                 className="tf-input"
                 value={form.availableSlots}
-                onChange={(e) =>
-                  updateField("availableSlots", e.target.value)
-                }
+                onChange={(e) => updateField("availableSlots", e.target.value)}
               />
             </div>
           </div>
@@ -331,9 +318,7 @@ const TourFormModal = ({ tour, onClose }) => {
                 className="tf-input"
                 placeholder="Address"
                 value={form.meetingPoint.address}
-                onChange={(e) =>
-                  updateMeetingPoint("address", e.target.value)
-                }
+                onChange={(e) => updateMeetingPoint("address", e.target.value)}
               />
               <input
                 type="number"
@@ -341,9 +326,7 @@ const TourFormModal = ({ tour, onClose }) => {
                 className="tf-input"
                 placeholder="Latitude"
                 value={form.meetingPoint.latitude}
-                onChange={(e) =>
-                  updateMeetingPoint("latitude", e.target.value)
-                }
+                onChange={(e) => updateMeetingPoint("latitude", e.target.value)}
               />
               <input
                 type="number"
@@ -371,7 +354,7 @@ const TourFormModal = ({ tour, onClose }) => {
             <button
               type="button"
               className="tf-btn tf-btn--secondary"
-              onClick={onClose}
+              onClick={() => onClose(false)}
               disabled={actionLoading}
             >
               Cancel

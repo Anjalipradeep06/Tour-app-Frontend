@@ -5,12 +5,12 @@ import {
   getPendingBookings,
   approveBooking,
   rejectBooking,
+  completeBooking,
 } from "../thunks/adminThunk";
 
 const initialState = {
   stats: null,
 
-  // PAGINATION STRUCTURE
   allBookings: [],
   pendingBookings: [],
 
@@ -106,7 +106,6 @@ const adminSlice = createSlice({
         state.pendingBookings = state.pendingBookings.filter(
           (b) => b._id !== updated._id
         );
-
         state.allBookings = state.allBookings.map((b) =>
           b._id === updated._id ? updated : b
         );
@@ -132,12 +131,34 @@ const adminSlice = createSlice({
         state.pendingBookings = state.pendingBookings.filter(
           (b) => b._id !== updated._id
         );
-
         state.allBookings = state.allBookings.map((b) =>
           b._id === updated._id ? updated : b
         );
       })
       .addCase(rejectBooking.rejected, (state, action) => {
+        state.loading.action = false;
+        state.actionTargetId = null;
+        state.error = action.payload;
+      })
+
+      // ---------------- COMPLETE BOOKING ----------------
+      .addCase(completeBooking.pending, (state, action) => {
+        state.loading.action = true;
+        state.actionTargetId = action.meta.arg; // booking id
+        state.error = null;
+      })
+      .addCase(completeBooking.fulfilled, (state, action) => {
+        state.loading.action = false;
+        state.actionTargetId = null;
+
+        const updated = action.payload;
+
+        // update in-place — row status flips to "completed", pencil disappears
+        state.allBookings = state.allBookings.map((b) =>
+          b._id === updated._id ? updated : b
+        );
+      })
+      .addCase(completeBooking.rejected, (state, action) => {
         state.loading.action = false;
         state.actionTargetId = null;
         state.error = action.payload;

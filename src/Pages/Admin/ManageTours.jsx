@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 
 import "./ManageTours.css";
 
-const LIMIT = 9; // tours per page
+const LIMIT = 9;
 
 const formatCurrency = (amount) =>
   `₹${Number(amount || 0).toLocaleString("en-IN")}`;
@@ -75,9 +75,13 @@ const ManageTours = () => {
     setModalOpen(true);
   };
 
-  const closeModal = () => {
+  // didSave = true when called after a successful create/update
+  const closeModal = (didSave = false) => {
     setEditingTour(null);
     setModalOpen(false);
+    if (didSave) {
+      fetchTours(page, search); // re-sync grid with latest data
+    }
   };
 
   // ================= DELETE =================
@@ -89,15 +93,12 @@ const ManageTours = () => {
     if (deleteTour.fulfilled.match(res)) {
       toast.success("Tour deleted successfully");
 
-      // If this was the last item on the current page (and an earlier
-      // page exists), step back a page so we don't show an empty page.
       const remainingOnPage = tours.length - 1;
       if (remainingOnPage === 0 && page > 1) {
         const newPage = page - 1;
         setPage(newPage);
         fetchTours(newPage, search);
       } else {
-        // Re-sync current page counts/total with the server
         fetchTours(page, search);
       }
     } else {
@@ -107,10 +108,9 @@ const ManageTours = () => {
     setDeleteTargetId(null);
   };
 
-  // ================= STATS (current page only) =================
+  // ================= STATS =================
   const featuredCount = tours.filter((t) => t.isFeatured).length;
   const availableCount = tours.filter((t) => t.availableSlots > 0).length;
-
   const inventoryValue = tours.reduce(
     (sum, t) => sum + Number(t.price || 0),
     0
@@ -145,7 +145,6 @@ const ManageTours = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-
         <button type="submit">Search</button>
       </form>
 
@@ -155,24 +154,21 @@ const ManageTours = () => {
           <span>Total Tours</span>
           <h2>{total}</h2>
         </div>
-
         <div className="tourStatCard">
           <span>Featured (this page)</span>
           <h2>{featuredCount}</h2>
         </div>
-
         <div className="tourStatCard">
           <span>Available (this page)</span>
           <h2>{availableCount}</h2>
         </div>
-
         <div className="tourStatCard">
           <span>Inventory Value (this page)</span>
           <h2>{formatCurrency(inventoryValue)}</h2>
         </div>
       </section>
 
-      {/* ================= LOADING ================= */}
+      {/* ================= TOUR GRID ================= */}
       {loading && tours.length === 0 ? (
         <div className="loadingState">Loading Tours...</div>
       ) : tours.length === 0 ? (
@@ -195,11 +191,9 @@ const ManageTours = () => {
                   alt={tour.title}
                   className="tourImage"
                 />
-
                 {tour.isFeatured && (
                   <span className="featuredBadge">⭐ Featured</span>
                 )}
-
                 <div className="tourPriceBadge">
                   {formatCurrency(tour.price)}
                 </div>
@@ -207,7 +201,6 @@ const ManageTours = () => {
 
               <div className="tourContent">
                 <h3>{tour.title}</h3>
-
                 <p className="tourLocation">
                   📍{" "}
                   {tour.destination?.name
@@ -220,12 +213,10 @@ const ManageTours = () => {
                     <span>Duration</span>
                     <strong>{tour.duration} Days</strong>
                   </div>
-
                   <div>
                     <span>Slots</span>
                     <strong>{tour.availableSlots}</strong>
                   </div>
-
                   <div>
                     <span>Rating</span>
                     <strong>
@@ -234,7 +225,6 @@ const ManageTours = () => {
                         : "No Reviews"}
                     </strong>
                   </div>
-
                   <div>
                     <span>Country</span>
                     <strong>{tour.destination?.country || "-"}</strong>
@@ -249,7 +239,6 @@ const ManageTours = () => {
                   >
                     Edit
                   </button>
-
                   <button
                     className="deleteBtn"
                     onClick={() => setDeleteTargetId(tour._id)}
@@ -274,11 +263,9 @@ const ManageTours = () => {
           >
             ← Prev
           </button>
-
           <span className="pageInfo">
             Page <strong>{page}</strong> of <strong>{pages}</strong>
           </span>
-
           <button
             className="pageBtn"
             onClick={handleNext}
@@ -295,7 +282,7 @@ const ManageTours = () => {
         tours total
       </div>
 
-      {/* ================= MODAL ================= */}
+      {/* ================= TOUR FORM MODAL ================= */}
       {modalOpen && (
         <TourFormModal tour={editingTour} onClose={closeModal} />
       )}
@@ -305,11 +292,7 @@ const ManageTours = () => {
         <div className="deleteOverlay" role="dialog">
           <div className="deleteModal">
             <h2>Delete this tour?</h2>
-
-            <p>
-              This action cannot be undone. Existing bookings will remain.
-            </p>
-
+            <p>This action cannot be undone. Existing bookings will remain.</p>
             <div className="deleteActions">
               <button
                 className="cancelBtn"
@@ -318,7 +301,6 @@ const ManageTours = () => {
               >
                 Cancel
               </button>
-
               <button
                 className="confirmDeleteBtn"
                 onClick={handleDelete}

@@ -116,20 +116,36 @@ const tourSlice = createSlice({
         state.actionError = action.payload;
       })
 
-      // ======================
-      // UPDATE TOUR
-      // ======================
-      .addCase(updateTour.fulfilled, (state, action) => {
-        const updatedTour = action.payload;
+     // ======================
+// UPDATE TOUR
+// ======================
+.addCase(updateTour.pending, (state) => {
+  state.actionLoading = true;
+  state.actionError = null;
+  state.actionSuccess = false;
+  state.actionMessage = null;
+})
 
-        state.tours = state.tours.map((tour) =>
-          tour._id === updatedTour._id ? updatedTour : tour
-        );
+.addCase(updateTour.fulfilled, (state, action) => {
+  state.actionLoading = false;
+  state.actionSuccess = true;        // ← this was missing, modal never closed
+  state.actionMessage = "Tour updated successfully";
 
-        if (state.selectedTour?._id === updatedTour._id) {
-          state.selectedTour = updatedTour;
-        }
-      })
+  const updatedTour = action.payload;
+
+  state.tours = state.tours.map((tour) =>
+    tour._id === updatedTour._id ? updatedTour : tour
+  );
+
+  if (state.selectedTour?._id === updatedTour._id) {
+    state.selectedTour = updatedTour;
+  }
+})
+
+.addCase(updateTour.rejected, (state, action) => {
+  state.actionLoading = false;
+  state.actionError = action.payload;
+})
 
       // ======================
       // DELETE TOUR

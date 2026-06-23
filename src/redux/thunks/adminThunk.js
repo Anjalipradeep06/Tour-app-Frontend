@@ -6,7 +6,6 @@ import api from "../../api/axios";
 ================================================= */
 const getAuthConfig = () => {
   const token = localStorage.getItem("token");
-
   return {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -21,11 +20,7 @@ export const getDashboardStats = createAsyncThunk(
   "admin/getDashboardStats",
   async (_, thunkAPI) => {
     try {
-      const { data } = await api.get(
-        "/admin/dashboard",
-        getAuthConfig()
-      );
-
+      const { data } = await api.get("/admin/dashboard", getAuthConfig());
       return data.stats;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -36,7 +31,7 @@ export const getDashboardStats = createAsyncThunk(
 );
 
 /* =================================================
-   GET ALL BOOKINGS (FIXED — reads nested pagination object)
+   GET ALL BOOKINGS
 ================================================= */
 export const getAllBookings = createAsyncThunk(
   "admin/getAllBookings",
@@ -46,7 +41,6 @@ export const getAllBookings = createAsyncThunk(
         `/admin/bookings?page=${page}&limit=${limit}`,
         getAuthConfig()
       );
-
       return {
         bookings: data.bookings || [],
         currentPage: data.pagination?.currentPage || page,
@@ -68,11 +62,7 @@ export const getPendingBookings = createAsyncThunk(
   "admin/getPendingBookings",
   async (_, thunkAPI) => {
     try {
-      const { data } = await api.get(
-        "/admin/bookings/pending",
-        getAuthConfig()
-      );
-
+      const { data } = await api.get("/admin/bookings/pending", getAuthConfig());
       return data.bookings || [];
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -94,7 +84,6 @@ export const approveBooking = createAsyncThunk(
         {},
         getAuthConfig()
       );
-
       return data.booking;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -116,11 +105,31 @@ export const rejectBooking = createAsyncThunk(
         {},
         getAuthConfig()
       );
-
       return data.booking;
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to reject booking"
+      );
+    }
+  }
+);
+
+/* =================================================
+   COMPLETE BOOKING
+================================================= */
+export const completeBooking = createAsyncThunk(
+  "admin/completeBooking",
+  async (id, thunkAPI) => {
+    try {
+      const { data } = await api.patch(
+        `/bookings/${id}/complete`,
+        {},
+        getAuthConfig()
+      );
+      return data.booking;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || "Failed to complete booking"
       );
     }
   }
