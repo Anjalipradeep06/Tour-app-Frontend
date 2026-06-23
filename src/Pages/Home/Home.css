@@ -273,7 +273,8 @@
 .map-section {
   width: min(92%, 1320px);
   margin: 0 auto;
-  padding: 5rem 0;
+position: relative;
+top: 63px;
 }
 
 .section:first-of-type {
