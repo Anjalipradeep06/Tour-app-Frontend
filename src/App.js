@@ -107,7 +107,7 @@ function App() {
             }
           >
             <Route index element={<AdminDashboard />} />
-<Route path="/admin/bookings" element={<AdminBookings />} />
+<Route path="bookings" element={<AdminBookings />} />
             <Route path="tours" element={<ManageTours />} />
             <Route
               path="destinations"

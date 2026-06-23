@@ -1,11 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
   getAllTours,
   deleteTour,
-  updateTour,
-  createTour,
 } from "../../redux/thunks/tourThunk";
 
 import TourFormModal from "./TourFormModal";
@@ -31,8 +29,15 @@ const ManageTours = () => {
   const [editingTour, setEditingTour] = useState(null);
   const [deleteTargetId, setDeleteTargetId] = useState(null);
 
+  // ✅ Prevent duplicate initial fetch (IMPORTANT FIX)
+  const didFetch = useRef(false);
+
   // ================= FETCH TOURS =================
   useEffect(() => {
+    if (didFetch.current) return;
+
+    didFetch.current = true;
+
     dispatch(getAllTours({ limit: 100 }));
   }, [dispatch]);
 
@@ -42,7 +47,7 @@ const ManageTours = () => {
 
     dispatch(
       getAllTours({
-        search: search || undefined,
+        search: search.trim() || undefined,
         limit: 100,
       })
     );
@@ -72,6 +77,9 @@ const ManageTours = () => {
 
     if (deleteTour.fulfilled.match(res)) {
       toast.success("Tour deleted successfully");
+
+      // 🔥 refresh list after delete (safe)
+      dispatch(getAllTours({ limit: 100 }));
     } else {
       toast.error(res.payload || "Delete failed");
     }
@@ -91,14 +99,13 @@ const ManageTours = () => {
   return (
     <div className="manageTours">
 
-      {/* ================= HEADER ================= */}
+      {/* HEADER */}
       <section className="manageToursHero">
         <div className="heroLeft">
           <span className="heroBadge">Premium Tour Management</span>
           <h1>Manage Tours</h1>
           <p>
-            Create, edit and organize luxury travel experiences for your
-            customers from one beautiful dashboard.
+            Create, edit and organize luxury travel experiences from one dashboard.
           </p>
         </div>
 
@@ -109,11 +116,11 @@ const ManageTours = () => {
         </div>
       </section>
 
-      {/* ================= SEARCH ================= */}
+      {/* SEARCH */}
       <form className="manageToursSearch" onSubmit={handleSearch}>
         <input
           type="text"
-          placeholder="Search tours, destinations or keywords..."
+          placeholder="Search tours, destinations..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -121,7 +128,7 @@ const ManageTours = () => {
         <button type="submit">Search</button>
       </form>
 
-      {/* ================= STATS ================= */}
+      {/* STATS */}
       <section className="tourStats">
         <div className="tourStatCard">
           <span>Total Tours</span>
@@ -144,13 +151,13 @@ const ManageTours = () => {
         </div>
       </section>
 
-      {/* ================= LOADING ================= */}
+      {/* CONTENT */}
       {loading && tours.length === 0 ? (
         <div className="loadingState">Loading Tours...</div>
       ) : tours.length === 0 ? (
         <div className="loadingState">
           <h2>No Tours Found</h2>
-          <p>Try changing your search or create a new tour.</p>
+          <p>Try searching or create a new tour.</p>
         </div>
       ) : (
         <div className="tourGrid">
@@ -160,73 +167,27 @@ const ManageTours = () => {
                 <img
                   src={
                     tour.images?.[0] ||
-                    tour.image ||
-                    tour.thumbnail ||
-                    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80"
+                    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200"
                   }
                   alt={tour.title}
-                  className="tourImage"
                 />
 
                 {tour.isFeatured && (
                   <span className="featuredBadge">⭐ Featured</span>
                 )}
-
-                <div className="tourPriceBadge">
-                  {formatCurrency(tour.price)}
-                </div>
               </div>
 
               <div className="tourContent">
                 <h3>{tour.title}</h3>
 
-                <p className="tourLocation">
-                  📍{" "}
-                  {tour.destination?.name
-                    ? `${tour.destination.name}, ${tour.destination.country}`
-                    : "Destination"}
-                </p>
-
-                <div className="tourInfo">
-                  <div>
-                    <span>Duration</span>
-                    <strong>{tour.duration} Days</strong>
-                  </div>
-
-                  <div>
-                    <span>Slots</span>
-                    <strong>{tour.availableSlots}</strong>
-                  </div>
-
-                  <div>
-                    <span>Rating</span>
-                    <strong>
-                      {tour.averageRating > 0
-                        ? `⭐ ${tour.averageRating.toFixed(1)}`
-                        : "No Reviews"}
-                    </strong>
-                  </div>
-
-                  <div>
-                    <span>Country</span>
-                    <strong>{tour.destination?.country || "-"}</strong>
-                  </div>
-                </div>
+                <p>{formatCurrency(tour.price)}</p>
 
                 <div className="tourActions">
-                  <button
-                    className="editBtn"
-                    onClick={() => openEdit(tour)}
-                    disabled={actionLoading}
-                  >
+                  <button onClick={() => openEdit(tour)}>
                     Edit
                   </button>
 
-                  <button
-                    className="deleteBtn"
-                    onClick={() => setDeleteTargetId(tour._id)}
-                    disabled={actionLoading}
-                  >
+                  <button onClick={() => setDeleteTargetId(tour._id)}>
                     Delete
                   </button>
                 </div>
@@ -236,42 +197,29 @@ const ManageTours = () => {
         </div>
       )}
 
-      {/* ================= FOOTER ================= */}
+      {/* FOOTER */}
       <div className="tourFooter">
         <strong>{tours.length}</strong> of <strong>{total}</strong> tours
-        displayed
       </div>
 
-      {/* ================= MODAL ================= */}
+      {/* MODAL */}
       {modalOpen && (
         <TourFormModal tour={editingTour} onClose={closeModal} />
       )}
 
-      {/* ================= DELETE MODAL ================= */}
+      {/* DELETE CONFIRM */}
       {deleteTargetId && (
-        <div className="deleteOverlay" role="dialog">
+        <div className="deleteOverlay">
           <div className="deleteModal">
             <h2>Delete this tour?</h2>
 
-            <p>
-              This action cannot be undone. Existing bookings will remain.
-            </p>
-
             <div className="deleteActions">
-              <button
-                className="cancelBtn"
-                onClick={() => setDeleteTargetId(null)}
-                disabled={actionLoading}
-              >
+              <button onClick={() => setDeleteTargetId(null)}>
                 Cancel
               </button>
 
-              <button
-                className="confirmDeleteBtn"
-                onClick={handleDelete}
-                disabled={actionLoading}
-              >
-                {actionLoading ? "Deleting..." : "Delete Tour"}
+              <button onClick={handleDelete}>
+                Delete
               </button>
             </div>
           </div>

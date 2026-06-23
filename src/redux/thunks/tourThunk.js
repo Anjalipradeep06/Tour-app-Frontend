@@ -2,22 +2,22 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../api/axios";
 
 // =====================
-// Get All Tours (PAGINATED)
+// GET ALL TOURS (PAGINATED SAFE)
 // =====================
 export const getAllTours = createAsyncThunk(
   "tours/getAllTours",
   async (params = {}, thunkAPI) => {
     try {
-      const response = await api.get("/tours", {
+      const { data } = await api.get("/tours", {
         params,
       });
 
       return {
-        tours: response.data.tours || [],
-        total: response.data.total || 0,
-        page: response.data.page || 1,
-        pages: response.data.pages || 1,
-        count: response.data.count || 0,
+        tours: data.tours || [],
+        total: data.total || 0,
+        page: data.page || 1,
+        pages: data.pages || 1,
+        count: data.count || 0,
       };
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -28,14 +28,15 @@ export const getAllTours = createAsyncThunk(
 );
 
 // =====================
-// Get Single Tour
+// GET SINGLE TOUR
 // =====================
 export const getTourById = createAsyncThunk(
   "tours/getTourById",
   async (id, thunkAPI) => {
     try {
-      const response = await api.get(`/tours/${id}`);
-      return response.data.tour;
+      const { data } = await api.get(`/tours/${id}`);
+
+      return data.tour || null;
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to fetch tour"
@@ -45,15 +46,15 @@ export const getTourById = createAsyncThunk(
 );
 
 // =====================
-// Create Tour
+// CREATE TOUR
 // =====================
 export const createTour = createAsyncThunk(
   "tours/createTour",
   async (tourData, thunkAPI) => {
     try {
-      const response = await api.post("/tours", tourData);
+      const { data } = await api.post("/tours", tourData);
 
-      return response.data.tour; // ✅ FIXED
+      return data.tour || null;
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to create tour"
@@ -63,15 +64,15 @@ export const createTour = createAsyncThunk(
 );
 
 // =====================
-// Update Tour
+// UPDATE TOUR
 // =====================
 export const updateTour = createAsyncThunk(
   "tours/updateTour",
   async ({ id, tourData }, thunkAPI) => {
     try {
-      const response = await api.put(`/tours/${id}`, tourData);
+      const { data } = await api.put(`/tours/${id}`, tourData);
 
-      return response.data.tour;
+      return data.tour || null;
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to update tour"
@@ -81,7 +82,7 @@ export const updateTour = createAsyncThunk(
 );
 
 // =====================
-// Delete Tour
+// DELETE TOUR
 // =====================
 export const deleteTour = createAsyncThunk(
   "tours/deleteTour",

@@ -3,7 +3,7 @@ import {
   loginUser,
   registerUser,
   updateProfile,
-} from "../thunks/authThunk"; // adjust path if needed
+} from "../../redux/thunks/authThunk"; // adjust path if needed
 
 const initialState = {
   user: JSON.parse(localStorage.getItem("user")) || null,

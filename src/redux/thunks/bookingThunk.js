@@ -1,6 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../api/axios";
 
+/* =================================================
+   AUTH HEADER
+================================================= */
 const getAuthConfig = () => {
   const token = localStorage.getItem("token");
 
@@ -37,11 +40,10 @@ export const createBooking = createAsyncThunk(
 );
 
 /* =================================================
-   GET USER BOOKINGS (PAGINATED)
-   Response: { bookings, pagination }
+   GET USER BOOKINGS (FIXED + STANDARDIZED)
 ================================================= */
 export const getUserBookings = createAsyncThunk(
-  "booking/getAll",
+  "booking/getUserBookings",
   async ({ page = 1, limit = 5 } = {}, thunkAPI) => {
     try {
       const { data } = await api.get(
@@ -50,8 +52,10 @@ export const getUserBookings = createAsyncThunk(
       );
 
       return {
-        bookings: data.bookings,
-        pagination: data.pagination,
+        bookings: data.bookings || [],
+        currentPage: data.pagination?.currentPage || page,
+        totalPages: data.pagination?.totalPages || 1,
+        totalBookings: data.pagination?.totalBookings || 0,
       };
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -65,7 +69,7 @@ export const getUserBookings = createAsyncThunk(
    GET BOOKING BY ID
 ================================================= */
 export const getBookingById = createAsyncThunk(
-  "booking/getById",
+  "booking/getBookingById",
   async (id, thunkAPI) => {
     try {
       const { data } = await api.get(
@@ -86,7 +90,7 @@ export const getBookingById = createAsyncThunk(
    UPDATE BOOKING
 ================================================= */
 export const updateBooking = createAsyncThunk(
-  "booking/update",
+  "booking/updateBooking",
   async ({ id, bookingData }, thunkAPI) => {
     try {
       const { data } = await api.put(
@@ -111,7 +115,7 @@ export const updateBooking = createAsyncThunk(
    CANCEL BOOKING
 ================================================= */
 export const cancelBooking = createAsyncThunk(
-  "booking/cancel",
+  "booking/cancelBooking",
   async (id, thunkAPI) => {
     try {
       const { data } = await api.patch(
@@ -139,15 +143,17 @@ export const checkAvailability = createAsyncThunk(
   "booking/checkAvailability",
   async ({ tourId, date, participants }, thunkAPI) => {
     try {
-      const { data } = await api.get("/availability/check", {
-        params: { tourId, date, participants },
-      });
+      const { data } = await api.get(
+        "/availability/check",
+        {
+          params: { tourId, date, participants },
+        }
+      );
 
       return data.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message ||
-          "Failed to check availability"
+        error.response?.data?.message || "Failed to check availability"
       );
     }
   }

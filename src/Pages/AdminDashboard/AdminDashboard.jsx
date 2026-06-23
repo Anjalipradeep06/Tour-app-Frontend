@@ -1,17 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -20,62 +9,38 @@ import {
   approveBooking,
   rejectBooking,
 } from "../../redux/thunks/adminThunk";
+
 import { resetAdminError } from "../../redux/slices/adminSlice";
 
 import "./AdminDashboard.css";
 
 const LIMIT = 4;
 
-const TABS = [
-  { key: "all", label: "All" },
-  { key: "pending", label: "Pending" },
-  { key: "confirmed", label: "Confirmed" },
-  { key: "completed", label: "Completed" },
-  { key: "cancelled", label: "Cancelled" },
-];
-
-const STATUS_COLORS = {
-  pending: "#B8770A",
-  confirmed: "#1B7A4D",
-  completed: "#8E959B",
-  cancelled: "#C03B2B",
-};
-
 const formatDate = (dateString) =>
-  new Date(dateString).toLocaleDateString("en-IN", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-
-const formatCurrency = (amount) =>
-  `₹${Number(amount || 0).toLocaleString("en-IN")}`;
-
-const ChartTooltip = ({ active, payload }) => {
-  if (!active || !payload?.length) return null;
-
-  return (
-    <div className="admin-chart-tooltip">
-      {payload.map((entry) => (
-        <div key={entry.name} className="admin-chart-tooltip-row">
-          <span>{entry.name}</span>
-          <strong>{entry.value}</strong>
-        </div>
-      ))}
-    </div>
-  );
-};
+  dateString
+    ? new Date(dateString).toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })
+    : "-";
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { stats, allBookings, loading, actionTargetId, error } =
-    useSelector((state) => state.admin);
+  const { stats, allBookings = [], loading, error } = useSelector(
+    (state) => state.admin
+  );
 
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab] = useState("all");
+
+  const hasFetched = useRef(false);
 
   useEffect(() => {
+    if (hasFetched.current) return;
+    hasFetched.current = true;
+
     dispatch(getDashboardStats());
     dispatch(getAllBookings());
   }, [dispatch]);
@@ -84,6 +49,7 @@ const AdminDashboard = () => {
     dispatch(approveBooking(id)).then((result) => {
       if (approveBooking.fulfilled.match(result)) {
         toast.success("Booking approved successfully!");
+        dispatch(getAllBookings());
       } else {
         toast.error(result.payload || "Failed to approve booking");
       }
@@ -91,24 +57,26 @@ const AdminDashboard = () => {
   };
 
   const handleReject = (id) => {
-    if (window.confirm("Reject this booking?")) {
-      dispatch(rejectBooking(id)).then((result) => {
-        if (rejectBooking.fulfilled.match(result)) {
-          toast.success("Booking rejected.");
-        } else {
-          toast.error(result.payload || "Failed to reject booking");
-        }
-      });
-    }
+    if (!window.confirm("Reject this booking?")) return;
+
+    dispatch(rejectBooking(id)).then((result) => {
+      if (rejectBooking.fulfilled.match(result)) {
+        toast.success("Booking rejected.");
+        dispatch(getAllBookings());
+      } else {
+        toast.error(result.payload || "Failed to reject booking");
+      }
+    });
   };
 
-  const visibleBookings =
-    activeTab === "all"
+  // ✅ SAFE: always array
+  const filteredBookings = Array.isArray(allBookings)
+    ? activeTab === "all"
       ? allBookings
-      : allBookings.filter((b) => b.status === activeTab);
+      : allBookings.filter((b) => b?.status === activeTab)
+    : [];
 
-  // 👉 LIMIT FOR DASHBOARD PREVIEW
-  const limitedBookings = visibleBookings.slice(0, LIMIT);
+  const limitedBookings = filteredBookings.slice(0, LIMIT);
 
   const statCards = [
     { label: "Total users", value: stats?.users ?? "—" },
@@ -119,20 +87,19 @@ const AdminDashboard = () => {
   return (
     <div className="admin-shell">
 
-      {/* HEADER */}
       <div className="admin-header">
         <h1>Dashboard</h1>
       </div>
 
-      {/* ERROR */}
       {error && (
         <div className="admin-error-banner">
           <span>{error}</span>
-          <button onClick={() => dispatch(resetAdminError())}>✕</button>
+          <button onClick={() => dispatch(resetAdminError())}>
+            ✕
+          </button>
         </div>
       )}
 
-      {/* STAT CARDS */}
       <div className="admin-stats-grid">
         {statCards.map((card) => (
           <div key={card.label} className="admin-stat-card">
@@ -142,7 +109,6 @@ const AdminDashboard = () => {
         ))}
       </div>
 
-      {/* BOOKINGS PREVIEW */}
       <div className="admin-bookings-section">
 
         <div className="admin-section-header">
@@ -158,10 +124,10 @@ const AdminDashboard = () => {
 
         <div className="admin-table-wrap">
 
-          {limitedBookings.length === 0 ? (
-            <div className="admin-table-state">
-              No bookings found.
-            </div>
+          {loading ? (
+            <div className="admin-table-state">Loading...</div>
+          ) : limitedBookings.length === 0 ? (
+            <div className="admin-table-state">No bookings found.</div>
           ) : (
             <table className="admin-table">
               <thead>
@@ -176,17 +142,20 @@ const AdminDashboard = () => {
               <tbody>
                 {limitedBookings.map((b) => (
                   <tr key={b._id}>
-                    <td>{b.user?.name}</td>
-                    <td>{b.tour?.title}</td>
-                    <td>{formatDate(b.bookingDate)}</td>
+                    <td>{b?.user?.name || "-"}</td>
+                    <td>{b?.tour?.title || "-"}</td>
+                    <td>{formatDate(b?.bookingDate)}</td>
                     <td>
-                      <span className={`admin-status admin-status--${b.status}`}>
-                        {b.status}
+                      <span
+                        className={`admin-status admin-status--${b?.status}`}
+                      >
+                        {b?.status}
                       </span>
                     </td>
                   </tr>
                 ))}
               </tbody>
+
             </table>
           )}
 

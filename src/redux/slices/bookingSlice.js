@@ -6,7 +6,7 @@ import {
   updateBooking,
   cancelBooking,
   checkAvailability,
-} from "../thunks/bookingThunk";
+} from "../../redux/thunks/bookingThunk";
 
 const initialState = {
   bookings: [],

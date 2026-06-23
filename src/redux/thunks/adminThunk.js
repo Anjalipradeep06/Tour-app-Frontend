@@ -1,6 +1,9 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../api/axios";
 
+/* =================================================
+   AUTH HEADER
+================================================= */
 const getAuthConfig = () => {
   const token = localStorage.getItem("token");
 
@@ -11,12 +14,18 @@ const getAuthConfig = () => {
   };
 };
 
-// ---------------- DASHBOARD STATS ----------------
+/* =================================================
+   DASHBOARD STATS
+================================================= */
 export const getDashboardStats = createAsyncThunk(
   "admin/getDashboardStats",
   async (_, thunkAPI) => {
     try {
-      const { data } = await api.get("/admin/dashboard", getAuthConfig());
+      const { data } = await api.get(
+        "/admin/dashboard",
+        getAuthConfig()
+      );
+
       return data.stats;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -26,7 +35,9 @@ export const getDashboardStats = createAsyncThunk(
   }
 );
 
-// ---------------- ALL BOOKINGS (PAGINATED) ----------------
+/* =================================================
+   GET ALL BOOKINGS (FIXED + STANDARDIZED)
+================================================= */
 export const getAllBookings = createAsyncThunk(
   "admin/getAllBookings",
   async ({ page = 1, limit = 8 } = {}, thunkAPI) => {
@@ -36,8 +47,12 @@ export const getAllBookings = createAsyncThunk(
         getAuthConfig()
       );
 
-      return data; 
-      // { bookings, currentPage, totalPages, totalBookings }
+      return {
+        bookings: data.bookings || [],
+        currentPage: data.currentPage || page,
+        totalPages: data.totalPages || 1,
+        totalBookings: data.totalBookings || 0,
+      };
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to fetch bookings"
@@ -46,7 +61,9 @@ export const getAllBookings = createAsyncThunk(
   }
 );
 
-// ---------------- PENDING BOOKINGS (NO PAGINATION YET OPTIONAL) ----------------
+/* =================================================
+   GET PENDING BOOKINGS
+================================================= */
 export const getPendingBookings = createAsyncThunk(
   "admin/getPendingBookings",
   async (_, thunkAPI) => {
@@ -56,7 +73,7 @@ export const getPendingBookings = createAsyncThunk(
         getAuthConfig()
       );
 
-      return data.bookings;
+      return data.bookings || [];
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to fetch pending bookings"
@@ -65,7 +82,9 @@ export const getPendingBookings = createAsyncThunk(
   }
 );
 
-// ---------------- APPROVE ----------------
+/* =================================================
+   APPROVE BOOKING
+================================================= */
 export const approveBooking = createAsyncThunk(
   "admin/approveBooking",
   async (id, thunkAPI) => {
@@ -75,6 +94,7 @@ export const approveBooking = createAsyncThunk(
         {},
         getAuthConfig()
       );
+
       return data.booking;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -84,7 +104,9 @@ export const approveBooking = createAsyncThunk(
   }
 );
 
-// ---------------- REJECT ----------------
+/* =================================================
+   REJECT BOOKING
+================================================= */
 export const rejectBooking = createAsyncThunk(
   "admin/rejectBooking",
   async (id, thunkAPI) => {
@@ -94,6 +116,7 @@ export const rejectBooking = createAsyncThunk(
         {},
         getAuthConfig()
       );
+
       return data.booking;
     } catch (error) {
       return thunkAPI.rejectWithValue(
