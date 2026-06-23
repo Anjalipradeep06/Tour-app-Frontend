@@ -56,11 +56,11 @@ export const createTour = createAsyncThunk(
         tourData
       );
 
-      return response.data.tour;
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message ||
-          "Failed to create tour"
+        "Failed to create tour"
       );
     }
   }

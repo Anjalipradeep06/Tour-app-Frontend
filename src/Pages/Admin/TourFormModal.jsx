@@ -8,6 +8,7 @@ import { resetTourActionState } from "../../redux/slices/tourSlice";
 import TagListInput from "./TagListInput";
 import ItineraryEditor from "./ItineraryEditor";
 import StartDatesEditor from "./StartDatesEditor";
+import { toast } from "react-toastify";
 
 import "./TourFormModal.css";
 
@@ -104,7 +105,7 @@ const TourFormModal = ({ tour, onClose }) => {
   const { allDestinations = [], loading: destinationsLoading } = useSelector(
     (state) => state.destinations
   );
-  const { actionLoading, actionError, actionSuccess } = useSelector(
+  const { actionLoading, actionError, actionSuccess,actionMessage } = useSelector(
     (state) => state.tours
   );
 
@@ -118,11 +119,15 @@ const TourFormModal = ({ tour, onClose }) => {
   // Close automatically once the create/update actually succeeds.
   useEffect(() => {
     if (actionSuccess) {
+       toast.success(
+              actionMessage ||
+                "Tour created successfully"
+            );
       dispatch(resetTourActionState());
       onClose();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actionSuccess]);
+  }, [actionSuccess,actionMessage,dispatch,onClose]);
 
   useEffect(() => {
     return () => {
