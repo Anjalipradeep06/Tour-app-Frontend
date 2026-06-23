@@ -3,13 +3,15 @@ import {
   loginUser,
   registerUser,
   updateProfile,
-} from "../../redux/thunks/authThunk"; // adjust path if needed
+} from "../../redux/thunks/authThunk";
 
 const initialState = {
   user: JSON.parse(localStorage.getItem("user")) || null,
+  token: localStorage.getItem("token") || null,
   loading: false,
   error: null,
   message: null,
+  success: false,
 };
 
 const authSlice = createSlice({
@@ -18,13 +20,14 @@ const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.user = null;
+      state.token = null;
+      state.success = false;
       localStorage.removeItem("user");
+      localStorage.removeItem("token");
     },
-
     clearError: (state) => {
       state.error = null;
     },
-
     clearMessage: (state) => {
       state.message = null;
     },
@@ -39,8 +42,12 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
-        localStorage.setItem("user", JSON.stringify(action.payload));
+        state.success = true;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.message = action.payload.message;
+        localStorage.setItem("user", JSON.stringify(action.payload.user));
+        localStorage.setItem("token", action.payload.token);
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -68,8 +75,8 @@ const authSlice = createSlice({
       })
       .addCase(updateProfile.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload;
-        localStorage.setItem("user", JSON.stringify(action.payload));
+        state.user = action.payload.user;
+        localStorage.setItem("user", JSON.stringify(action.payload.user));
         state.message = "Profile updated successfully";
       })
       .addCase(updateProfile.rejected, (state, action) => {
@@ -79,7 +86,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, clearError, clearMessage } =
-  authSlice.actions;
-
+export const { logout, clearError, clearMessage } = authSlice.actions;
 export default authSlice.reducer;

@@ -19,11 +19,13 @@ const SearchTours = () => {
   );
 
   const [page, setPage] = useState(1);
+  const [queryParams, setQueryParams] = useState({});
   const limit = 12;
 
+  // ================= FETCH (search/filter/page driven) =================
   useEffect(() => {
-    dispatch(getAllTours({ page, limit }));
-  }, [dispatch, page]);
+    dispatch(getAllTours({ ...queryParams, page, limit }));
+  }, [dispatch, page, queryParams]);
 
   useEffect(() => {
     if (error) {
@@ -32,6 +34,25 @@ const SearchTours = () => {
     }
   }, [error, dispatch]);
 
+  // ================= SEARCH (from SearchBar) =================
+  const handleSearch = (searchValues) => {
+    setPage(1); // reset to page 1 on a new search
+    setQueryParams((prev) => ({
+      ...prev,
+      ...searchValues,
+    }));
+  };
+
+  // ================= FILTER (from FilterSidebar) =================
+  const handleFilter = (filterValues) => {
+    setPage(1); // reset to page 1 on a new filter
+    setQueryParams((prev) => ({
+      ...prev,
+      ...filterValues,
+    }));
+  };
+
+  // ================= PAGINATION =================
   const handleNext = () => {
     setPage((prev) => Math.min(prev + 1, pages));
   };
@@ -60,10 +81,10 @@ const SearchTours = () => {
         </div>
       </section>
 
-      <SearchBar />
+      <SearchBar onSearch={handleSearch} />
 
       <div className="search-layout">
-        <FilterSidebar />
+        <FilterSidebar onFilter={handleFilter} />
 
         <div className="tour-results">
           <div className="results-header">
@@ -71,7 +92,7 @@ const SearchTours = () => {
               <h2>
                 {loading
                   ? "Finding experiences..."
-                  : `${total || tours.length} experiences found`}
+                  : `${total || tours.length} packages found`}
               </h2>
 
               <p>Curated tours from trusted operators worldwide.</p>

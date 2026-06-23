@@ -53,9 +53,9 @@ export const getUserBookings = createAsyncThunk(
 
       return {
         bookings: data.bookings || [],
-        currentPage: data.pagination?.currentPage || page,
-        totalPages: data.pagination?.totalPages || 1,
-        totalBookings: data.pagination?.totalBookings || 0,
+        currentPage: data.currentPage || page,
+        totalPages: data.totalPages || 1,
+        totalBookings: data.totalBookings || 0,
       };
     } catch (error) {
       return thunkAPI.rejectWithValue(

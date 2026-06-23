@@ -10,6 +10,8 @@ import {
   clearError,
 } from "../../redux/slices/authSlice";
 
+import { getUserBookings } from "../../redux/thunks/bookingThunk";
+
 import EditProfileModal from "./EditProfileModal";
 
 import "./Profile.css";
@@ -22,15 +24,22 @@ const Profile = () => {
     (state) => state.auth
   );
 
-  const { bookings } = useSelector(
+  // ⚠️ Verify this matches your store.js key — should be
+  // whatever key bookingSlice is registered under in configureStore.
+  const { totalBookings } = useSelector(
     (state) =>
-      state.bookings || {
-        bookings: [],
+      state.booking || {
+        totalBookings: 0,
       }
   );
 
   const [showEditModal, setShowEditModal] =
     useState(false);
+
+  // ================= FETCH USER'S BOOKINGS =================
+  useEffect(() => {
+    dispatch(getUserBookings({ page: 1, limit: 5 }));
+  }, [dispatch]);
 
   useEffect(() => {
     if (message) {
@@ -95,7 +104,7 @@ const Profile = () => {
       <div className="profile-container">
         <div className="profile-stats">
           <div className="stat-card">
-            <h3>{bookings?.length || 0}</h3>
+            <h3>{totalBookings}</h3>
             <span>Total Bookings</span>
           </div>
 

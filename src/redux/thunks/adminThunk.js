@@ -36,7 +36,7 @@ export const getDashboardStats = createAsyncThunk(
 );
 
 /* =================================================
-   GET ALL BOOKINGS (FIXED + STANDARDIZED)
+   GET ALL BOOKINGS (FIXED — reads nested pagination object)
 ================================================= */
 export const getAllBookings = createAsyncThunk(
   "admin/getAllBookings",
@@ -49,9 +49,9 @@ export const getAllBookings = createAsyncThunk(
 
       return {
         bookings: data.bookings || [],
-        currentPage: data.currentPage || page,
-        totalPages: data.totalPages || 1,
-        totalBookings: data.totalBookings || 0,
+        currentPage: data.pagination?.currentPage || page,
+        totalPages: data.pagination?.totalPages || 1,
+        totalBookings: data.pagination?.totalItems || 0,
       };
     } catch (error) {
       return thunkAPI.rejectWithValue(

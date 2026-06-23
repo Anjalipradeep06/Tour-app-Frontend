@@ -3,23 +3,29 @@ import {
   FaLock,
   FaCreditCard,
   FaSpinner,
+  FaHourglassHalf,
 } from "react-icons/fa";
 
 import { startPayment } from "../../redux/thunks/paymentThunk";
 
 import "./PaymentButton.css";
 
-const PaymentButton = ({ bookingId }) => {
+const PaymentButton = ({ booking }) => {
   const dispatch = useDispatch();
 
   const { loading } = useSelector(
     (state) => state.payment
   );
 
+  // ================= GUARD: booking not loaded yet =================
+  if (!booking) {
+    return null;
+  }
+
   const handlePayment = async () => {
     try {
       const response = await dispatch(
-        startPayment(bookingId)
+        startPayment(booking._id)
       ).unwrap();
 
       window.location.href = response.url;
@@ -28,6 +34,31 @@ const PaymentButton = ({ bookingId }) => {
     }
   };
 
+  // ================= WAITING FOR ADMIN APPROVAL =================
+  if (booking.status === "pending") {
+    return (
+      <div className="payment-wrapper">
+        <button className="pay-btn waiting-btn" disabled>
+          <FaHourglassHalf />
+          Waiting for Admin Approval
+        </button>
+
+        <div className="payment-note">
+          <FaLock />
+          <span>
+            You'll be able to pay once your booking is approved
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  // ================= ALREADY PAID =================
+  if (booking.paymentStatus === "paid") {
+    return null;
+  }
+
+  // ================= APPROVED — SHOW PAY BUTTON =================
   return (
     <div className="payment-wrapper">
       <button

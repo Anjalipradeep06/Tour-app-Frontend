@@ -14,10 +14,10 @@ export const getAllTours = createAsyncThunk(
 
       return {
         tours: data.tours || [],
-        total: data.total || 0,
-        page: data.page || 1,
-        pages: data.pages || 1,
-        count: data.count || 0,
+        total: data.pagination?.total || 0,
+        page: data.pagination?.page || 1,
+        pages: data.pagination?.totalPages || 1,
+        count: data.tours?.length || 0,
       };
     } catch (error) {
       return thunkAPI.rejectWithValue(

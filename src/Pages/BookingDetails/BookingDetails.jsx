@@ -296,38 +296,30 @@ const BookingDetails = () => {
             <div className="summary-divider" />
 
             <div className="action-group">
-              {paymentStatus !==
-                "paid" &&
-                status !==
-                  "cancelled" && (
-                  <PaymentButton
-                    bookingId={
-                      booking?._id
-                    }
-                  />
-                )}
+  {paymentStatus !== "paid" &&
+    status !== "cancelled" && (
+      <PaymentButton
+        booking={booking}
+      />
+    )}
 
-              {canCancel ? (
-                <button
-                  className="danger-btn"
-                  onClick={
-                    handleCancel
-                  }
-                  disabled={
-                    loading.action
-                  }
-                >
-                  {loading.action
-                    ? "Cancelling..."
-                    : "Cancel Booking"}
-                </button>
-              ) : (
-                <p className="locked-note">
-                  This booking can no
-                  longer be modified.
-                </p>
-              )}
-            </div>
+  {canCancel ? (
+    <button
+      className="danger-btn"
+      onClick={handleCancel}
+      disabled={loading.action}
+    >
+      {loading.action
+        ? "Cancelling..."
+        : "Cancel Booking"}
+    </button>
+  ) : (
+    <p className="locked-note">
+      This booking can no
+      longer be modified.
+    </p>
+  )}
+</div>
           </aside>
         </div>
       </div>

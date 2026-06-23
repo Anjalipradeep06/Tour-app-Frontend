@@ -18,3 +18,46 @@
   opacity: 0.4;
   cursor: not-allowed;
 }
+/* ---------- Pagination (Manage Bookings page) ---------- */
+
+.admin-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 18px 16px;
+  border-top: 1px solid var(--line);
+}
+
+.admin-page-btn {
+  background: none;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.admin-page-btn:hover:not(:disabled) {
+  border-color: var(--gold);
+  background: var(--pending-bg);
+}
+
+.admin-page-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.admin-page-info {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.admin-page-total {
+  font-weight: 400;
+  color: var(--slate);
+}
