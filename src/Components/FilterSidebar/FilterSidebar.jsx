@@ -10,10 +10,12 @@ import {
 } from "react-icons/fa";
 
 import { getAllTours } from "../../redux/thunks/tourThunk";
+import { countries } from "../../utils/countries";
 
 import "./FilterSidebar.css";
 
 const initialFilters = {
+  country: "",
   continent: "",
   activity: "",
   duration: "",
@@ -86,6 +88,36 @@ const FilterSidebar = () => {
         </button>
       </div>
 
+      {/* COUNTRY */}
+
+      <div className="filter-group">
+        <label>
+          <FaGlobeAsia />
+          Country
+        </label>
+
+        <select
+          name="country"
+          value={filters.country}
+          onChange={handleChange}
+        >
+          <option value="">
+            All Countries
+          </option>
+
+          {countries.map((country) => (
+            <option
+              key={country}
+              value={country}
+            >
+              {country}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* CONTINENT */}
+
       <div className="filter-group">
         <label>
           <FaGlobeAsia />
@@ -101,18 +133,33 @@ const FilterSidebar = () => {
             All Continents
           </option>
 
-          <option value="Asia">Asia</option>
-          <option value="Europe">Europe</option>
-          <option value="Africa">Africa</option>
-          <option value="Australia">Australia</option>
+          <option value="Asia">
+            Asia
+          </option>
+
+          <option value="Europe">
+            Europe
+          </option>
+
+          <option value="Africa">
+            Africa
+          </option>
+
+          <option value="Australia">
+            Australia
+          </option>
+
           <option value="North America">
             North America
           </option>
+
           <option value="South America">
             South America
           </option>
         </select>
       </div>
+
+      {/* ACTIVITY */}
 
       <div className="filter-group">
         <label>
@@ -129,6 +176,8 @@ const FilterSidebar = () => {
         />
       </div>
 
+      {/* DURATION */}
+
       <div className="filter-group">
         <label>
           <FaClock />
@@ -144,6 +193,8 @@ const FilterSidebar = () => {
           placeholder="e.g. 5"
         />
       </div>
+
+      {/* PRICE */}
 
       <div className="filter-group">
         <label>
@@ -169,6 +220,8 @@ const FilterSidebar = () => {
           />
         </div>
       </div>
+
+      {/* SORT */}
 
       <div className="filter-group">
         <label>

@@ -1,0 +1,124 @@
+.epm-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(
+    15,
+    23,
+    42,
+    0.65
+  );
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
+
+  padding: 1rem;
+}
+
+.epm-modal {
+  width: 100%;
+  max-width: 500px;
+
+  background: #fff;
+
+  border-radius: 24px;
+
+  padding: 2rem;
+
+  box-shadow: 0 20px 60px
+    rgba(0, 0, 0, 0.18);
+}
+
+.epm-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 1.5rem;
+}
+
+.epm-header h2 {
+  margin: 0;
+  color: #111827;
+}
+
+.epm-close {
+  border: none;
+  background: none;
+
+  font-size: 1.2rem;
+
+  cursor: pointer;
+}
+
+.epm-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.epm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.epm-field label {
+  font-weight: 600;
+  color: #374151;
+}
+
+.epm-field input {
+  padding: 0.95rem 1rem;
+
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+
+  font-size: 1rem;
+}
+
+.epm-field input:focus {
+  outline: none;
+  border-color: #006ce4;
+}
+
+.epm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+
+  margin-top: 0.5rem;
+}
+
+.epm-cancel {
+  border: 1px solid #d1d5db;
+
+  background: #fff;
+
+  padding: 0.9rem 1.4rem;
+
+  border-radius: 12px;
+
+  cursor: pointer;
+}
+
+.epm-save {
+  border: none;
+
+  background: #006ce4;
+  color: white;
+
+  padding: 0.9rem 1.4rem;
+
+  border-radius: 12px;
+
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.epm-save:hover {
+  background: #0057b8;
+}

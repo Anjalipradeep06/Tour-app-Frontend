@@ -1,102 +1,68 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { loginUser, registerUser } from "../thunks/authThunk";
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import api from "../../api/axios";
 
-const storedAuth = localStorage.getItem("auth");
+/* =========================
+   REGISTER
+========================= */
+export const registerUser = createAsyncThunk(
+  "auth/registerUser",
+  async (userData, thunkAPI) => {
+    try {
+      const response = await api.post(
+        "/auth/register",
+        userData
+      );
 
-const parsedAuth = storedAuth ? JSON.parse(storedAuth) : null;
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message ||
+          "Registration failed"
+      );
+    }
+  }
+);
 
-const initialState = {
-  user: parsedAuth?.user || null,
-  token: parsedAuth?.token || null,
+/* =========================
+   LOGIN
+========================= */
+export const loginUser = createAsyncThunk(
+  "auth/loginUser",
+  async (userData, thunkAPI) => {
+    try {
+      const response = await api.post(
+        "/auth/login",
+        userData
+      );
 
-  loading: false,
-  error: null,
-  success: false,
-  message: null,
-};
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message ||
+          "Login failed"
+      );
+    }
+  }
+);
 
-const authSlice = createSlice({
-  name: "auth",
-  initialState,
-  reducers: {
-    clearError: (state) => {
-      state.error = null;
-    },
+/* =========================
+   UPDATE PROFILE
+========================= */
+export const updateProfile = createAsyncThunk(
+  "auth/updateProfile",
+  async (profileData, thunkAPI) => {
+    try {
+      const response = await api.put(
+        "/auth/profile",
+        profileData
+      );
 
-    clearMessage: (state) => {
-      state.message = null;
-      state.success = false;
-    },
-
-    logout: (state) => {
-      localStorage.removeItem("auth");
-      localStorage.removeItem("token");
-
-      state.user = null;
-      state.token = null;
-      state.error = null;
-      state.message = null;
-      state.success = false;
-    },
-  },
-
-  extraReducers: (builder) => {
-    builder
-      // REGISTER
-      .addCase(registerUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(registerUser.fulfilled, (state, action) => {
-        state.loading = false;
-        state.success = true;
-
-        state.user = action.payload.user;
-        state.token = action.payload.token;
-        state.message = action.payload.message;
-
-        localStorage.setItem(
-          "auth",
-          JSON.stringify({
-            user: action.payload.user,
-            token: action.payload.token,
-          })
-        );
-        localStorage.setItem("token", action.payload.token);
-      })
-      .addCase(registerUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-
-      // LOGIN
-      .addCase(loginUser.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(loginUser.fulfilled, (state, action) => {
-        state.loading = false;
-        state.success = true;
-
-        state.user = action.payload.user;
-        state.token = action.payload.token;
-        state.message = action.payload.message;
-
-        localStorage.setItem(
-          "auth",
-          JSON.stringify({
-            user: action.payload.user,
-            token: action.payload.token,
-          })
-        );
-        localStorage.setItem("token", action.payload.token);
-      })
-      .addCase(loginUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      });
-  },
-});
-
-export const { clearError, clearMessage, logout } = authSlice.actions;
-export default authSlice.reducer;
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message ||
+          "Profile update failed"
+      );
+    }
+  }
+);

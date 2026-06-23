@@ -7,17 +7,33 @@ import {
   getDestinationsByContinent,
   getDestinationById,
   createDestination,
+  updateDestination,
 } from "../thunks/destinationThunk";
-const storedAuth = localStorage.getItem("auth");
 
-const parsedAuth = storedAuth ? JSON.parse(storedAuth) : null;
+const storedAuth = localStorage.getItem("auth");
+const parsedAuth = storedAuth
+  ? JSON.parse(storedAuth)
+  : null;
+
 const initialState = {
-  featuredDestinations: parsedAuth?.featuredDestinations || [],
-  destinations: parsedAuth?.destinations || [],
-  popularDestinations: parsedAuth?.popularDestinations || [],
-  allDestinations: parsedAuth?.allDestinations || [],
-  selectedDestination: parsedAuth?.selectedDestination || null,
-  destinationTours: parsedAuth?.destinationTours || [],
+  featuredDestinations:
+    parsedAuth?.featuredDestinations || [],
+
+  destinations:
+    parsedAuth?.destinations || [],
+
+  popularDestinations:
+    parsedAuth?.popularDestinations || [],
+
+  allDestinations:
+    parsedAuth?.allDestinations || [],
+
+  selectedDestination:
+    parsedAuth?.selectedDestination ||
+    null,
+
+  destinationTours:
+    parsedAuth?.destinationTours || [],
 
   total: 0,
   page: 1,
@@ -50,22 +66,33 @@ const destinationSlice =
         (state) => {
           state.selectedDestination =
             null;
+
           state.destinationTours =
             [];
         },
 
-     resetDestinationActionState: (state) => {
-  state.actionLoading = false;
-  state.actionError = null;
-  state.actionSuccess = false;
-  state.actionMessage = null;
-},
+      resetDestinationActionState:
+        (state) => {
+          state.actionLoading =
+            false;
+
+          state.actionError = null;
+
+          state.actionSuccess =
+            false;
+
+          state.actionMessage =
+            null;
+        },
     },
 
     extraReducers: (builder) => {
       builder
 
-        // ALL
+        /* =========================
+           ALL DESTINATIONS
+        ========================= */
+
         .addCase(
           getAllDestinations.pending,
           (state) => {
@@ -80,17 +107,20 @@ const destinationSlice =
             state.loading = false;
 
             state.allDestinations =
-              action.payload.destinations ||
-              [];
+              action.payload
+                .destinations || [];
 
             state.total =
-              action.payload.total || 0;
+              action.payload.total ||
+              0;
 
             state.page =
-              action.payload.page || 1;
+              action.payload.page ||
+              1;
 
             state.pages =
-              action.payload.pages || 1;
+              action.payload.pages ||
+              1;
           }
         )
 
@@ -103,7 +133,10 @@ const destinationSlice =
           }
         )
 
-        // FEATURED
+        /* =========================
+           FEATURED
+        ========================= */
+
         .addCase(
           getFeaturedDestinations.pending,
           (state) => {
@@ -133,7 +166,10 @@ const destinationSlice =
           }
         )
 
-        // POPULAR
+        /* =========================
+           POPULAR
+        ========================= */
+
         .addCase(
           getPopularDestinations.pending,
           (state) => {
@@ -163,7 +199,10 @@ const destinationSlice =
           }
         )
 
-        // CONTINENT
+        /* =========================
+           CONTINENT
+        ========================= */
+
         .addCase(
           getDestinationsByContinent.pending,
           (state) => {
@@ -193,7 +232,10 @@ const destinationSlice =
           }
         )
 
-        // SINGLE
+        /* =========================
+           SINGLE DESTINATION
+        ========================= */
+
         .addCase(
           getDestinationById.pending,
           (state) => {
@@ -212,8 +254,8 @@ const destinationSlice =
               action.payload;
 
             state.destinationTours =
-              action.payload.tours ||
-              [];
+              action.payload
+                .tours || [];
           }
         )
 
@@ -226,41 +268,121 @@ const destinationSlice =
           }
         )
 
-        // CREATE
-.addCase(
-  createDestination.pending,
-  (state) => {
-    state.actionLoading = true;
-    state.actionError = null;
-    state.actionSuccess = false;
-  }
-)
+        /* =========================
+           CREATE DESTINATION
+        ========================= */
 
-.addCase(
-  createDestination.fulfilled,
-  (state, action) => {
-    state.actionLoading = false;
-    state.actionSuccess = true;
+        .addCase(
+          createDestination.pending,
+          (state) => {
+            state.actionLoading =
+              true;
 
-    state.allDestinations = [
-      action.payload.destination,
-      ...state.allDestinations,
-    ];
+            state.actionError =
+              null;
 
-    state.actionMessage =
-      action.payload.message ||
-      "Destination created successfully";
-  }
-)
+            state.actionSuccess =
+              false;
+          }
+        )
 
-.addCase(
-  createDestination.rejected,
-  (state, action) => {
-    state.actionLoading = false;
-    state.actionError = action.payload;
-    state.actionSuccess = false;
-  }
-)
+        .addCase(
+          createDestination.fulfilled,
+          (state, action) => {
+            state.actionLoading =
+              false;
+
+            state.actionSuccess =
+              true;
+
+            state.allDestinations =
+              [
+                action.payload
+                  .destination,
+                ...state.allDestinations,
+              ];
+
+            state.total += 1;
+
+            state.actionMessage =
+              action.payload
+                .message ||
+              "Destination created successfully";
+          }
+        )
+
+        .addCase(
+          createDestination.rejected,
+          (state, action) => {
+            state.actionLoading =
+              false;
+
+            state.actionError =
+              action.payload;
+
+            state.actionSuccess =
+              false;
+          }
+        )
+
+        /* =========================
+           UPDATE DESTINATION
+        ========================= */
+
+        .addCase(
+          updateDestination.pending,
+          (state) => {
+            state.actionLoading =
+              true;
+
+            state.actionError =
+              null;
+
+            state.actionSuccess =
+              false;
+          }
+        )
+
+        .addCase(
+          updateDestination.fulfilled,
+          (state, action) => {
+            state.actionLoading =
+              false;
+
+            state.actionSuccess =
+              true;
+
+            state.allDestinations =
+              state.allDestinations.map(
+                (destination) =>
+                  destination._id ===
+                  action.payload
+                    .destination._id
+                    ? action.payload
+                        .destination
+                    : destination
+              );
+
+            state.actionMessage =
+              action.payload
+                .message ||
+              "Destination updated successfully";
+          }
+        )
+
+        .addCase(
+          updateDestination.rejected,
+          (state, action) => {
+            state.actionLoading =
+              false;
+
+            state.actionError =
+              action.payload;
+
+            state.actionSuccess =
+              false;
+          }
+        );
     },
   });
 

@@ -1,14 +1,28 @@
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
+import { FaPencilAlt } from "react-icons/fa";
+import { toast } from "react-toastify";
 
-import { logout } from "../../redux/slices/authSlice";
+import {
+  logout,
+  clearMessage,
+  clearError,
+} from "../../redux/slices/authSlice";
+
+import ProfileEditModal from "./ProfileEditModal";
 
 import "./Profile.css";
 
 const Profile = () => {
-  const { user } = useSelector(
-    (state) => state.auth
-  );
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const {
+    user,
+    message,
+    error,
+  } = useSelector((state) => state.auth);
 
   const { bookings } = useSelector(
     (state) => state.bookings || {
@@ -16,8 +30,24 @@ const Profile = () => {
     }
   );
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const [showEditModal, setShowEditModal] =
+    useState(false);
+
+  useEffect(() => {
+    if (message) {
+      toast.success(message);
+
+      dispatch(clearMessage());
+    }
+  }, [message, dispatch]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+
+      dispatch(clearError());
+    }
+  }, [error, dispatch]);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -92,7 +122,18 @@ const Profile = () => {
 
         <div className="profile-grid">
           <div className="profile-card">
-            <h2>Account Information</h2>
+            <div className="profile-card-header">
+              <h2>Account Information</h2>
+
+              <button
+                className="profile-edit-btn"
+                onClick={() =>
+                  setShowEditModal(true)
+                }
+              >
+                <FaPencilAlt />
+              </button>
+            </div>
 
             <div className="detail-item">
               <span>Full Name</span>
@@ -154,6 +195,14 @@ const Profile = () => {
           </div>
         </div>
       </div>
+
+      {showEditModal && (
+        <ProfileEditModal
+          onClose={() =>
+            setShowEditModal(false)
+          }
+        />
+      )}
     </div>
   );
 };

@@ -36,10 +36,10 @@
   border: none;
   background: #006ce4;
   color: #fff;
-
+position: relative;
   padding: 0.9rem 1.25rem;
   border-radius: 12px;
-
+top: 40px;
   font-size: 0.9rem;
   font-weight: 600;
 
@@ -288,3 +288,6 @@
     font-size: 1.75rem;
   }
 }
+/* .notifications-page {
+  padding-top: 100px;
+} */

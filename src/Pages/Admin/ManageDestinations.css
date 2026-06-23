@@ -208,3 +208,24 @@
     grid-template-columns: 1fr;
   }
 }
+.md-actions {
+  margin-top: 14px;
+}
+
+.md-edit-btn {
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 10px;
+  background: #1c1f23;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.md-edit-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}

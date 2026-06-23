@@ -1,15 +1,19 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../api/axios";
 
-// Get All Destinations (Admin)
-// Backend returns: { success, total, page, pages, count, destinations }
+/* =========================
+   Get All Destinations
+========================= */
 export const getAllDestinations = createAsyncThunk(
   "destinations/getAllDestinations",
   async (params = {}, thunkAPI) => {
     try {
-      const response = await api.get("/destinations/all", {
-        params,
-      });
+      const response = await api.get(
+        "/destinations/all",
+        {
+          params,
+        }
+      );
 
       return response.data;
     } catch (error) {
@@ -21,7 +25,9 @@ export const getAllDestinations = createAsyncThunk(
   }
 );
 
-// Get Featured Destinations
+/* =========================
+   Get Featured Destinations
+========================= */
 export const getFeaturedDestinations =
   createAsyncThunk(
     "destinations/getFeaturedDestinations",
@@ -41,7 +47,9 @@ export const getFeaturedDestinations =
     }
   );
 
-// Get Destinations By Continent
+/* =========================
+   Get Destinations By Continent
+========================= */
 export const getDestinationsByContinent =
   createAsyncThunk(
     "destinations/getDestinationsByContinent",
@@ -61,7 +69,9 @@ export const getDestinationsByContinent =
     }
   );
 
-// Get Popular Destinations
+/* =========================
+   Get Popular Destinations
+========================= */
 export const getPopularDestinations =
   createAsyncThunk(
     "destinations/getPopularDestinations",
@@ -81,7 +91,9 @@ export const getPopularDestinations =
     }
   );
 
-// Get Single Destination + Related Tours
+/* =========================
+   Get Destination By ID
+========================= */
 export const getDestinationById =
   createAsyncThunk(
     "destinations/getDestinationById",
@@ -101,47 +113,144 @@ export const getDestinationById =
     }
   );
 
-// =====================
-// Create Destination (Admin)
-// Backend expects multipart/form-data (multer fields:
-// bannerImage, galleryImages) and returns the flat
-// destination object — no wrapper, no message field.
-//
-// Call with a plain object, e.g.:
-//   { name, country, continent, description, isFeatured,
-//     isPopular, bannerImage: File, galleryImages: File[] }
-// This thunk builds the FormData for you.
-// =====================
-export const createDestination = createAsyncThunk(
-  "destinations/createDestination",
-  async (destinationData, thunkAPI) => {
-    try {
-      const formData = new FormData();
+/* =========================
+   Create Destination
+========================= */
+export const createDestination =
+  createAsyncThunk(
+    "destinations/createDestination",
+    async (
+      destinationData,
+      thunkAPI
+    ) => {
+      try {
+        const formData =
+          new FormData();
 
-      Object.entries(destinationData).forEach(([key, value]) => {
-        if (key === "bannerImage" && value instanceof File) {
-          formData.append("bannerImage", value);
-        } else if (key === "galleryImages" && Array.isArray(value)) {
-          value.forEach((file) => formData.append("galleryImages", file));
-        } else if (value !== undefined && value !== null) {
-          formData.append(key, value);
-        }
-      });
+        Object.entries(
+          destinationData
+        ).forEach(([key, value]) => {
+          if (
+            key === "bannerImage" &&
+            value instanceof File
+          ) {
+            formData.append(
+              "bannerImage",
+              value
+            );
+          } else if (
+            key === "galleryImages" &&
+            Array.isArray(value)
+          ) {
+            value.forEach((file) =>
+              formData.append(
+                "galleryImages",
+                file
+              )
+            );
+          } else if (
+            value !== undefined &&
+            value !== null
+          ) {
+            formData.append(
+              key,
+              value
+            );
+          }
+        });
 
-      const response = await api.post(
-        "/destinations",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
+        const response =
+          await api.post(
+            "/destinations",
+            formData,
+            {
+              headers: {
+                "Content-Type":
+                  "multipart/form-data",
+              },
+            }
+          );
 
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data?.message ||
-          "Failed to create destination"
-      );
+        return response.data;
+      } catch (error) {
+        return thunkAPI.rejectWithValue(
+          error.response?.data
+            ?.message ||
+            "Failed to create destination"
+        );
+      }
     }
-  }
-);
+  );
+
+/* =========================
+   Update Destination
+========================= */
+export const updateDestination =
+  createAsyncThunk(
+    "destinations/updateDestination",
+    async (
+      { id, destinationData },
+      thunkAPI
+    ) => {
+      try {
+        const formData =
+          new FormData();
+
+        Object.entries(
+          destinationData
+        ).forEach(([key, value]) => {
+          if (
+            key === "bannerImage" &&
+            value instanceof File
+          ) {
+            formData.append(
+              "bannerImage",
+              value
+            );
+          } else if (
+            key === "galleryImages" &&
+            Array.isArray(value)
+          ) {
+            value.forEach((file) => {
+              if (
+                file instanceof File
+              ) {
+                formData.append(
+                  "galleryImages",
+                  file
+                );
+              }
+            });
+          } else if (
+            value !== undefined &&
+            value !== null
+          ) {
+            formData.append(
+              key,
+              value
+            );
+          }
+        });
+
+        const response =
+          await api.put(
+            `/destinations/${id}`,
+            formData,
+            {
+              headers: {
+                "Content-Type":
+                  "multipart/form-data",
+              },
+            }
+          );
+
+        return response.data;
+      } catch (error) {
+        return thunkAPI.rejectWithValue(
+          error.response?.data
+            ?.message ||
+            "Failed to update destination"
+        );
+      }
+    }
+  );

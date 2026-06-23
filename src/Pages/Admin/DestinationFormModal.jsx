@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { getNames } from "country-list";
 
-import { createDestination } from "../../redux/thunks/destinationThunk";
+import {
+  createDestination,
+  updateDestination,
+} from "../../redux/thunks/destinationThunk";
 
 import {
   resetDestinationActionState,
@@ -22,6 +26,8 @@ const CONTINENTS = [
   "Antarctica",
 ];
 
+const COUNTRIES = getNames().sort();
+
 const emptyForm = {
   name: "",
   country: "",
@@ -34,8 +40,14 @@ const emptyForm = {
   isPopular: false,
 };
 
-const DestinationFormModal = ({ onClose }) => {
+const DestinationFormModal = ({
+  onClose,
+  destination = null,
+}) => {
   const dispatch = useDispatch();
+
+  const isEditMode =
+    Boolean(destination);
 
   const {
     actionLoading,
@@ -46,7 +58,8 @@ const DestinationFormModal = ({ onClose }) => {
     (state) => state.destinations
   );
 
-  const [form, setForm] = useState(emptyForm);
+  const [form, setForm] =
+    useState(emptyForm);
 
   const [bannerImage, setBannerImage] =
     useState(null);
@@ -58,10 +71,42 @@ const DestinationFormModal = ({ onClose }) => {
     useState(null);
 
   useEffect(() => {
+    if (!destination) return;
+
+    setForm({
+      name: destination.name || "",
+      country:
+        destination.country || "",
+      continent:
+        destination.continent || "",
+      description:
+        destination.description || "",
+      activities:
+        destination.activities || [],
+      latitude:
+        destination.latitude || "",
+      longitude:
+        destination.longitude || "",
+      isFeatured:
+        destination.isFeatured ||
+        false,
+      isPopular:
+        destination.isPopular ||
+        false,
+    });
+
+    setBannerPreview(
+      destination.bannerImage
+    );
+  }, [destination]);
+
+  useEffect(() => {
     if (actionSuccess) {
       toast.success(
         actionMessage ||
-          "Destination created successfully"
+          (isEditMode
+            ? "Destination updated successfully"
+            : "Destination created successfully")
       );
 
       dispatch(
@@ -75,6 +120,7 @@ const DestinationFormModal = ({ onClose }) => {
     actionMessage,
     dispatch,
     onClose,
+    isEditMode,
   ]);
 
   useEffect(() => {
@@ -83,44 +129,83 @@ const DestinationFormModal = ({ onClose }) => {
     }
   }, [actionError]);
 
-  const setField = (key, value) => {
+  const setField = (
+    key,
+    value
+  ) => {
     setForm((prev) => ({
       ...prev,
       [key]: value,
     }));
   };
 
-  const handleBannerChange = (e) => {
+  const handleBannerChange = (
+    e
+  ) => {
     const file =
       e.target.files?.[0] || null;
 
     setBannerImage(file);
 
-    setBannerPreview(
-      file
-        ? URL.createObjectURL(file)
-        : null
-    );
+    if (file) {
+      setBannerPreview(
+        URL.createObjectURL(file)
+      );
+    }
   };
 
-  const handleGalleryChange = (e) => {
+  const handleGalleryChange = (
+    e
+  ) => {
     setGalleryImages(
-      Array.from(e.target.files || [])
+      Array.from(
+        e.target.files || []
+      )
     );
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    dispatch(
-      createDestination({
-        ...form,
-        latitude: Number(form.latitude),
-        longitude: Number(form.longitude),
-        bannerImage,
-        galleryImages,
-      })
-    );
+    const payload = {
+      ...form,
+      latitude: Number(
+        form.latitude
+      ),
+      longitude: Number(
+        form.longitude
+      ),
+    };
+
+    if (bannerImage) {
+      payload.bannerImage =
+        bannerImage;
+    }
+
+    if (
+      galleryImages.length > 0
+    ) {
+      payload.galleryImages =
+        galleryImages;
+    }
+
+    if (isEditMode) {
+      dispatch(
+        updateDestination({
+          id: destination._id,
+          destinationData:
+            payload,
+        })
+      );
+    } else {
+      dispatch(
+        createDestination({
+          ...payload,
+          bannerImage,
+          galleryImages,
+        })
+      );
+    }
   };
 
   return (
@@ -130,9 +215,12 @@ const DestinationFormModal = ({ onClose }) => {
       aria-modal="true"
     >
       <div className="tf-modal">
-
         <div className="tf-modal-header">
-          <h2>Create Destination</h2>
+          <h2>
+            {isEditMode
+              ? "Edit Destination"
+              : "Create Destination"}
+          </h2>
 
           <button
             className="tf-close-btn"
@@ -154,7 +242,6 @@ const DestinationFormModal = ({ onClose }) => {
           )}
 
           <div className="tf-grid">
-
             <div className="tf-field">
               <label>Name</label>
 
@@ -173,7 +260,7 @@ const DestinationFormModal = ({ onClose }) => {
             <div className="tf-field">
               <label>Country</label>
 
-              <input
+              <select
                 value={form.country}
                 onChange={(e) =>
                   setField(
@@ -182,14 +269,34 @@ const DestinationFormModal = ({ onClose }) => {
                   )
                 }
                 required
-              />
+              >
+                <option
+                  value=""
+                  disabled
+                >
+                  Select Country
+                </option>
+
+                {COUNTRIES.map(
+                  (country) => (
+                    <option
+                      key={country}
+                      value={country}
+                    >
+                      {country}
+                    </option>
+                  )
+                )}
+              </select>
             </div>
 
             <div className="tf-field">
               <label>Continent</label>
 
               <select
-                value={form.continent}
+                value={
+                  form.continent
+                }
                 onChange={(e) =>
                   setField(
                     "continent",
@@ -205,30 +312,37 @@ const DestinationFormModal = ({ onClose }) => {
                   Select continent
                 </option>
 
-                {CONTINENTS.map((c) => (
-                  <option
-                    key={c}
-                    value={c}
-                  >
-                    {c}
-                  </option>
-                ))}
+                {CONTINENTS.map(
+                  (c) => (
+                    <option
+                      key={c}
+                      value={c}
+                    >
+                      {c}
+                    </option>
+                  )
+                )}
               </select>
             </div>
 
             <div className="tf-field">
               <label>
-                Rating handled by reviews
+                Rating handled by
+                reviews
               </label>
             </div>
 
             <div className="tf-field">
-              <label>Latitude</label>
+              <label>
+                Latitude
+              </label>
 
               <input
                 type="number"
                 step="any"
-                value={form.latitude}
+                value={
+                  form.latitude
+                }
                 onChange={(e) =>
                   setField(
                     "latitude",
@@ -240,12 +354,16 @@ const DestinationFormModal = ({ onClose }) => {
             </div>
 
             <div className="tf-field">
-              <label>Longitude</label>
+              <label>
+                Longitude
+              </label>
 
               <input
                 type="number"
                 step="any"
-                value={form.longitude}
+                value={
+                  form.longitude
+                }
                 onChange={(e) =>
                   setField(
                     "longitude",
@@ -255,15 +373,18 @@ const DestinationFormModal = ({ onClose }) => {
                 required
               />
             </div>
-
           </div>
 
           <div className="tf-field">
-            <label>Description</label>
+            <label>
+              Description
+            </label>
 
             <textarea
               rows={3}
-              value={form.description}
+              value={
+                form.description
+              }
               onChange={(e) =>
                 setField(
                   "description",
@@ -275,22 +396,27 @@ const DestinationFormModal = ({ onClose }) => {
           </div>
 
           <div className="tf-field">
-            <label>Activities</label>
+            <label>
+              Activities
+            </label>
 
             <TagListInput
-              values={form.activities}
-              onChange={(activities) =>
+              values={
+                form.activities
+              }
+              onChange={(
+                activities
+              ) =>
                 setField(
                   "activities",
                   activities
                 )
               }
-              placeholder="Add an activity..."
+              placeholder="Hiking, Heritage Walks, Safari..."
             />
           </div>
 
           <div className="tf-grid">
-
             <div className="tf-field">
               <label>
                 Banner Image
@@ -302,12 +428,16 @@ const DestinationFormModal = ({ onClose }) => {
                 onChange={
                   handleBannerChange
                 }
-                required
+                required={
+                  !isEditMode
+                }
               />
 
               {bannerPreview && (
                 <img
-                  src={bannerPreview}
+                  src={
+                    bannerPreview
+                  }
                   alt="Banner Preview"
                   className="tf-image-preview"
                 />
@@ -334,15 +464,30 @@ const DestinationFormModal = ({ onClose }) => {
                   {
                     galleryImages.length
                   }{" "}
-                  file(s) selected
+                  file(s)
+                  selected
                 </span>
               )}
-            </div>
 
+              {isEditMode &&
+                destination
+                  ?.galleryImages
+                  ?.length >
+                  0 && (
+                  <span className="tf-file-count">
+                    Existing:{" "}
+                    {
+                      destination
+                        .galleryImages
+                        .length
+                    }{" "}
+                    image(s)
+                  </span>
+                )}
+            </div>
           </div>
 
           <div className="tf-grid">
-
             <label className="tf-checkbox-row">
               <input
                 type="checkbox"
@@ -374,16 +519,16 @@ const DestinationFormModal = ({ onClose }) => {
               />
               Popular
             </label>
-
           </div>
 
           <div className="tf-modal-footer">
-
             <button
               type="button"
               className="tf-btn tf-btn--secondary"
               onClick={onClose}
-              disabled={actionLoading}
+              disabled={
+                actionLoading
+              }
             >
               Cancel
             </button>
@@ -391,17 +536,18 @@ const DestinationFormModal = ({ onClose }) => {
             <button
               type="submit"
               className="tf-btn tf-btn--primary"
-              disabled={actionLoading}
+              disabled={
+                actionLoading
+              }
             >
               {actionLoading
                 ? "Saving..."
+                : isEditMode
+                ? "Update Destination"
                 : "Create Destination"}
             </button>
-
           </div>
-
         </form>
-
       </div>
     </div>
   );
