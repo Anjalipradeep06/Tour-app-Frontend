@@ -15,11 +15,8 @@ const initialState = {
   featuredDestinations: parsedAuth?.featuredDestinations || [],
   destinations: parsedAuth?.destinations || [],
   popularDestinations: parsedAuth?.popularDestinations || [],
-
   allDestinations: parsedAuth?.allDestinations || [],
-
   selectedDestination: parsedAuth?.selectedDestination || null,
-
   destinationTours: parsedAuth?.destinationTours || [],
 
   total: 0,
@@ -32,6 +29,7 @@ const initialState = {
   actionLoading: false,
   actionError: null,
   actionSuccess: false,
+  actionMessage: null,
 };
 
 const destinationSlice =
@@ -56,14 +54,12 @@ const destinationSlice =
             [];
         },
 
-      resetDestinationActionState:
-        (state) => {
-          state.actionLoading =
-            false;
-          state.actionError = null;
-          state.actionSuccess =
-            false;
-        },
+     resetDestinationActionState: (state) => {
+  state.actionLoading = false;
+  state.actionError = null;
+  state.actionSuccess = false;
+  state.actionMessage = null;
+},
     },
 
     extraReducers: (builder) => {
@@ -231,42 +227,40 @@ const destinationSlice =
         )
 
         // CREATE
-        .addCase(
-          createDestination.pending,
-          (state) => {
-            state.actionLoading =
-              true;
-            state.actionError =
-              null;
-          }
-        )
+.addCase(
+  createDestination.pending,
+  (state) => {
+    state.actionLoading = true;
+    state.actionError = null;
+    state.actionSuccess = false;
+  }
+)
 
-        .addCase(
-          createDestination.fulfilled,
-          (state, action) => {
-            state.actionLoading =
-              false;
+.addCase(
+  createDestination.fulfilled,
+  (state, action) => {
+    state.actionLoading = false;
+    state.actionSuccess = true;
 
-            state.actionSuccess =
-              true;
+    state.allDestinations = [
+      action.payload.destination,
+      ...state.allDestinations,
+    ];
 
-            state.allDestinations = [
-              action.payload,
-              ...state.allDestinations,
-            ];
-          }
-        )
+    state.actionMessage =
+      action.payload.message ||
+      "Destination created successfully";
+  }
+)
 
-        .addCase(
-          createDestination.rejected,
-          (state, action) => {
-            state.actionLoading =
-              false;
-
-            state.actionError =
-              action.payload;
-          }
-        );
+.addCase(
+  createDestination.rejected,
+  (state, action) => {
+    state.actionLoading = false;
+    state.actionError = action.payload;
+    state.actionSuccess = false;
+  }
+)
     },
   });
 
