@@ -10,7 +10,7 @@ import {
   clearError,
 } from "../../redux/slices/authSlice";
 
-import ProfileEditModal from "./ProfileEditModal";
+import EditProfileModal from "./EditProfileModal";
 
 import "./Profile.css";
 
@@ -18,16 +18,15 @@ const Profile = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const {
-    user,
-    message,
-    error,
-  } = useSelector((state) => state.auth);
+  const { user, message, error } = useSelector(
+    (state) => state.auth
+  );
 
   const { bookings } = useSelector(
-    (state) => state.bookings || {
-      bookings: [],
-    }
+    (state) =>
+      state.bookings || {
+        bookings: [],
+      }
   );
 
   const [showEditModal, setShowEditModal] =
@@ -36,7 +35,6 @@ const Profile = () => {
   useEffect(() => {
     if (message) {
       toast.success(message);
-
       dispatch(clearMessage());
     }
   }, [message, dispatch]);
@@ -44,7 +42,6 @@ const Profile = () => {
   useEffect(() => {
     if (error) {
       toast.error(error);
-
       dispatch(clearError());
     }
   }, [error, dispatch]);
@@ -65,12 +62,13 @@ const Profile = () => {
   }
 
   const joinDate = user.createdAt
-    ? new Date(
-        user.createdAt
-      ).toLocaleDateString("en-US", {
-        month: "long",
-        year: "numeric",
-      })
+    ? new Date(user.createdAt).toLocaleDateString(
+        "en-US",
+        {
+          month: "long",
+          year: "numeric",
+        }
+      )
     : "Recently";
 
   return (
@@ -79,9 +77,7 @@ const Profile = () => {
         <div className="profile-hero-overlay">
           <div className="profile-hero-content">
             <div className="profile-avatar">
-              {user.name
-                ?.charAt(0)
-                .toUpperCase()}
+              {user.name?.charAt(0).toUpperCase()}
             </div>
 
             <div>
@@ -90,7 +86,6 @@ const Profile = () => {
               </span>
 
               <h1>{user.name}</h1>
-
               <p>{user.email}</p>
             </div>
           </div>
@@ -115,7 +110,6 @@ const Profile = () => {
                 ? "Admin"
                 : "Traveler"}
             </h3>
-
             <span>Account Type</span>
           </div>
         </div>
@@ -197,7 +191,8 @@ const Profile = () => {
       </div>
 
       {showEditModal && (
-        <ProfileEditModal
+        <EditProfileModal
+          user={user}
           onClose={() =>
             setShowEditModal(false)
           }

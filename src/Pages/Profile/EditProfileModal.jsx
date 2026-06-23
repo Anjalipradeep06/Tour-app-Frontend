@@ -5,36 +5,34 @@ import { updateProfile } from "../../redux/thunks/authThunk";
 
 import "./EditProfileModal.css";
 
-const EditProfileModal = ({
-  user,
-  onClose,
-}) => {
+const EditProfileModal = ({ user, onClose }) => {
   const dispatch = useDispatch();
 
-  const { loading } =
-    useSelector(
-      (state) => state.auth
-    );
+  const { loading } = useSelector(
+    (state) => state.auth
+  );
 
-  const [name, setName] =
-    useState(user?.name || "");
+  const [name, setName] = useState(
+    user?.name || ""
+  );
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    dispatch(
-      updateProfile({
-        name,
-      })
+    const resultAction = await dispatch(
+      updateProfile({ name })
     );
 
-    onClose();
+    if (
+      updateProfile.fulfilled.match(resultAction)
+    ) {
+      onClose();
+    }
   };
 
   return (
     <div className="epm-overlay">
       <div className="epm-modal">
-
         <div className="epm-header">
           <h2>Edit Profile</h2>
 
@@ -51,26 +49,20 @@ const EditProfileModal = ({
           onSubmit={handleSubmit}
           className="epm-form"
         >
-
           <div className="epm-field">
-            <label>
-              Full Name
-            </label>
+            <label>Full Name</label>
 
             <input
               type="text"
               value={name}
               onChange={(e) =>
-                setName(
-                  e.target.value
-                )
+                setName(e.target.value)
               }
               required
             />
           </div>
 
           <div className="epm-actions">
-
             <button
               type="button"
               className="epm-cancel"
@@ -88,11 +80,8 @@ const EditProfileModal = ({
                 ? "Saving..."
                 : "Save Changes"}
             </button>
-
           </div>
-
         </form>
-
       </div>
     </div>
   );
