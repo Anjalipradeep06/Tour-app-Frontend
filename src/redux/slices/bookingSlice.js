@@ -14,6 +14,11 @@ const initialState = {
 
   availability: null,
 
+  // pagination state (NEW)
+  currentPage: 1,
+  totalPages: 1,
+  totalBookings: 0,
+
   loading: {
     list: false,
     detail: false,
@@ -59,12 +64,11 @@ const bookingSlice = createSlice({
   extraReducers: (builder) => {
     builder
 
-      // CREATE BOOKING
+      // ---------------- CREATE BOOKING ----------------
       .addCase(createBooking.pending, (state) => {
         state.loading.action = true;
         state.error = null;
       })
-
       .addCase(createBooking.fulfilled, (state, action) => {
         state.loading.action = false;
         state.success = true;
@@ -72,50 +76,48 @@ const bookingSlice = createSlice({
         state.selectedBooking = action.payload.booking;
         state.message = action.payload.message;
       })
-
       .addCase(createBooking.rejected, (state, action) => {
         state.loading.action = false;
         state.error = action.payload;
       })
 
-      // GET USER BOOKINGS
+      // ---------------- GET USER BOOKINGS (PAGINATION FIXED) ----------------
       .addCase(getUserBookings.pending, (state) => {
         state.loading.list = true;
         state.error = null;
       })
-
       .addCase(getUserBookings.fulfilled, (state, action) => {
         state.loading.list = false;
-        state.bookings = action.payload;
-      })
 
+        state.bookings = action.payload.bookings;
+        state.currentPage = action.payload.currentPage;
+        state.totalPages = action.payload.totalPages;
+        state.totalBookings = action.payload.totalBookings;
+      })
       .addCase(getUserBookings.rejected, (state, action) => {
         state.loading.list = false;
         state.error = action.payload;
       })
 
-      // GET BOOKING BY ID
+      // ---------------- GET BOOKING BY ID ----------------
       .addCase(getBookingById.pending, (state) => {
         state.loading.detail = true;
         state.error = null;
       })
-
       .addCase(getBookingById.fulfilled, (state, action) => {
         state.loading.detail = false;
         state.selectedBooking = action.payload;
       })
-
       .addCase(getBookingById.rejected, (state, action) => {
         state.loading.detail = false;
         state.error = action.payload;
       })
 
-      // UPDATE BOOKING
+      // ---------------- UPDATE BOOKING ----------------
       .addCase(updateBooking.pending, (state) => {
         state.loading.action = true;
         state.error = null;
       })
-
       .addCase(updateBooking.fulfilled, (state, action) => {
         state.loading.action = false;
         state.success = true;
@@ -129,18 +131,16 @@ const bookingSlice = createSlice({
             : booking
         );
       })
-
       .addCase(updateBooking.rejected, (state, action) => {
         state.loading.action = false;
         state.error = action.payload;
       })
 
-      // CANCEL BOOKING
+      // ---------------- CANCEL BOOKING ----------------
       .addCase(cancelBooking.pending, (state) => {
         state.loading.action = true;
         state.error = null;
       })
-
       .addCase(cancelBooking.fulfilled, (state, action) => {
         state.loading.action = false;
         state.success = true;
@@ -154,31 +154,22 @@ const bookingSlice = createSlice({
             : booking
         );
       })
-
       .addCase(cancelBooking.rejected, (state, action) => {
         state.loading.action = false;
         state.error = action.payload;
       })
 
-      // CHECK AVAILABILITY
+      // ---------------- CHECK AVAILABILITY ----------------
       .addCase(checkAvailability.pending, (state) => {
         state.availability = null;
       })
-
-      .addCase(
-        checkAvailability.fulfilled,
-        (state, action) => {
-          state.availability = action.payload;
-        }
-      )
-
-      .addCase(
-        checkAvailability.rejected,
-        (state, action) => {
-          state.availability = null;
-          state.error = action.payload;
-        }
-      );
+      .addCase(checkAvailability.fulfilled, (state, action) => {
+        state.availability = action.payload;
+      })
+      .addCase(checkAvailability.rejected, (state, action) => {
+        state.availability = null;
+        state.error = action.payload;
+      });
   },
 });
 

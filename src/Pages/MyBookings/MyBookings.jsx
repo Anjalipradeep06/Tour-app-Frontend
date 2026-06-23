@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { getUserBookings } from "../../redux/thunks/bookingThunk";
@@ -11,9 +11,20 @@ const MyBookings = () => {
     (state) => state.booking
   );
 
+  const [page, setPage] = useState(1);
+  const limit = 5;
+
   useEffect(() => {
-    dispatch(getUserBookings());
-  }, [dispatch]);
+    dispatch(getUserBookings({ page, limit }));
+  }, [dispatch, page]);
+
+  const handleNext = () => {
+    setPage((prev) => prev + 1);
+  };
+
+  const handlePrev = () => {
+    setPage((prev) => Math.max(prev - 1, 1));
+  };
 
   return (
     <div className="mybookings-page">
@@ -26,7 +37,9 @@ const MyBookings = () => {
       </section>
 
       <div className="mybookings-content">
-        {loading.list && <div className="loader">Loading your trips...</div>}
+        {loading.list && (
+          <div className="loader">Loading your trips...</div>
+        )}
 
         {error && <div className="error-box">{error}</div>}
 
@@ -36,11 +49,10 @@ const MyBookings = () => {
           </div>
         )}
 
+        {/* BOOKINGS */}
         <div className="bookings-grid">
           {bookings.map((b) => (
             <div className="mybooking-card" key={b._id}>
-              
-              {/* IMAGE */}
               <div className="booking-image">
                 <img
                   src={
@@ -51,9 +63,7 @@ const MyBookings = () => {
                 />
               </div>
 
-              {/* CONTENT */}
               <div className="booking-content">
-                
                 <div className="top-row">
                   <h2>{b.tour?.title || "Tour unavailable"}</h2>
 
@@ -68,13 +78,13 @@ const MyBookings = () => {
 
                 <div className="meta">
                   <span>👥 {b.participants} guests</span>
-                  <span>📅 {new Date(b.bookingDate).toLocaleDateString()}</span>
+                  <span>
+                    📅 {new Date(b.bookingDate).toLocaleDateString()}
+                  </span>
                 </div>
 
                 <div className="bottom-row">
-                  <p className="price">
-                    ₹{b.totalAmount}
-                  </p>
+                  <p className="price">₹{b.totalAmount}</p>
 
                   <div className="bottom-row-actions">
                     {b.status === "completed" && b.tour?._id && (
@@ -94,10 +104,25 @@ const MyBookings = () => {
                     </Link>
                   </div>
                 </div>
-
               </div>
             </div>
           ))}
+        </div>
+
+        {/* PAGINATION CONTROLS */}
+        <div className="pagination">
+          <button
+            onClick={handlePrev}
+            disabled={page === 1}
+          >
+            Prev
+          </button>
+
+          <span>Page {page}</span>
+
+          <button onClick={handleNext}>
+            Next
+          </button>
         </div>
       </div>
     </div>

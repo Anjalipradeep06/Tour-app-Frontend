@@ -4,9 +4,12 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   getAllTours,
   deleteTour,
+  updateTour,
+  createTour,
 } from "../../redux/thunks/tourThunk";
 
 import TourFormModal from "./TourFormModal";
+import { toast } from "react-toastify";
 
 import "./ManageTours.css";
 
@@ -17,10 +20,10 @@ const ManageTours = () => {
   const dispatch = useDispatch();
 
   const {
-    tours,
+    tours = [],
     loading,
     actionLoading,
-    total,
+    total = 0,
   } = useSelector((state) => state.tours);
 
   const [search, setSearch] = useState("");
@@ -28,10 +31,12 @@ const ManageTours = () => {
   const [editingTour, setEditingTour] = useState(null);
   const [deleteTargetId, setDeleteTargetId] = useState(null);
 
+  // ================= FETCH TOURS =================
   useEffect(() => {
     dispatch(getAllTours({ limit: 100 }));
   }, [dispatch]);
 
+  // ================= SEARCH =================
   const handleSearch = (e) => {
     e.preventDefault();
 
@@ -43,6 +48,7 @@ const ManageTours = () => {
     );
   };
 
+  // ================= MODAL HANDLERS =================
   const openCreate = () => {
     setEditingTour(null);
     setModalOpen(true);
@@ -58,55 +64,53 @@ const ManageTours = () => {
     setModalOpen(false);
   };
 
-  const handleDelete = () => {
-    dispatch(deleteTour(deleteTargetId));
+  // ================= DELETE =================
+  const handleDelete = async () => {
+    if (!deleteTargetId) return;
+
+    const res = await dispatch(deleteTour(deleteTargetId));
+
+    if (deleteTour.fulfilled.match(res)) {
+      toast.success("Tour deleted successfully");
+    } else {
+      toast.error(res.payload || "Delete failed");
+    }
+
     setDeleteTargetId(null);
   };
+
+  // ================= STATS =================
+  const featuredCount = tours.filter((t) => t.isFeatured).length;
+  const availableCount = tours.filter((t) => t.availableSlots > 0).length;
+
+  const inventoryValue = tours.reduce(
+    (sum, t) => sum + Number(t.price || 0),
+    0
+  );
 
   return (
     <div className="manageTours">
 
       {/* ================= HEADER ================= */}
-
       <section className="manageToursHero">
-
         <div className="heroLeft">
-
-          <span className="heroBadge">
-            Premium Tour Management
-          </span>
-
-          <h1>
-            Manage Tours
-          </h1>
-
+          <span className="heroBadge">Premium Tour Management</span>
+          <h1>Manage Tours</h1>
           <p>
             Create, edit and organize luxury travel experiences for your
             customers from one beautiful dashboard.
           </p>
-
         </div>
 
         <div className="heroRight">
-
-          <button
-            className="createTourBtn"
-            onClick={openCreate}
-          >
+          <button className="createTourBtn" onClick={openCreate}>
             + Create Tour
           </button>
-
         </div>
-
       </section>
 
       {/* ================= SEARCH ================= */}
-
-      <form
-        className="manageToursSearch"
-        onSubmit={handleSearch}
-      >
-
+      <form className="manageToursSearch" onSubmit={handleSearch}>
         <input
           type="text"
           placeholder="Search tours, destinations or keywords..."
@@ -114,299 +118,149 @@ const ManageTours = () => {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <button type="submit">
-          Search
-        </button>
-
+        <button type="submit">Search</button>
       </form>
 
       {/* ================= STATS ================= */}
-
       <section className="tourStats">
-
         <div className="tourStatCard">
-
-          <div>
-
-            <span>Total Tours</span>
-
-            <h2>{total}</h2>
-
-          </div>
-
-          <div className="tourStatIcon">
-            🌍
-          </div>
-
+          <span>Total Tours</span>
+          <h2>{total}</h2>
         </div>
 
         <div className="tourStatCard">
-
-          <div>
-
-            <span>Featured Tours</span>
-
-            <h2>
-              {
-                tours.filter(
-                  (tour) => tour.isFeatured
-                ).length
-              }
-            </h2>
-
-          </div>
-
-          <div className="tourStatIcon">
-            ⭐
-          </div>
-
+          <span>Featured Tours</span>
+          <h2>{featuredCount}</h2>
         </div>
 
         <div className="tourStatCard">
-
-          <div>
-
-            <span>Available Tours</span>
-
-            <h2>
-              {
-                tours.filter(
-                  (tour) => tour.availableSlots > 0
-                ).length
-              }
-            </h2>
-
-          </div>
-
-          <div className="tourStatIcon">
-            ✈️
-          </div>
-
+          <span>Available Tours</span>
+          <h2>{availableCount}</h2>
         </div>
 
         <div className="tourStatCard">
-
-          <div>
-
-            <span>Inventory Value</span>
-
-            <h2>
-              ₹
-              {tours
-                .reduce(
-                  (sum, tour) =>
-                    sum + Number(tour.price || 0),
-                  0
-                )
-                .toLocaleString()}
-            </h2>
-
-          </div>
-
-          <div className="tourStatIcon">
-            💰
-          </div>
-
+          <span>Inventory Value</span>
+          <h2>{formatCurrency(inventoryValue)}</h2>
         </div>
-
       </section>
 
-      {/* ================= TOUR GRID ================= */}
-
+      {/* ================= LOADING ================= */}
       {loading && tours.length === 0 ? (
-
-        <div className="loadingState">
-
-          Loading Tours...
-
-        </div>
-
+        <div className="loadingState">Loading Tours...</div>
       ) : tours.length === 0 ? (
-
         <div className="loadingState">
-
           <h2>No Tours Found</h2>
-
-          <p>
-            Try changing your search or create a new tour.
-          </p>
-
+          <p>Try changing your search or create a new tour.</p>
         </div>
-
       ) : (
-
         <div className="tourGrid">
           {tours.map((tour) => (
-  <div className="tourCard" key={tour._id}>
+            <div className="tourCard" key={tour._id}>
+              <div className="tourImageWrapper">
+                <img
+                  src={
+                    tour.images?.[0] ||
+                    tour.image ||
+                    tour.thumbnail ||
+                    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80"
+                  }
+                  alt={tour.title}
+                  className="tourImage"
+                />
 
-    <div className="tourImageWrapper">
+                {tour.isFeatured && (
+                  <span className="featuredBadge">⭐ Featured</span>
+                )}
 
-      <img
-        src={
-          tour.images?.[0] ||
-          tour.image ||
-          tour.thumbnail ||
-          "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80"
-        }
-        alt={tour.title}
-        className="tourImage"
-      />
+                <div className="tourPriceBadge">
+                  {formatCurrency(tour.price)}
+                </div>
+              </div>
 
-      {tour.isFeatured && (
-        <span className="featuredBadge">
-          ⭐ Featured
-        </span>
-      )}
+              <div className="tourContent">
+                <h3>{tour.title}</h3>
 
-      <div className="tourPriceBadge">
-        {formatCurrency(tour.price)}
-      </div>
+                <p className="tourLocation">
+                  📍{" "}
+                  {tour.destination?.name
+                    ? `${tour.destination.name}, ${tour.destination.country}`
+                    : "Destination"}
+                </p>
 
-    </div>
+                <div className="tourInfo">
+                  <div>
+                    <span>Duration</span>
+                    <strong>{tour.duration} Days</strong>
+                  </div>
 
-    <div className="tourContent">
+                  <div>
+                    <span>Slots</span>
+                    <strong>{tour.availableSlots}</strong>
+                  </div>
 
-      <h3>{tour.title}</h3>
+                  <div>
+                    <span>Rating</span>
+                    <strong>
+                      {tour.averageRating > 0
+                        ? `⭐ ${tour.averageRating.toFixed(1)}`
+                        : "No Reviews"}
+                    </strong>
+                  </div>
 
-      <p className="tourLocation">
-        📍{" "}
-        {tour.destination?.name
-          ? `${tour.destination.name}, ${tour.destination.country}`
-          : "Destination"}
-      </p>
+                  <div>
+                    <span>Country</span>
+                    <strong>{tour.destination?.country || "-"}</strong>
+                  </div>
+                </div>
 
-      <div className="tourInfo">
+                <div className="tourActions">
+                  <button
+                    className="editBtn"
+                    onClick={() => openEdit(tour)}
+                    disabled={actionLoading}
+                  >
+                    Edit
+                  </button>
 
-        <div>
-
-          <span>Duration</span>
-
-          <strong>
-            {tour.duration} Days
-          </strong>
-
-        </div>
-
-        <div>
-
-          <span>Slots</span>
-
-          <strong>
-            {tour.availableSlots}
-          </strong>
-
-        </div>
-
-        <div>
-
-          <span>Rating</span>
-
-          <strong>
-            {tour.averageRating > 0 ? (
-              <>
-                ⭐ {tour.averageRating.toFixed(1)}
-                <small>
-                  {" "}
-                  ({tour.totalReviews || 0})
-                </small>
-              </>
-            ) : (
-              "No Reviews"
-            )}
-          </strong>
-
-        </div>
-
-        <div>
-
-          <span>Country</span>
-
-          <strong>
-            {tour.destination?.country || "-"}
-          </strong>
-
-        </div>
-
-      </div>
-
-      <div className="tourActions">
-
-        <button
-          className="editBtn"
-          onClick={() => openEdit(tour)}
-        >
-          Edit
-        </button>
-
-        <button
-          className="deleteBtn"
-          onClick={() =>
-            setDeleteTargetId(tour._id)
-          }
-          disabled={actionLoading}
-        >
-          Delete
-        </button>
-
-      </div>
-
-    </div>
-
-  </div>
-))}
+                  <button
+                    className="deleteBtn"
+                    onClick={() => setDeleteTargetId(tour._id)}
+                    disabled={actionLoading}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
       {/* ================= FOOTER ================= */}
-
       <div className="tourFooter">
-
-        <strong>{tours.length}</strong> of{" "}
-        <strong>{total}</strong> tours displayed
-
+        <strong>{tours.length}</strong> of <strong>{total}</strong> tours
+        displayed
       </div>
 
-      {/* ================= CREATE / EDIT MODAL ================= */}
-
+      {/* ================= MODAL ================= */}
       {modalOpen && (
-        <TourFormModal
-          tour={editingTour}
-          onClose={closeModal}
-        />
+        <TourFormModal tour={editingTour} onClose={closeModal} />
       )}
 
       {/* ================= DELETE MODAL ================= */}
-
       {deleteTargetId && (
-        <div
-          className="deleteOverlay"
-          role="dialog"
-          aria-modal="true"
-        >
+        <div className="deleteOverlay" role="dialog">
           <div className="deleteModal">
-
-            <div className="deleteIcon">
-              🗑️
-            </div>
-
-            <h2>
-              Delete this tour?
-            </h2>
+            <h2>Delete this tour?</h2>
 
             <p>
-              This action cannot be undone.
-              Existing bookings will remain,
-              but this tour will no longer be
-              available for customers.
+              This action cannot be undone. Existing bookings will remain.
             </p>
 
             <div className="deleteActions">
-
               <button
                 className="cancelBtn"
-                onClick={() =>
-                  setDeleteTargetId(null)
-                }
+                onClick={() => setDeleteTargetId(null)}
                 disabled={actionLoading}
               >
                 Cancel
@@ -417,17 +271,12 @@ const ManageTours = () => {
                 onClick={handleDelete}
                 disabled={actionLoading}
               >
-                {actionLoading
-                  ? "Deleting..."
-                  : "Delete Tour"}
+                {actionLoading ? "Deleting..." : "Delete Tour"}
               </button>
-
             </div>
-
           </div>
         </div>
       )}
-
     </div>
   );
 };

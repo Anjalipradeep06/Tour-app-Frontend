@@ -31,7 +31,7 @@ import ManageTours from "./Pages/Admin/ManageTours";
 import ManageDestinations from "./Pages/Admin/ManageDestinations";
 import ManageUsers from "./Pages/Admin/ManageUsers";
 import ManageReviews from "./Pages/Admin/ManageReviews/ManageReviews";
-
+import AdminBookings from "./Pages/Admin/AdminBookings";
 import "./App.css";
 
 function App() {
@@ -107,7 +107,7 @@ function App() {
             }
           >
             <Route index element={<AdminDashboard />} />
-
+<Route path="/admin/bookings" element={<AdminBookings />} />
             <Route path="tours" element={<ManageTours />} />
             <Route
               path="destinations"

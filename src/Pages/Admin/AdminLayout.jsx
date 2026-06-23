@@ -27,9 +27,14 @@ const NAV_ITEMS = [
     end: true,
   },
   {
+    to: "/admin/bookings",
+    label: "Manage Bookings",
+    icon: <FaSuitcase />,
+  },
+  {
     to: "/admin/tours",
     label: "Tours",
-    icon: <FaSuitcase />,
+    icon: <FaGlobeAsia />,
   },
   {
     to: "/admin/destinations",
@@ -65,13 +70,17 @@ const AdminLayout = () => {
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (accountRef.current && !accountRef.current.contains(e.target)) {
+      if (
+        accountRef.current &&
+        !accountRef.current.contains(e.target)
+      ) {
         setAccountOpen(false);
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleLogout = () => {
@@ -83,8 +92,7 @@ const AdminLayout = () => {
   return (
     <div className="admin-layout">
 
-      {/* Topbar */}
-
+      {/* TOPBAR */}
       <header className="admin-topbar">
 
         <div className="admin-topbar-search">
@@ -99,7 +107,6 @@ const AdminLayout = () => {
 
           <button
             className="admin-topbar-icon-btn"
-            aria-label="Notifications"
             onClick={() => navigate("/notifications")}
           >
             <FaBell />
@@ -108,23 +115,24 @@ const AdminLayout = () => {
             )}
           </button>
 
-          <div className="admin-topbar-account-wrapper" ref={accountRef}>
+          <div
+            className="admin-topbar-account-wrapper"
+            ref={accountRef}
+          >
             <button
               className="admin-topbar-account"
-              onClick={() => setAccountOpen((prev) => !prev)}
-              aria-expanded={accountOpen}
+              onClick={() =>
+                setAccountOpen((prev) => !prev)
+              }
             >
-              <FaUserCircle className="admin-topbar-avatar" />
+              <FaUserCircle />
               <span>{user?.name || "Admin"}</span>
-              <FaChevronDown className="admin-topbar-caret" />
+              <FaChevronDown />
             </button>
 
             {accountOpen && (
-              <div className="admin-topbar-dropdown" role="menu">
-                <button
-                  className="admin-topbar-dropdown-item"
-                  onClick={handleLogout}
-                >
+              <div className="admin-topbar-dropdown">
+                <button onClick={handleLogout}>
                   <FaSignOutAlt />
                   Logout
                 </button>
@@ -133,27 +141,17 @@ const AdminLayout = () => {
           </div>
 
         </div>
-
       </header>
 
-      {/* Sidebar */}
-
+      {/* SIDEBAR */}
       <aside className="admin-sidebar">
 
         <div className="sidebar-logo">
-
-          <p className="sidebar-small">
-            MERIDIAN
-          </p>
-
-          <h2>
-            Travel Admin
-          </h2>
-
+          <p className="sidebar-small">MERIDIAN</p>
+          <h2>Travel Admin</h2>
         </div>
 
         <nav className="sidebar-menu">
-
           {NAV_ITEMS.map((item) => (
             <NavLink
               key={item.to}
@@ -168,11 +166,9 @@ const AdminLayout = () => {
               <span className="sidebar-icon">
                 {item.icon}
               </span>
-
               <span>{item.label}</span>
             </NavLink>
           ))}
-
         </nav>
 
         <div className="sidebar-footer">
@@ -202,12 +198,9 @@ const AdminLayout = () => {
 
       </aside>
 
-      {/* Content */}
-
+      {/* MAIN CONTENT */}
       <main className="admin-content">
-
         <Outlet />
-
       </main>
 
     </div>

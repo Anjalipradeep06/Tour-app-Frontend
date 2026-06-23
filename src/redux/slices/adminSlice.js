@@ -9,8 +9,16 @@ import {
 
 const initialState = {
   stats: null,
+
+  // PAGINATION STRUCTURE
   allBookings: [],
   pendingBookings: [],
+
+  pagination: {
+    currentPage: 1,
+    totalPages: 1,
+    totalBookings: 0,
+  },
 
   loading: {
     stats: false,
@@ -35,7 +43,7 @@ const adminSlice = createSlice({
   extraReducers: (builder) => {
     builder
 
-      // DASHBOARD STATS
+      // ---------------- DASHBOARD ----------------
       .addCase(getDashboardStats.pending, (state) => {
         state.loading.stats = true;
         state.error = null;
@@ -49,21 +57,27 @@ const adminSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ALL BOOKINGS
+      // ---------------- ALL BOOKINGS (PAGINATED) ----------------
       .addCase(getAllBookings.pending, (state) => {
         state.loading.bookings = true;
         state.error = null;
       })
       .addCase(getAllBookings.fulfilled, (state, action) => {
         state.loading.bookings = false;
-        state.allBookings = action.payload;
+
+        state.allBookings = action.payload.bookings;
+        state.pagination = {
+          currentPage: action.payload.currentPage,
+          totalPages: action.payload.totalPages,
+          totalBookings: action.payload.totalBookings,
+        };
       })
       .addCase(getAllBookings.rejected, (state, action) => {
         state.loading.bookings = false;
         state.error = action.payload;
       })
 
-      // PENDING BOOKINGS
+      // ---------------- PENDING BOOKINGS ----------------
       .addCase(getPendingBookings.pending, (state) => {
         state.loading.bookings = true;
         state.error = null;
@@ -77,7 +91,7 @@ const adminSlice = createSlice({
         state.error = action.payload;
       })
 
-      // APPROVE
+      // ---------------- APPROVE ----------------
       .addCase(approveBooking.pending, (state, action) => {
         state.loading.action = true;
         state.actionTargetId = action.meta.arg;
@@ -103,7 +117,7 @@ const adminSlice = createSlice({
         state.error = action.payload;
       })
 
-      // REJECT
+      // ---------------- REJECT ----------------
       .addCase(rejectBooking.pending, (state, action) => {
         state.loading.action = true;
         state.actionTargetId = action.meta.arg;

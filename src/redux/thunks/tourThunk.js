@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../api/axios";
 
 // =====================
-// Get All Tours
+// Get All Tours (PAGINATED)
 // =====================
 export const getAllTours = createAsyncThunk(
   "tours/getAllTours",
@@ -12,11 +12,16 @@ export const getAllTours = createAsyncThunk(
         params,
       });
 
-      return response.data;
+      return {
+        tours: response.data.tours || [],
+        total: response.data.total || 0,
+        page: response.data.page || 1,
+        pages: response.data.pages || 1,
+        count: response.data.count || 0,
+      };
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message ||
-          "Failed to fetch tours"
+        error.response?.data?.message || "Failed to fetch tours"
       );
     }
   }
@@ -29,16 +34,11 @@ export const getTourById = createAsyncThunk(
   "tours/getTourById",
   async (id, thunkAPI) => {
     try {
-      const response = await api.get(
-        `/tours/${id}`
-      );
-
-      // IMPORTANT FIX
+      const response = await api.get(`/tours/${id}`);
       return response.data.tour;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message ||
-          "Failed to fetch tour"
+        error.response?.data?.message || "Failed to fetch tour"
       );
     }
   }
@@ -51,16 +51,12 @@ export const createTour = createAsyncThunk(
   "tours/createTour",
   async (tourData, thunkAPI) => {
     try {
-      const response = await api.post(
-        "/tours",
-        tourData
-      );
+      const response = await api.post("/tours", tourData);
 
-      return response.data;
+      return response.data.tour; // ✅ FIXED
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message ||
-        "Failed to create tour"
+        error.response?.data?.message || "Failed to create tour"
       );
     }
   }
@@ -71,21 +67,14 @@ export const createTour = createAsyncThunk(
 // =====================
 export const updateTour = createAsyncThunk(
   "tours/updateTour",
-  async (
-    { id, tourData },
-    thunkAPI
-  ) => {
+  async ({ id, tourData }, thunkAPI) => {
     try {
-      const response = await api.put(
-        `/tours/${id}`,
-        tourData
-      );
+      const response = await api.put(`/tours/${id}`, tourData);
 
       return response.data.tour;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message ||
-          "Failed to update tour"
+        error.response?.data?.message || "Failed to update tour"
       );
     }
   }
@@ -99,12 +88,10 @@ export const deleteTour = createAsyncThunk(
   async (id, thunkAPI) => {
     try {
       await api.delete(`/tours/${id}`);
-
       return id;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data?.message ||
-          "Failed to delete tour"
+        error.response?.data?.message || "Failed to delete tour"
       );
     }
   }

@@ -11,7 +11,9 @@ const getAuthConfig = () => {
   };
 };
 
-// CREATE BOOKING
+/* =================================================
+   CREATE BOOKING
+================================================= */
 export const createBooking = createAsyncThunk(
   "booking/create",
   async (bookingData, thunkAPI) => {
@@ -21,7 +23,11 @@ export const createBooking = createAsyncThunk(
         bookingData,
         getAuthConfig()
       );
-      return { booking: data.booking, message: data.message };
+
+      return {
+        booking: data.booking,
+        message: data.message,
+      };
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to create booking"
@@ -30,13 +36,23 @@ export const createBooking = createAsyncThunk(
   }
 );
 
-// GET ALL
+/* =================================================
+   GET USER BOOKINGS (PAGINATED)
+   Response: { bookings, pagination }
+================================================= */
 export const getUserBookings = createAsyncThunk(
   "booking/getAll",
-  async (_, thunkAPI) => {
+  async ({ page = 1, limit = 5 } = {}, thunkAPI) => {
     try {
-      const { data } = await api.get("/bookings", getAuthConfig());
-      return data.bookings;
+      const { data } = await api.get(
+        `/bookings?page=${page}&limit=${limit}`,
+        getAuthConfig()
+      );
+
+      return {
+        bookings: data.bookings,
+        pagination: data.pagination,
+      };
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to fetch bookings"
@@ -45,7 +61,9 @@ export const getUserBookings = createAsyncThunk(
   }
 );
 
-// GET BY ID
+/* =================================================
+   GET BOOKING BY ID
+================================================= */
 export const getBookingById = createAsyncThunk(
   "booking/getById",
   async (id, thunkAPI) => {
@@ -54,6 +72,7 @@ export const getBookingById = createAsyncThunk(
         `/bookings/${id}`,
         getAuthConfig()
       );
+
       return data.booking;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -63,7 +82,9 @@ export const getBookingById = createAsyncThunk(
   }
 );
 
-// UPDATE
+/* =================================================
+   UPDATE BOOKING
+================================================= */
 export const updateBooking = createAsyncThunk(
   "booking/update",
   async ({ id, bookingData }, thunkAPI) => {
@@ -73,7 +94,11 @@ export const updateBooking = createAsyncThunk(
         bookingData,
         getAuthConfig()
       );
-      return { booking: data.booking, message: data.message };
+
+      return {
+        booking: data.booking,
+        message: data.message,
+      };
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to update booking"
@@ -82,7 +107,9 @@ export const updateBooking = createAsyncThunk(
   }
 );
 
-// CANCEL
+/* =================================================
+   CANCEL BOOKING
+================================================= */
 export const cancelBooking = createAsyncThunk(
   "booking/cancel",
   async (id, thunkAPI) => {
@@ -92,7 +119,11 @@ export const cancelBooking = createAsyncThunk(
         {},
         getAuthConfig()
       );
-      return { booking: data.booking, message: data.message };
+
+      return {
+        booking: data.booking,
+        message: data.message,
+      };
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data?.message || "Failed to cancel booking"
@@ -100,23 +131,17 @@ export const cancelBooking = createAsyncThunk(
     }
   }
 );
+
+/* =================================================
+   CHECK AVAILABILITY
+================================================= */
 export const checkAvailability = createAsyncThunk(
   "booking/checkAvailability",
-  async (
-    { tourId, date, participants },
-    thunkAPI
-  ) => {
+  async ({ tourId, date, participants }, thunkAPI) => {
     try {
-      const { data } = await api.get(
-        "/availability/check",
-        {
-          params: {
-            tourId,
-            date,
-            participants,
-          },
-        }
-      );
+      const { data } = await api.get("/availability/check", {
+        params: { tourId, date, participants },
+      });
 
       return data.data;
     } catch (error) {

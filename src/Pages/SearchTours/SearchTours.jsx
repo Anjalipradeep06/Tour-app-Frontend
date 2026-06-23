@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
@@ -14,15 +14,16 @@ import "./SearchTours.css";
 const SearchTours = () => {
   const dispatch = useDispatch();
 
-  const {
-    tours,
-    loading,
-    error,
-  } = useSelector((state) => state.tours);
+  const { tours, loading, error, total, pages } = useSelector(
+    (state) => state.tours
+  );
+
+  const [page, setPage] = useState(1);
+  const limit = 12;
 
   useEffect(() => {
-    dispatch(getAllTours({}));
-  }, [dispatch]);
+    dispatch(getAllTours({ page, limit }));
+  }, [dispatch, page]);
 
   useEffect(() => {
     if (error) {
@@ -31,8 +32,17 @@ const SearchTours = () => {
     }
   }, [error, dispatch]);
 
+  const handleNext = () => {
+    setPage((prev) => Math.min(prev + 1, pages));
+  };
+
+  const handlePrev = () => {
+    setPage((prev) => Math.max(prev - 1, 1));
+  };
+
   return (
     <div className="search-page">
+      {/* HERO */}
       <section className="search-hero">
         <div className="search-hero-overlay">
           <div className="search-hero-content">
@@ -40,16 +50,11 @@ const SearchTours = () => {
               DISCOVER EXPERIENCES WORLDWIDE
             </span>
 
-            <h1>
-              Find tours crafted for every
-              kind of traveler
-            </h1>
+            <h1>Find tours crafted for every kind of traveler</h1>
 
             <p>
-              Explore handpicked adventures,
-              cultural experiences, guided
-              tours, and unforgettable
-              activities across the globe.
+              Explore handpicked adventures, cultural experiences,
+              guided tours, and unforgettable activities across the globe.
             </p>
           </div>
         </div>
@@ -66,39 +71,48 @@ const SearchTours = () => {
               <h2>
                 {loading
                   ? "Finding experiences..."
-                  : `${tours.length} experiences found`}
+                  : `${total || tours.length} experiences found`}
               </h2>
 
-              <p>
-                Curated tours from trusted
-                operators worldwide.
-              </p>
+              <p>Curated tours from trusted operators worldwide.</p>
             </div>
           </div>
 
+          {/* LOADING */}
           {loading ? (
             <div className="loading-state">
               <div className="booking-spinner" />
-
               <p>Loading tours...</p>
             </div>
           ) : tours.length > 0 ? (
-            <div className="tour-grid">
-              {tours.map((tour) => (
-                <TourCard
-                  key={tour._id}
-                  tour={tour}
-                />
-              ))}
-            </div>
+            <>
+              {/* TOURS GRID */}
+              <div className="tour-grid">
+                {tours.map((tour) => (
+                  <TourCard key={tour._id} tour={tour} />
+                ))}
+              </div>
+
+              {/* PAGINATION */}
+              <div className="pagination">
+                <button onClick={handlePrev} disabled={page === 1}>
+                  Prev
+                </button>
+
+                <span>
+                  Page {page} of {pages}
+                </span>
+
+                <button onClick={handleNext} disabled={page === pages}>
+                  Next
+                </button>
+              </div>
+            </>
           ) : (
             <div className="empty-state">
               <h3>No experiences found</h3>
-
               <p>
-                Try adjusting your search or
-                filters to discover more
-                destinations.
+                Try adjusting your search or filters to discover more destinations.
               </p>
             </div>
           )}

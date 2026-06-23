@@ -23,11 +23,11 @@ const initialState = {
   total: 0,
   page: 1,
   pages: 1,
+  count: 0,
 };
 
 const tourSlice = createSlice({
   name: "tours",
-
   initialState,
 
   reducers: {
@@ -66,6 +66,7 @@ const tourSlice = createSlice({
         state.total = action.payload.total || 0;
         state.page = action.payload.page || 1;
         state.pages = action.payload.pages || 1;
+        state.count = action.payload.count || 0;
       })
 
       .addCase(getAllTours.rejected, (state, action) => {
@@ -105,14 +106,7 @@ const tourSlice = createSlice({
         state.actionLoading = false;
         state.actionSuccess = true;
 
-        state.actionMessage =
-          action.payload?.message ||
-          "Tour created successfully";
-
-        const tour =
-          action.payload?.tour || action.payload;
-
-        state.tours = [tour, ...state.tours];
+        state.tours.unshift(action.payload);
 
         state.total += 1;
       })
@@ -125,79 +119,31 @@ const tourSlice = createSlice({
       // ======================
       // UPDATE TOUR
       // ======================
-      .addCase(updateTour.pending, (state) => {
-        state.actionLoading = true;
-        state.actionError = null;
-        state.actionSuccess = false;
-        state.actionMessage = null;
-      })
-
       .addCase(updateTour.fulfilled, (state, action) => {
-        state.actionLoading = false;
-        state.actionSuccess = true;
-
-        state.actionMessage =
-          action.payload?.message ||
-          "Tour updated successfully";
-
-        const updatedTour =
-          action.payload?.tour || action.payload;
+        const updatedTour = action.payload;
 
         state.tours = state.tours.map((tour) =>
-          tour._id === updatedTour._id
-            ? updatedTour
-            : tour
+          tour._id === updatedTour._id ? updatedTour : tour
         );
 
-        if (
-          state.selectedTour?._id ===
-          updatedTour._id
-        ) {
+        if (state.selectedTour?._id === updatedTour._id) {
           state.selectedTour = updatedTour;
         }
-      })
-
-      .addCase(updateTour.rejected, (state, action) => {
-        state.actionLoading = false;
-        state.actionError = action.payload;
       })
 
       // ======================
       // DELETE TOUR
       // ======================
-      .addCase(deleteTour.pending, (state) => {
-        state.actionLoading = true;
-        state.actionError = null;
-        state.actionSuccess = false;
-        state.actionMessage = null;
-      })
-
       .addCase(deleteTour.fulfilled, (state, action) => {
-        state.actionLoading = false;
-        state.actionSuccess = true;
-
-        state.actionMessage =
-          "Tour deleted successfully";
-
         state.tours = state.tours.filter(
           (tour) => tour._id !== action.payload
         );
 
-        state.total = Math.max(
-          0,
-          state.total - 1
-        );
+        state.total = Math.max(0, state.total - 1);
 
-        if (
-          state.selectedTour?._id === action.payload
-        ) {
+        if (state.selectedTour?._id === action.payload) {
           state.selectedTour = null;
         }
-      })
-
-      .addCase(deleteTour.rejected, (state, action) => {
-        state.actionLoading = false;
-        state.actionError = action.payload;
       });
   },
 });
