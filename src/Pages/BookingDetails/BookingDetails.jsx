@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, Link } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -24,6 +24,8 @@ import {
   clearBookingError,
 } from "../../redux/slices/bookingSlice";
 
+import { usePolling } from "../../hooks/usePolling";
+
 import PaymentButton from "../../Components/PaymentButton/PaymentButton";
 
 import "./BookingDetails.css";
@@ -40,12 +42,21 @@ const BookingDetails = () => {
     message,
   } = useSelector((state) => state.booking);
 
-  // Fetch booking details
+  // Tracks whether the very first fetch has completed,
+  // so the full-page spinner only shows once (not on every poll)
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
+
+  // Fetch booking details (initial load)
   useEffect(() => {
-    dispatch(getBookingById(id));
+    setHasLoadedOnce(false);
+
+    dispatch(getBookingById(id)).then(() => {
+      setHasLoadedOnce(true);
+    });
 
     return () => {
       dispatch(resetBookingState());
+      setHasLoadedOnce(false);
     };
   }, [dispatch, id]);
 
@@ -67,6 +78,31 @@ const BookingDetails = () => {
     dispatch,
   ]);
 
+  const booking = selectedBooking;
+
+  const status =
+    booking?.status || "pending";
+
+  const paymentStatus =
+    booking?.paymentStatus || "unpaid";
+
+  const canCancel =
+    status === "pending" ||
+    status === "confirmed";
+
+  // Stop polling once the booking can't change anymore
+  const isFinal =
+    status === "cancelled" ||
+    (status === "completed" && paymentStatus === "paid");
+
+  // Auto-refresh every 5s so admin approval / payment status shows up
+  // without the user having to refresh manually. Stops once final.
+  usePolling(
+    () => dispatch(getBookingById(id)),
+    5000,
+    !isFinal
+  );
+
   const handleCancel = () => {
     const confirmed = window.confirm(
       "Are you sure you want to cancel this booking?"
@@ -77,7 +113,7 @@ const BookingDetails = () => {
     }
   };
 
-  if (loading.detail) {
+  if (loading.detail && !hasLoadedOnce) {
     return (
       <div className="booking-page">
         <div className="booking-state">
@@ -105,18 +141,6 @@ const BookingDetails = () => {
       </div>
     );
   }
-
-  const booking = selectedBooking;
-
-  const status =
-    booking?.status || "pending";
-
-  const paymentStatus =
-    booking?.paymentStatus || "unpaid";
-
-  const canCancel =
-    status === "pending" ||
-    status === "confirmed";
 
   const formattedDate = booking?.bookingDate
     ? new Date(
@@ -296,30 +320,30 @@ const BookingDetails = () => {
             <div className="summary-divider" />
 
             <div className="action-group">
-  {paymentStatus !== "paid" &&
-    status !== "cancelled" && (
-      <PaymentButton
-        booking={booking}
-      />
-    )}
+              {paymentStatus !== "paid" &&
+                status !== "cancelled" && (
+                  <PaymentButton
+                    booking={booking}
+                  />
+                )}
 
-  {canCancel ? (
-    <button
-      className="danger-btn"
-      onClick={handleCancel}
-      disabled={loading.action}
-    >
-      {loading.action
-        ? "Cancelling..."
-        : "Cancel Booking"}
-    </button>
-  ) : (
-    <p className="locked-note">
-      This booking can no
-      longer be modified.
-    </p>
-  )}
-</div>
+              {canCancel ? (
+                <button
+                  className="danger-btn"
+                  onClick={handleCancel}
+                  disabled={loading.action}
+                >
+                  {loading.action
+                    ? "Cancelling..."
+                    : "Cancel Booking"}
+                </button>
+              ) : (
+                <p className="locked-note">
+                  This booking can no
+                  longer be modified.
+                </p>
+              )}
+            </div>
           </aside>
         </div>
       </div>

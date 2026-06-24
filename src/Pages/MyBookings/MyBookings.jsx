@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { getUserBookings } from "../../redux/thunks/bookingThunk";
 import "./MyBookings.css";
-
+import { usePolling } from "../../hooks/usePolling";
 const MyBookings = () => {
   const dispatch = useDispatch();
 
@@ -17,6 +17,10 @@ const MyBookings = () => {
   useEffect(() => {
     dispatch(getUserBookings({ page, limit }));
   }, [dispatch, page]);
+  usePolling(
+    () => dispatch(getUserBookings({ page, limit })),
+    8000
+  );
 
   const handleNext = () => {
     setPage((prev) => prev + 1);

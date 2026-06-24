@@ -23,7 +23,7 @@ import {
 import { resetAdminError } from "../../redux/slices/adminSlice";
 
 import "./AdminDashboard.css";
-
+import { usePolling } from "../../hooks/usePolling";
 const RECENT_BOOKINGS_LIMIT = 4;
 
 const TABS = [
@@ -87,7 +87,10 @@ const AdminDashboard = () => {
     dispatch(getDashboardStats());
     dispatch(getAllBookings());
   }, [dispatch]);
-
+usePolling(() => {
+    dispatch(getDashboardStats());
+    dispatch(getAllBookings());
+  }, 10000);
   const handleApprove = (id) => {
     dispatch(approveBooking(id)).then((result) => {
       if (approveBooking.fulfilled.match(result)) {
