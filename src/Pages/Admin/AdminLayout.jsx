@@ -193,9 +193,7 @@ const AdminLayout = () => {
 
           <button
             className="sidebar-btn"
-            onClick={() =>
-              navigate("/admin/settings")
-            }
+           
           >
             <FaCog />
             Settings
