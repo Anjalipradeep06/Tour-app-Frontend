@@ -1,21 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+
 import {
   FaChartPie,
   FaSuitcase,
   FaGlobeAsia,
   FaUsers,
-  FaBell,
   FaCog,
-  FaSearch,
   FaUserCircle,
   FaChevronDown,
   FaSignOutAlt,
 } from "react-icons/fa";
 
 import { logout } from "../../redux/slices/authSlice";
-import { getUnreadCount } from "../../redux/thunks/notificationThunk";
 
 import "./AdminLayout.css";
 
@@ -54,19 +52,8 @@ const AdminLayout = () => {
   const accountRef = useRef(null);
 
   const { user } = useSelector((state) => state.auth);
-  const { unreadCount } = useSelector((state) => state.notification);
 
   const [accountOpen, setAccountOpen] = useState(false);
-
-  useEffect(() => {
-    dispatch(getUnreadCount());
-
-    const interval = setInterval(() => {
-      dispatch(getUnreadCount());
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, [dispatch]);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -78,9 +65,16 @@ const AdminLayout = () => {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener(
+      "mousedown",
+      handleClickOutside
+    );
+
     return () =>
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutside
+      );
   }, []);
 
   const handleLogout = () => {
@@ -95,25 +89,11 @@ const AdminLayout = () => {
       {/* TOPBAR */}
       <header className="admin-topbar">
 
-        <div className="admin-topbar-search">
-          <FaSearch className="admin-topbar-search-icon" />
-          <input
-            type="text"
-            placeholder="Search bookings, tours, travelers…"
-          />
+        <div className="admin-brand">
+          MERIDIAN ADMIN
         </div>
 
         <div className="admin-topbar-right">
-
-          <button
-            className="admin-topbar-icon-btn"
-            onClick={() => navigate("/notifications")}
-          >
-            <FaBell />
-            {unreadCount > 0 && (
-              <span className="admin-topbar-dot" />
-            )}
-          </button>
 
           <div
             className="admin-topbar-account-wrapper"
@@ -125,17 +105,41 @@ const AdminLayout = () => {
                 setAccountOpen((prev) => !prev)
               }
             >
-              <FaUserCircle />
-              <span>{user?.name || "Admin"}</span>
-              <FaChevronDown />
+              <FaUserCircle
+                className="admin-topbar-avatar"
+              />
+
+              <span>
+                {user?.name || "Admin"}
+              </span>
+
+              <FaChevronDown
+                className="admin-topbar-caret"
+              />
             </button>
 
             {accountOpen && (
               <div className="admin-topbar-dropdown">
-                <button onClick={handleLogout}>
+
+                <button
+                  className="admin-topbar-dropdown-item"
+                  onClick={() => {
+                    setAccountOpen(false);
+                    navigate("/admin/profile");
+                  }}
+                >
+                  <FaUserCircle />
+                  Profile
+                </button>
+
+                <button
+                  className="admin-topbar-dropdown-item"
+                  onClick={handleLogout}
+                >
                   <FaSignOutAlt />
                   Logout
                 </button>
+
               </div>
             )}
           </div>
@@ -147,7 +151,10 @@ const AdminLayout = () => {
       <aside className="admin-sidebar">
 
         <div className="sidebar-logo">
-          <p className="sidebar-small">MERIDIAN</p>
+          <p className="sidebar-small">
+            MERIDIAN
+          </p>
+
           <h2>Travel Admin</h2>
         </div>
 
@@ -166,6 +173,7 @@ const AdminLayout = () => {
               <span className="sidebar-icon">
                 {item.icon}
               </span>
+
               <span>{item.label}</span>
             </NavLink>
           ))}
@@ -175,7 +183,9 @@ const AdminLayout = () => {
 
           <button
             className="sidebar-btn"
-            onClick={() => navigate("/profile")}
+            onClick={() =>
+              navigate("/admin/profile")
+            }
           >
             <FaUserCircle />
             Profile
@@ -183,13 +193,10 @@ const AdminLayout = () => {
 
           <button
             className="sidebar-btn"
-            onClick={() => navigate("/notifications")}
+            onClick={() =>
+              navigate("/admin/settings")
+            }
           >
-            <FaBell />
-            Notifications
-          </button>
-
-          <button className="sidebar-btn">
             <FaCog />
             Settings
           </button>

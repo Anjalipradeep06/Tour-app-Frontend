@@ -32,6 +32,7 @@ import ManageDestinations from "./Pages/Admin/ManageDestinations";
 import ManageUsers from "./Pages/Admin/ManageUsers";
 import ManageReviews from "./Pages/Admin/ManageReviews/ManageReviews";
 import AdminBookings from "./Pages/Admin/AdminBookings";
+import AdminProfile from "./Pages/Admin/Profile/AdminProfile";
 import "./App.css";
 
 function App() {
@@ -116,7 +117,10 @@ function App() {
             <Route path="users" element={<ManageUsers />} />
             <Route path="reviews" element={<ManageReviews />} />
           </Route>
-
+<Route
+  path="/admin/profile"
+  element={<AdminProfile />}
+/>
           <Route
             path="/destinations/:id"
             element={<DestinationDetails />}

@@ -1,0 +1,140 @@
+.admin-profile-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.admin-profile-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+
+  background: #fff;
+  padding: 32px;
+  border-radius: 20px;
+
+  margin-bottom: 24px;
+
+  box-shadow: 0 10px 25px rgba(0,0,0,.08);
+}
+
+.admin-profile-avatar {
+  width: 90px;
+  height: 90px;
+
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 38px;
+
+  background: linear-gradient(
+    135deg,
+    #c9a669,
+    #b78e4f
+  );
+
+  color: #111;
+}
+
+.admin-profile-header h1 {
+  font-size: 2rem;
+  margin-bottom: 6px;
+  color: #111827;
+}
+
+.admin-profile-header p {
+  color: #6b7280;
+}
+
+.admin-profile-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+.admin-profile-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px;
+
+  box-shadow: 0 10px 25px rgba(0,0,0,.08);
+}
+
+.admin-profile-card h2 {
+  margin-bottom: 24px;
+  color: #111827;
+  font-size: 1.2rem;
+}
+
+.admin-info-item {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+
+  padding: 16px 0;
+
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.admin-info-item:last-child {
+  border-bottom: none;
+}
+
+.admin-info-item svg {
+  font-size: 18px;
+  color: #c9a669;
+}
+
+.admin-info-item span {
+  display: block;
+  color: #6b7280;
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+}
+
+.admin-info-item strong {
+  color: #111827;
+}
+
+.admin-action-btn {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 14px 18px;
+  margin-bottom: 12px;
+
+  border: none;
+  border-radius: 12px;
+
+  cursor: pointer;
+
+  background: #111827;
+  color: white;
+
+  font-weight: 600;
+
+  transition: .25s;
+}
+
+.admin-action-btn:hover {
+  background: #c9a669;
+  color: #111;
+}
+
+@media (max-width: 900px) {
+
+  .admin-profile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-profile-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+}
