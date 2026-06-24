@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-
 import {
   startPayment,
   verifyPayment,
@@ -13,12 +12,16 @@ const initialState = {
   sessionUrl: null,
 
   success: false,
+
+  // latest paid/updated booking
   booking: null,
+
+  // 🔥 optional: helps sync UI if bookings exist in same app state
+  lastUpdatedBookingId: null,
 };
 
 const paymentSlice = createSlice({
   name: "payment",
-
   initialState,
 
   reducers: {
@@ -36,7 +39,7 @@ const paymentSlice = createSlice({
   extraReducers: (builder) => {
     builder
 
-      // START PAYMENT
+      /* ---------------- START PAYMENT ---------------- */
       .addCase(startPayment.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -54,7 +57,7 @@ const paymentSlice = createSlice({
         state.error = action.payload;
       })
 
-      // VERIFY PAYMENT
+      /* ---------------- VERIFY PAYMENT ---------------- */
       .addCase(verifyPayment.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -65,9 +68,19 @@ const paymentSlice = createSlice({
       .addCase(verifyPayment.fulfilled, (state, action) => {
         state.loading = false;
         state.success = true;
-        state.booking = action.payload.booking;
+
+        const updatedBooking = action.payload.booking;
+
+        state.booking = updatedBooking;
         state.message = action.payload.message;
-        state.error = null;
+
+        state.lastUpdatedBookingId = updatedBooking?._id;
+
+        /*
+          🔥 IMPORTANT:
+          Redux cannot directly update other slices (booking/admin slice),
+          but this flag allows UI to auto-sync instantly.
+        */
       })
 
       .addCase(verifyPayment.rejected, (state, action) => {

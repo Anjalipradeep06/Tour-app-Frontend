@@ -14,7 +14,6 @@ const initialState = {
 
   availability: null,
 
-  // pagination state (NEW)
   currentPage: 1,
   totalPages: 1,
   totalBookings: 0,
@@ -32,7 +31,6 @@ const initialState = {
 
 const bookingSlice = createSlice({
   name: "booking",
-
   initialState,
 
   reducers: {
@@ -64,7 +62,7 @@ const bookingSlice = createSlice({
   extraReducers: (builder) => {
     builder
 
-      // ---------------- CREATE BOOKING ----------------
+      /* ---------------- CREATE BOOKING ---------------- */
       .addCase(createBooking.pending, (state) => {
         state.loading.action = true;
         state.error = null;
@@ -73,15 +71,22 @@ const bookingSlice = createSlice({
         state.loading.action = false;
         state.success = true;
 
-        state.selectedBooking = action.payload.booking;
+        const newBooking = action.payload.booking;
+
+        state.selectedBooking = newBooking;
         state.message = action.payload.message;
+
+        // 🔥 instantly add to list (NO refresh needed)
+        state.bookings.unshift(newBooking);
+
+        state.totalBookings += 1;
       })
       .addCase(createBooking.rejected, (state, action) => {
         state.loading.action = false;
         state.error = action.payload;
       })
 
-      // ---------------- GET USER BOOKINGS (PAGINATION FIXED) ----------------
+      /* ---------------- GET BOOKINGS ---------------- */
       .addCase(getUserBookings.pending, (state) => {
         state.loading.list = true;
         state.error = null;
@@ -90,6 +95,7 @@ const bookingSlice = createSlice({
         state.loading.list = false;
 
         state.bookings = action.payload.bookings;
+
         state.currentPage = action.payload.currentPage;
         state.totalPages = action.payload.totalPages;
         state.totalBookings = action.payload.totalBookings;
@@ -99,7 +105,7 @@ const bookingSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ---------------- GET BOOKING BY ID ----------------
+      /* ---------------- GET SINGLE BOOKING ---------------- */
       .addCase(getBookingById.pending, (state) => {
         state.loading.detail = true;
         state.error = null;
@@ -113,7 +119,7 @@ const bookingSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ---------------- UPDATE BOOKING ----------------
+      /* ---------------- UPDATE BOOKING ---------------- */
       .addCase(updateBooking.pending, (state) => {
         state.loading.action = true;
         state.error = null;
@@ -122,13 +128,13 @@ const bookingSlice = createSlice({
         state.loading.action = false;
         state.success = true;
 
-        state.selectedBooking = action.payload.booking;
+        const updated = action.payload.booking;
+
+        state.selectedBooking = updated;
         state.message = action.payload.message;
 
-        state.bookings = state.bookings.map((booking) =>
-          booking._id === action.payload.booking._id
-            ? action.payload.booking
-            : booking
+        state.bookings = state.bookings.map((b) =>
+          b._id === updated._id ? updated : b
         );
       })
       .addCase(updateBooking.rejected, (state, action) => {
@@ -136,7 +142,7 @@ const bookingSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ---------------- CANCEL BOOKING ----------------
+      /* ---------------- CANCEL BOOKING ---------------- */
       .addCase(cancelBooking.pending, (state) => {
         state.loading.action = true;
         state.error = null;
@@ -145,13 +151,13 @@ const bookingSlice = createSlice({
         state.loading.action = false;
         state.success = true;
 
-        state.selectedBooking = action.payload.booking;
+        const updated = action.payload.booking;
+
+        state.selectedBooking = updated;
         state.message = action.payload.message;
 
-        state.bookings = state.bookings.map((booking) =>
-          booking._id === action.payload.booking._id
-            ? action.payload.booking
-            : booking
+        state.bookings = state.bookings.map((b) =>
+          b._id === updated._id ? updated : b
         );
       })
       .addCase(cancelBooking.rejected, (state, action) => {
@@ -159,7 +165,7 @@ const bookingSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ---------------- CHECK AVAILABILITY ----------------
+      /* ---------------- CHECK AVAILABILITY ---------------- */
       .addCase(checkAvailability.pending, (state) => {
         state.availability = null;
       })

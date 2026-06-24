@@ -43,7 +43,7 @@ const adminSlice = createSlice({
   extraReducers: (builder) => {
     builder
 
-      // ---------------- DASHBOARD ----------------
+      /* ---------------- DASHBOARD ---------------- */
       .addCase(getDashboardStats.pending, (state) => {
         state.loading.stats = true;
         state.error = null;
@@ -57,7 +57,7 @@ const adminSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ---------------- ALL BOOKINGS (PAGINATED) ----------------
+      /* ---------------- ALL BOOKINGS ---------------- */
       .addCase(getAllBookings.pending, (state) => {
         state.loading.bookings = true;
         state.error = null;
@@ -66,10 +66,11 @@ const adminSlice = createSlice({
         state.loading.bookings = false;
 
         state.allBookings = action.payload.bookings;
+
         state.pagination = {
-          currentPage: action.payload.currentPage,
-          totalPages: action.payload.totalPages,
-          totalBookings: action.payload.totalBookings,
+          currentPage: action.payload.pagination?.currentPage,
+          totalPages: action.payload.pagination?.totalPages,
+          totalBookings: action.payload.pagination?.totalBookings,
         };
       })
       .addCase(getAllBookings.rejected, (state, action) => {
@@ -77,21 +78,23 @@ const adminSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ---------------- PENDING BOOKINGS ----------------
+      /* ---------------- PENDING BOOKINGS ---------------- */
       .addCase(getPendingBookings.pending, (state) => {
         state.loading.bookings = true;
         state.error = null;
       })
       .addCase(getPendingBookings.fulfilled, (state, action) => {
         state.loading.bookings = false;
-        state.pendingBookings = action.payload;
+
+        // FIX: ensure correct structure
+        state.pendingBookings = action.payload.bookings;
       })
       .addCase(getPendingBookings.rejected, (state, action) => {
         state.loading.bookings = false;
         state.error = action.payload;
       })
 
-      // ---------------- APPROVE ----------------
+      /* ---------------- APPROVE BOOKING ---------------- */
       .addCase(approveBooking.pending, (state, action) => {
         state.loading.action = true;
         state.actionTargetId = action.meta.arg;
@@ -103,12 +106,23 @@ const adminSlice = createSlice({
 
         const updated = action.payload;
 
+        // remove from pending list immediately
         state.pendingBookings = state.pendingBookings.filter(
           (b) => b._id !== updated._id
         );
+
+        // update in all bookings list
         state.allBookings = state.allBookings.map((b) =>
           b._id === updated._id ? updated : b
         );
+
+        // update stats instantly (optional but powerful UX)
+        if (state.stats) {
+          state.stats.pendingBookings =
+            (state.stats.pendingBookings || 1) - 1;
+          state.stats.confirmedBookings =
+            (state.stats.confirmedBookings || 0) + 1;
+        }
       })
       .addCase(approveBooking.rejected, (state, action) => {
         state.loading.action = false;
@@ -116,7 +130,7 @@ const adminSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ---------------- REJECT ----------------
+      /* ---------------- REJECT BOOKING ---------------- */
       .addCase(rejectBooking.pending, (state, action) => {
         state.loading.action = true;
         state.actionTargetId = action.meta.arg;
@@ -128,12 +142,22 @@ const adminSlice = createSlice({
 
         const updated = action.payload;
 
+        // remove from pending immediately
         state.pendingBookings = state.pendingBookings.filter(
           (b) => b._id !== updated._id
         );
+
         state.allBookings = state.allBookings.map((b) =>
           b._id === updated._id ? updated : b
         );
+
+        // stats update
+        if (state.stats) {
+          state.stats.pendingBookings =
+            (state.stats.pendingBookings || 1) - 1;
+          state.stats.cancelledBookings =
+            (state.stats.cancelledBookings || 0) + 1;
+        }
       })
       .addCase(rejectBooking.rejected, (state, action) => {
         state.loading.action = false;
@@ -141,10 +165,10 @@ const adminSlice = createSlice({
         state.error = action.payload;
       })
 
-      // ---------------- COMPLETE BOOKING ----------------
+      /* ---------------- COMPLETE BOOKING ---------------- */
       .addCase(completeBooking.pending, (state, action) => {
         state.loading.action = true;
-        state.actionTargetId = action.meta.arg; // booking id
+        state.actionTargetId = action.meta.arg;
         state.error = null;
       })
       .addCase(completeBooking.fulfilled, (state, action) => {
@@ -153,10 +177,15 @@ const adminSlice = createSlice({
 
         const updated = action.payload;
 
-        // update in-place — row status flips to "completed", pencil disappears
         state.allBookings = state.allBookings.map((b) =>
           b._id === updated._id ? updated : b
         );
+
+        // stats update
+        if (state.stats) {
+          state.stats.completedBookings =
+            (state.stats.completedBookings || 0) + 1;
+        }
       })
       .addCase(completeBooking.rejected, (state, action) => {
         state.loading.action = false;
