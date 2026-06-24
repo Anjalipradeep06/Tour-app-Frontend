@@ -67,10 +67,11 @@ const adminSlice = createSlice({
 
         state.allBookings = action.payload.bookings;
 
+        // FIX: payload is flat (no nested `pagination` key) — read fields directly
         state.pagination = {
-          currentPage: action.payload.pagination?.currentPage,
-          totalPages: action.payload.pagination?.totalPages,
-          totalBookings: action.payload.pagination?.totalBookings,
+          currentPage: action.payload.currentPage,
+          totalPages: action.payload.totalPages,
+          totalBookings: action.payload.totalBookings,
         };
       })
       .addCase(getAllBookings.rejected, (state, action) => {
