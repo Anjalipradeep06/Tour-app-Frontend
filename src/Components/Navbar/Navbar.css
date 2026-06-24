@@ -400,3 +400,33 @@
   background: #fef2f2;
   color: #dc2626;
 }
+/* Always keep user menu button dark */
+
+.nav-user-btn {
+  color: #111827;
+}
+
+.nav-user-avatar {
+  color: #111827;
+}
+
+/* Transparent navbar */
+.navbar:not(.navbar-scrolled):not(.navbar-admin) .nav-user-btn {
+  color: #111827;
+  border-color: rgba(17, 24, 39, 0.15);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.navbar:not(.navbar-scrolled):not(.navbar-admin) .nav-user-btn:hover {
+  background: #ffffff;
+  border-color: rgba(17, 24, 39, 0.25);
+}
+
+.navbar:not(.navbar-scrolled):not(.navbar-admin) .nav-user-avatar {
+  color: #111827;
+  background: #f3f4f6;
+}
+
+.navbar:not(.navbar-scrolled):not(.navbar-admin) .nav-user-chevron {
+  color: #111827;
+}

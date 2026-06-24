@@ -11,6 +11,8 @@ import { resetAdminUserError } from "../../redux/slices/adminUserSlice";
 
 import "./ManageUsers.css";
 
+const PAGE_SIZE = 8;
+
 const formatDate = (date) =>
   new Date(date).toLocaleDateString("en-IN", {
     day: "numeric",
@@ -35,6 +37,7 @@ const ManageUsers = () => {
   const [includeDeleted, setIncludeDeleted] = useState(false);
   const [confirmTarget, setConfirmTarget] = useState(null);
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     dispatch(
@@ -45,12 +48,37 @@ const ManageUsers = () => {
   }, [dispatch, includeDeleted]);
 
   const filteredUsers = useMemo(() => {
-    return users.filter((u) =>
-      `${u.name} ${u.email}`
-        .toLowerCase()
-        .includes(search.toLowerCase())
-    );
+    return users
+      .filter((u) => u.role !== "admin")
+      .filter((u) =>
+        `${u.name} ${u.email}`
+          .toLowerCase()
+          .includes(search.toLowerCase())
+      );
   }, [users, search]);
+
+  // Reset to page 1 whenever the filtered set changes (new search, toggle, etc.)
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, includeDeleted]);
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredUsers.length / PAGE_SIZE)
+  );
+
+  const paginatedUsers = useMemo(() => {
+    const start = (currentPage - 1) * PAGE_SIZE;
+    return filteredUsers.slice(start, start + PAGE_SIZE);
+  }, [filteredUsers, currentPage]);
+
+  const goNext = () => {
+    if (currentPage < totalPages) setCurrentPage((p) => p + 1);
+  };
+
+  const goPrev = () => {
+    if (currentPage > 1) setCurrentPage((p) => p - 1);
+  };
 
   const activeUsers = users.filter((u) => !u.isDeleted).length;
   const inactiveUsers = users.filter((u) => u.isDeleted).length;
@@ -163,7 +191,7 @@ const ManageUsers = () => {
 
             <tbody>
 
-              {filteredUsers.map((u) => {
+              {paginatedUsers.map((u) => {
 
                 const busy =
                   actionLoading &&
@@ -273,6 +301,31 @@ const ManageUsers = () => {
 
           </table>
 
+        )}
+
+        {!loading && filteredUsers.length > 0 && totalPages > 1 && (
+          <div className="admin-pagination">
+            <button
+              className="admin-page-btn"
+              onClick={goPrev}
+              disabled={currentPage === 1}
+            >
+              ← Prev
+            </button>
+            <span className="admin-page-info">
+              Page {currentPage} of {totalPages}{" "}
+              <span className="admin-page-total">
+                ({filteredUsers.length} total)
+              </span>
+            </span>
+            <button
+              className="admin-page-btn"
+              onClick={goNext}
+              disabled={currentPage === totalPages}
+            >
+              Next →
+            </button>
+          </div>
         )}
 
       </div>

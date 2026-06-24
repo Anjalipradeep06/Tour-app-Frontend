@@ -219,3 +219,14 @@
     font-size: 2rem;
   }
 }
+.date-range-hint {
+  margin-top: 6px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.no-dates-msg {
+  margin-top: 6px;
+  font-size: 0.9rem;
+  color: #c0392b;
+}

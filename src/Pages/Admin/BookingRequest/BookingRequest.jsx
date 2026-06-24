@@ -56,7 +56,7 @@ const BookingRequest = () => {
     }
   }, [dispatch, tourId]);
 
-  // LIVE AVAILABILITY CHECK
+  // LIVE AVAILABILITY CHECK — fires once a departure date is selected
   useEffect(() => {
     if (
       !tourId ||
@@ -128,7 +128,7 @@ const BookingRequest = () => {
 
     if (!formData.bookingDate) {
       return setFormError(
-        "Please select a travel date."
+        "Please select a departure date."
       );
     }
 
@@ -149,9 +149,34 @@ const BookingRequest = () => {
     );
   };
 
-  const today = new Date()
-    .toISOString()
-    .split("T")[0];
+  // Compute end date from a given start date + tour duration
+  // (duration counts the start day itself, e.g. a 5-day trip starting
+  // Jun 27 ends Jul 1, not Jul 2)
+  const getEndDate = (startDateStr, durationDays) => {
+    if (!startDateStr || !durationDays) return null;
+
+    const start = new Date(startDateStr);
+    const end = new Date(start);
+    end.setDate(start.getDate() + (durationDays - 1));
+
+    return end;
+  };
+
+  const formatDisplayDate = (date) =>
+    date
+      ? date.toLocaleDateString("en-IN", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        })
+      : null;
+
+  const selectedEndDate = getEndDate(
+    formData.bookingDate,
+    tour?.duration
+  );
+
+  const availableStartDates = tour?.startDates || [];
 
   const totalAmount =
     (tour?.price || 0) *
@@ -184,17 +209,54 @@ const BookingRequest = () => {
               <div className="form-group">
                 <label>
                   <FaCalendarAlt />
-                  Travel date
+                  Departure date
                 </label>
 
-                <input
-                  type="date"
-                  name="bookingDate"
-                  value={formData.bookingDate}
-                  onChange={handleChange}
-                  min={today}
-                  required
-                />
+                {availableStartDates.length > 0 ? (
+                  <select
+                    name="bookingDate"
+                    value={formData.bookingDate}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">
+                      Select a departure date
+                    </option>
+
+                    {availableStartDates.map((date) => {
+                      const start = new Date(date);
+                      const end = getEndDate(
+                        date,
+                        tour?.duration
+                      );
+                      const value = new Date(date)
+                        .toISOString()
+                        .split("T")[0];
+
+                      return (
+                        <option key={date} value={value}>
+                          {formatDisplayDate(start)} →{" "}
+                          {formatDisplayDate(end)}
+                        </option>
+                      );
+                    })}
+                  </select>
+                ) : (
+                  <p className="no-dates-msg">
+                    No upcoming departure dates available
+                    for this tour.
+                  </p>
+                )}
+
+                {formData.bookingDate && tour?.duration && (
+                  <p className="date-range-hint">
+                    {tour.duration}-day trip:{" "}
+                    {formatDisplayDate(
+                      new Date(formData.bookingDate)
+                    )}{" "}
+                    → {formatDisplayDate(selectedEndDate)}
+                  </p>
+                )}
               </div>
 
               <div className="form-group">
@@ -302,6 +364,7 @@ const BookingRequest = () => {
                 disabled={
                   loading?.action ||
                   success ||
+                  availableStartDates.length === 0 ||
                   (availability &&
                     !availability.isAvailable)
                 }
@@ -363,6 +426,19 @@ const BookingRequest = () => {
                       {tour.duration} days
                     </strong>
                   </div>
+
+                  {formData.bookingDate && selectedEndDate && (
+                    <div className="summary-row">
+                      <span>Dates</span>
+
+                      <strong>
+                        {formatDisplayDate(
+                          new Date(formData.bookingDate)
+                        )}{" "}
+                        – {formatDisplayDate(selectedEndDate)}
+                      </strong>
+                    </div>
+                  )}
 
                   <div className="summary-row total">
                     <span>Total</span>

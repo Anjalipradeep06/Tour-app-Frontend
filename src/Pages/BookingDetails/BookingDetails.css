@@ -306,3 +306,86 @@
     font-size: 2rem;
   }
 }
+.booking-main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.details-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px;
+
+  box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08);
+}
+
+.details-card h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 24px;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(220px, 1fr)
+  );
+  gap: 20px;
+}
+
+.detail-item span {
+  display: block;
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+
+.detail-item strong {
+  color: #111827;
+  font-size: 1rem;
+}
+
+.payment-text.paid {
+  color: #16a34a;
+}
+
+.payment-text.unpaid {
+  color: #2563eb;
+}
+
+.payment-text.failed {
+  color: #dc2626;
+}
+
+.payment-text.refunded {
+  color: #9333ea;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.timeline-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  font-weight: 500;
+  color: #374151;
+}
+
+.timeline-item .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #16a34a;
+}
+
+.timeline-item.cancelled .dot {
+  background: #dc2626;
+}

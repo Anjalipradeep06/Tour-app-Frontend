@@ -294,10 +294,96 @@ const BookingDetails = () => {
                   View Tour Details
                 </Link>
               </div>
-            </div>
-          </div>
+           </div>
+</div>
 
-          {/* RIGHT SIDE */}
+<div className="details-card">
+  <h3>Payment Information</h3>
+
+  <div className="details-grid">
+    <div className="detail-item">
+      <span>Payment Status</span>
+
+      <strong
+        className={`payment-text ${paymentStatus}`}
+      >
+        {paymentStatus}
+      </strong>
+    </div>
+
+    <div className="detail-item">
+      <span>Payment Method</span>
+
+      <strong>
+        {booking?.paymentMethod === "stripe"
+          ? "Stripe"
+          : "Cash On Arrival"}
+      </strong>
+    </div>
+
+    <div className="detail-item">
+      <span>Booking Created</span>
+
+      <strong>
+        {new Date(
+          booking?.createdAt
+        ).toLocaleString("en-IN")}
+      </strong>
+    </div>
+
+    <div className="detail-item">
+      <span>Last Updated</span>
+
+      <strong>
+        {new Date(
+          booking?.updatedAt
+        ).toLocaleString("en-IN")}
+      </strong>
+    </div>
+  </div>
+</div>
+
+<div className="details-card">
+  <h3>Booking Timeline</h3>
+
+  <div className="timeline">
+    <div className="timeline-item active">
+      <span className="dot" />
+      Booking Created
+    </div>
+
+    {paymentStatus === "paid" && (
+      <div className="timeline-item active">
+        <span className="dot" />
+        Payment Completed
+      </div>
+    )}
+
+    {status === "confirmed" && (
+      <div className="timeline-item active">
+        <span className="dot" />
+        Booking Confirmed
+      </div>
+    )}
+
+    {status === "completed" && (
+      <div className="timeline-item active">
+        <span className="dot" />
+        Tour Completed
+      </div>
+    )}
+
+    {status === "cancelled" && (
+      <div className="timeline-item cancelled">
+        <span className="dot" />
+        Booking Cancelled
+      </div>
+    )}
+  </div>
+</div>
+
+{/* RIGHT SIDE */}
+          
 
           <aside className="summary-card">
             <p className="summary-label">
