@@ -4,17 +4,26 @@ import {
   FaEnvelope,
   FaCalendarAlt,
   FaUserCog,
-  FaLock,
 } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { FaArrowLeft } from "react-icons/fa";
 
 import "./AdminProfile.css";
 
 const AdminProfile = () => {
   const { user } = useSelector((state) => state.auth);
-
+const navigate = useNavigate();
   return (
     <div className="admin-profile-page">
-
+<div className="admin-profile-top">
+  <button
+    className="admin-back-btn"
+    onClick={() => navigate("/admin")}
+  >
+    <FaArrowLeft />
+    Dashboard
+  </button>
+</div>
       <div className="admin-profile-header">
         <div className="admin-profile-avatar">
           <FaUserShield />
@@ -66,19 +75,26 @@ const AdminProfile = () => {
           </div>
         </div>
 
-        <div className="admin-profile-card">
-          <h2>Quick Actions</h2>
+       <div className="admin-profile-card">
+  <h2>Account Summary</h2>
 
-          <button className="admin-action-btn">
-            <FaUserCog />
-            Edit Profile
-          </button>
+  <div className="admin-summary-item">
+    <span>Role</span>
+    <strong>Administrator</strong>
+  </div>
 
-          <button className="admin-action-btn">
-            <FaLock />
-            Change Password
-          </button>
-        </div>
+  <div className="admin-summary-item">
+    <span>Permissions</span>
+    <strong>Full Access</strong>
+  </div>
+
+  <div className="admin-summary-item">
+    <span>Status</span>
+    <strong className="status-active">
+      Active
+    </strong>
+  </div>
+</div>
 
       </div>
     </div>

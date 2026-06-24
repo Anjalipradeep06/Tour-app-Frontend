@@ -138,3 +138,57 @@
   }
 
 }
+.admin-profile-top {
+  margin-bottom: 20px;
+}
+
+.admin-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  border: none;
+  cursor: pointer;
+
+  background: #111827;
+  color: white;
+
+  padding: 12px 18px;
+  border-radius: 12px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  transition: all 0.25s ease;
+}
+
+.admin-back-btn:hover {
+  background: #c9a669;
+  color: #111;
+  transform: translateY(-2px);
+}.admin-summary-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 16px 0;
+
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.admin-summary-item:last-child {
+  border-bottom: none;
+}
+
+.admin-summary-item span {
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.admin-summary-item strong {
+  color: #111827;
+}
+
+.status-active {
+  color: #16a34a;
+}
