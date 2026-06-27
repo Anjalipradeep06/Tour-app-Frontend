@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams, Link } from "react-router-dom";
 
@@ -9,6 +9,8 @@ import {
   FaShieldAlt,
   FaBolt,
   FaCheckCircle,
+  FaChevronLeft,
+  FaChevronRight,
 } from "react-icons/fa";
 
 import { toast } from "react-toastify";
@@ -22,6 +24,25 @@ import { getTourById } from "../../../redux/thunks/tourThunk";
 import { resetBookingState } from "../../../redux/slices/bookingSlice";
 
 import "./BookingRequest.css";
+
+// ---------- Date helpers (module-level, no component re-creation) ----------
+
+// Normalize any date-ish value to a "YYYY-MM-DD" string using LOCAL date
+// parts (not toISOString, which can shift the day across timezones).
+const toDateKey = (d) => {
+  const date = d instanceof Date ? d : new Date(d);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+const MONTH_NAMES = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
+
+const WEEKDAY_LABELS = ["S", "M", "T", "W", "T", "F", "S"];
 
 const BookingRequest = () => {
   const { tourId } = useParams();
@@ -49,6 +70,15 @@ const BookingRequest = () => {
   });
 
   const [formError, setFormError] = useState("");
+
+  // NEW: shown when the user clicks a date that admin has NOT registered
+  // as a valid start date for this tour.
+  const [dateNotAvailable, setDateNotAvailable] = useState(false);
+
+  // NEW: which month/year the calendar is currently displaying.
+  const today = useMemo(() => new Date(), []);
+  const [viewYear, setViewYear] = useState(today.getFullYear());
+  const [viewMonth, setViewMonth] = useState(today.getMonth()); // 0-indexed
 
   useEffect(() => {
     if (tourId) {
@@ -132,6 +162,12 @@ const BookingRequest = () => {
       );
     }
 
+    if (dateNotAvailable) {
+      return setFormError(
+        "Please choose a valid departure date."
+      );
+    }
+
     if (
       availability &&
       !availability.isAvailable
@@ -178,9 +214,108 @@ const BookingRequest = () => {
 
   const availableStartDates = tour?.startDates || [];
 
+  // NEW: Set of valid admin-registered start dates, keyed as "YYYY-MM-DD"
+  // for fast lookup when rendering dots and validating clicks.
+  const validStartDateKeys = useMemo(() => {
+    const set = new Set();
+    availableStartDates.forEach((d) => set.add(toDateKey(d)));
+    return set;
+  }, [availableStartDates]);
+
   const totalAmount =
     (tour?.price || 0) *
     formData.participants;
+
+  // ---------- Calendar grid construction ----------
+
+  // Builds a flat array of cells for the visible month, padded with nulls
+  // for leading/trailing blanks so the grid aligns to weekday columns.
+  const calendarCells = useMemo(() => {
+    const firstOfMonth = new Date(viewYear, viewMonth, 1);
+    const startWeekday = firstOfMonth.getDay(); // 0 = Sunday
+    const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+    const cells = [];
+
+    for (let i = 0; i < startWeekday; i++) {
+      cells.push(null);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      cells.push(new Date(viewYear, viewMonth, day));
+    }
+
+    return cells;
+  }, [viewYear, viewMonth]);
+
+  const goToPrevMonth = () => {
+    setViewMonth((prev) => {
+      if (prev === 0) {
+        setViewYear((y) => y - 1);
+        return 11;
+      }
+      return prev - 1;
+    });
+  };
+
+  const goToNextMonth = () => {
+    setViewMonth((prev) => {
+      if (prev === 11) {
+        setViewYear((y) => y + 1);
+        return 0;
+      }
+      return prev + 1;
+    });
+  };
+
+  // A date counts as "in range" if it falls between the selected start
+  // date and the computed end date (inclusive), so the full package
+  // duration lights up automatically the moment a valid date is clicked.
+  const isInSelectedRange = (date) => {
+    if (!formData.bookingDate || !selectedEndDate || dateNotAvailable) {
+      return false;
+    }
+
+    const dayKey = toDateKey(date);
+    const startKey = toDateKey(formData.bookingDate);
+    const endKey = toDateKey(selectedEndDate);
+
+    return dayKey >= startKey && dayKey <= endKey;
+  };
+
+  const isPastDate = (date) => {
+    const startOfToday = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate()
+    );
+    return date < startOfToday;
+  };
+
+  const handleDayClick = (date) => {
+    if (isPastDate(date)) return; // ignore clicks on past days
+
+    const dayKey = toDateKey(date);
+
+    if (formError) setFormError("");
+
+    if (!validStartDateKeys.has(dayKey)) {
+      // Admin has not registered this date as a valid departure.
+      setDateNotAvailable(true);
+      setFormData((prev) => ({ ...prev, bookingDate: "" }));
+      return;
+    }
+
+    // Valid admin-registered start date — select it. The existing
+    // availability-check useEffect picks this up automatically, and
+    // selectedEndDate recalculates from tour.duration on the next render,
+    // which is what drives the automatic range highlight below.
+    setDateNotAvailable(false);
+    setFormData((prev) => ({ ...prev, bookingDate: dayKey }));
+  };
+
+  const isViewingCurrentMonth =
+    viewYear === today.getFullYear() && viewMonth === today.getMonth();
 
   return (
     <div className="booking-request-page">
@@ -212,43 +347,107 @@ const BookingRequest = () => {
                   Departure date
                 </label>
 
-                {availableStartDates.length > 0 ? (
-                  <select
-                    name="bookingDate"
-                    value={formData.bookingDate}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="">
-                      Select a departure date
-                    </option>
+                {/* NEW: custom calendar replacing the dropdown */}
+                <div className="booking-calendar">
+                  <div className="booking-calendar-header">
+                    <button
+                      type="button"
+                      className="cal-nav-btn"
+                      onClick={goToPrevMonth}
+                      disabled={isViewingCurrentMonth}
+                      aria-label="Previous month"
+                    >
+                      <FaChevronLeft />
+                    </button>
 
-                    {availableStartDates.map((date) => {
-                      const start = new Date(date);
-                      const end = getEndDate(
-                        date,
-                        tour?.duration
-                      );
-                      const value = new Date(date)
-                        .toISOString()
-                        .split("T")[0];
+                    <span className="cal-month-label">
+                      {MONTH_NAMES[viewMonth]} {viewYear}
+                    </span>
+
+                    <button
+                      type="button"
+                      className="cal-nav-btn"
+                      onClick={goToNextMonth}
+                      aria-label="Next month"
+                    >
+                      <FaChevronRight />
+                    </button>
+                  </div>
+
+                  <div className="booking-calendar-weekdays">
+                    {WEEKDAY_LABELS.map((label, idx) => (
+                      <span key={`${label}-${idx}`}>{label}</span>
+                    ))}
+                  </div>
+
+                  <div className="booking-calendar-grid">
+                    {calendarCells.map((date, idx) => {
+                      if (!date) {
+                        return (
+                          <div
+                            key={`blank-${idx}`}
+                            className="cal-cell cal-cell-blank"
+                          />
+                        );
+                      }
+
+                      const dayKey = toDateKey(date);
+                      const isValidStart = validStartDateKeys.has(dayKey);
+                      const isSelectedStart =
+                        formData.bookingDate &&
+                        dayKey === toDateKey(formData.bookingDate);
+                      const inRange = isInSelectedRange(date);
+                      const past = isPastDate(date);
+
+                      const classNames = ["cal-cell"];
+                      if (past) classNames.push("cal-cell-past");
+                      if (inRange) classNames.push("cal-cell-in-range");
+                      if (isSelectedStart) classNames.push("cal-cell-selected-start");
 
                       return (
-                        <option key={date} value={value}>
-                          {formatDisplayDate(start)} →{" "}
-                          {formatDisplayDate(end)}
-                        </option>
+                        <button
+                          type="button"
+                          key={dayKey}
+                          className={classNames.join(" ")}
+                          disabled={past}
+                          onClick={() => handleDayClick(date)}
+                        >
+                          <span className="cal-cell-daynum">
+                            {date.getDate()}
+                          </span>
+
+                          {isValidStart && (
+                            <span className="cal-cell-dot" />
+                          )}
+                        </button>
                       );
                     })}
-                  </select>
-                ) : (
+                  </div>
+
+                  <div className="booking-calendar-legend">
+                    <span>
+                      <i className="legend-dot" /> Departure available
+                    </span>
+                    <span>
+                      <i className="legend-range" /> Package days
+                    </span>
+                  </div>
+                </div>
+
+                {dateNotAvailable && (
                   <p className="no-dates-msg">
-                    No upcoming departure dates available
-                    for this tour.
+                    No booking available for this date. Please pick a date
+                    marked with a dot above.
                   </p>
                 )}
 
-                {formData.bookingDate && tour?.duration && (
+                {availableStartDates.length === 0 && (
+                  <p className="no-dates-msg">
+                    No upcoming departure dates available for this tour.
+                  </p>
+                )}
+
+                {formData.bookingDate && tour?.duration && !dateNotAvailable && (
                   <p className="date-range-hint">
                     {tour.duration}-day trip:{" "}
                     {formatDisplayDate(
@@ -277,7 +476,7 @@ const BookingRequest = () => {
 
               {/* AVAILABILITY CARD */}
 
-              {availability && (
+              {availability && !dateNotAvailable && (
                 <div
                   style={{
                     marginBottom: "20px",
@@ -364,7 +563,8 @@ const BookingRequest = () => {
                 disabled={
                   loading?.action ||
                   success ||
-                  availableStartDates.length === 0 ||
+                  !formData.bookingDate ||
+                  dateNotAvailable ||
                   (availability &&
                     !availability.isAvailable)
                 }
@@ -427,7 +627,7 @@ const BookingRequest = () => {
                     </strong>
                   </div>
 
-                  {formData.bookingDate && selectedEndDate && (
+                  {formData.bookingDate && selectedEndDate && !dateNotAvailable && (
                     <div className="summary-row">
                       <span>Dates</span>
 

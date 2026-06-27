@@ -230,3 +230,151 @@
   font-size: 0.9rem;
   color: #c0392b;
 }
+/* ===================== Booking Calendar ===================== */
+
+.booking-calendar {
+  border: 1px solid #e4e4e4;
+  border-radius: 12px;
+  padding: 14px;
+  margin-top: 8px;
+  background: #fff;
+}
+
+.booking-calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.cal-month-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #1a1a1a;
+}
+
+.cal-nav-btn {
+  background: transparent;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #555;
+  transition: all 0.15s ease;
+}
+
+.cal-nav-btn:hover:not(:disabled) {
+  border-color: #C9A669;
+  color: #C9A669;
+}
+
+.cal-nav-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.booking-calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 0.75rem;
+  color: #999;
+  margin-bottom: 4px;
+}
+
+.booking-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.cal-cell {
+  position: relative;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #333;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.cal-cell-blank {
+  cursor: default;
+}
+
+.cal-cell:hover:not(:disabled):not(.cal-cell-blank) {
+  background: #f5f0e6;
+}
+
+.cal-cell-past {
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+.cal-cell-dot {
+  position: absolute;
+  bottom: 4px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #C9A669;
+}
+
+.cal-cell-selected-start {
+  background: #C9A669 !important;
+  color: #fff !important;
+  font-weight: 700;
+}
+
+.cal-cell-selected-start .cal-cell-dot {
+  background: #fff;
+}
+
+.cal-cell-in-range {
+  background: #f5e8cc;
+  color: #4a3a1a;
+  border-radius: 0;
+}
+
+.cal-cell-in-range.cal-cell-selected-start {
+  border-radius: 8px 0 0 8px;
+}
+
+.booking-calendar-legend {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  font-size: 0.75rem;
+  color: #777;
+}
+
+.booking-calendar-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #C9A669;
+  display: inline-block;
+}
+
+.legend-range {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  background: #f5e8cc;
+  display: inline-block;
+}
