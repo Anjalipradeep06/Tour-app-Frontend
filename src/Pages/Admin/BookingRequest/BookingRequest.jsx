@@ -212,7 +212,13 @@ const BookingRequest = () => {
     tour?.duration
   );
 
-  const availableStartDates = tour?.startDates || [];
+  // Memoized so this only produces a new array reference when
+  // tour?.startDates itself changes (the `|| []` fallback would
+  // otherwise create a brand-new array on every render).
+  const availableStartDates = useMemo(
+    () => tour?.startDates || [],
+    [tour?.startDates]
+  );
 
   // NEW: Set of valid admin-registered start dates, keyed as "YYYY-MM-DD"
   // for fast lookup when rendering dots and validating clicks.
