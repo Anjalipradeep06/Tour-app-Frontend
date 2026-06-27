@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 import SearchBar from "../../Components/SearchBar/SearchBar";
@@ -11,15 +12,31 @@ import { clearTourError } from "../../redux/slices/tourSlice";
 
 import "./SearchTours.css";
 
+// Keys SearchBar/FilterSidebar can produce — used to read the same
+// shape back out of the URL on load.
+const SYNCABLE_KEYS = ["search", "country", "continent", "activity"];
+
 const SearchTours = () => {
   const dispatch = useDispatch();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const { tours, loading, error, total, pages } = useSelector(
     (state) => state.tours
   );
 
   const [page, setPage] = useState(1);
-  const [queryParams, setQueryParams] = useState({});
+
+  // Seed initial filters straight from the URL (e.g. /search?search=Japan
+  // coming from the Home page hero search, or a shared/refreshed link).
+  const [queryParams, setQueryParams] = useState(() => {
+    const initial = {};
+    SYNCABLE_KEYS.forEach((key) => {
+      const value = searchParams.get(key);
+      if (value) initial[key] = value;
+    });
+    return initial;
+  });
+
   const limit = 12;
 
   // ================= FETCH (search/filter/page driven) =================
@@ -34,22 +51,43 @@ const SearchTours = () => {
     }
   }, [error, dispatch]);
 
+  // Keeps the URL's query string in sync with the active filters, so
+  // the page stays shareable/refreshable. Only touches the keys we
+  // manage here — any unrelated params already on the URL are preserved.
+  const syncUrl = (nextParams) => {
+    const next = new URLSearchParams(searchParams);
+
+    SYNCABLE_KEYS.forEach((key) => next.delete(key));
+
+    Object.entries(nextParams).forEach(([key, value]) => {
+      if (SYNCABLE_KEYS.includes(key) && value) {
+        next.set(key, value);
+      }
+    });
+
+    setSearchParams(next, { replace: true });
+  };
+
   // ================= SEARCH (from SearchBar) =================
   const handleSearch = (searchValues) => {
     setPage(1); // reset to page 1 on a new search
-    setQueryParams((prev) => ({
-      ...prev,
-      ...searchValues,
-    }));
+
+    setQueryParams((prev) => {
+      const merged = { ...prev, ...searchValues };
+      syncUrl(merged);
+      return merged;
+    });
   };
 
   // ================= FILTER (from FilterSidebar) =================
   const handleFilter = (filterValues) => {
     setPage(1); // reset to page 1 on a new filter
-    setQueryParams((prev) => ({
-      ...prev,
-      ...filterValues,
-    }));
+
+    setQueryParams((prev) => {
+      const merged = { ...prev, ...filterValues };
+      syncUrl(merged);
+      return merged;
+    });
   };
 
   // ================= PAGINATION =================
@@ -81,7 +119,7 @@ const SearchTours = () => {
         </div>
       </section>
 
-      <SearchBar onSearch={handleSearch} />
+      <SearchBar onSearch={handleSearch} initialValues={queryParams} />
 
       <div className="search-layout">
         <FilterSidebar onFilter={handleFilter} />

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
@@ -63,9 +63,13 @@ const trustItems = [
 
 const Home = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [selectedContinent, setSelectedContinent] =
     useState("Asia");
+
+  // NEW: controlled value for the hero search input
+  const [heroSearch, setHeroSearch] = useState("");
 
   const {
     featuredDestinations,
@@ -86,6 +90,21 @@ const Home = () => {
       )
     );
   }, [dispatch, selectedContinent]);
+
+  // NEW: navigate to /search carrying the typed value as a `search`
+  // query param — same key SearchBar already uses internally, so
+  // SearchTours can pick it up with zero translation logic.
+  const handleHeroSearch = (e) => {
+    e.preventDefault();
+
+    const trimmed = heroSearch.trim();
+
+    if (trimmed) {
+      navigate(`/search?search=${encodeURIComponent(trimmed)}`);
+    } else {
+      navigate("/search");
+    }
+  };
 
   return (
     <main className="home">
@@ -110,14 +129,19 @@ const Home = () => {
               destinations.
             </p>
 
-            <div className="hero-search">
+            <form
+              className="hero-search"
+              onSubmit={handleHeroSearch}
+            >
               <input
                 type="text"
                 placeholder="Where do you want to go?"
+                value={heroSearch}
+                onChange={(e) => setHeroSearch(e.target.value)}
               />
 
-              <Link
-                to="/search"
+              <button
+                type="submit"
                 className="search-btn"
               >
                 <FaSearch />
@@ -125,8 +149,8 @@ const Home = () => {
                 <span>
                   Search Experiences
                 </span>
-              </Link>
-            </div>
+              </button>
+            </form>
 
             <div className="hero-actions">
               <Link
