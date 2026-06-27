@@ -430,3 +430,13 @@
 .navbar:not(.navbar-scrolled):not(.navbar-admin) .nav-user-chevron {
   color: #111827;
 }
+/* ── Dropdown item icon wrapper ── */
+.nav-dropdown-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: inherit;
+}
