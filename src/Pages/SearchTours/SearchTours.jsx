@@ -90,6 +90,16 @@ const SearchTours = () => {
     });
   };
 
+  // ================= RESET =================
+  // Hard navigation (not React Router) on purpose: this is the only way
+  // to guarantee SearchBar's internal filters, FilterSidebar, Redux tour
+  // state, and the URL all clear at once with zero leftover state. Using
+  // window.location.origin (rather than a hardcoded domain) keeps this
+  // correct on localhost and preview deployments too, not just production.
+  const handleReset = () => {
+    window.location.href = `${window.location.origin}/search`;
+  };
+
   // ================= PAGINATION =================
   const handleNext = () => {
     setPage((prev) => Math.min(prev + 1, pages));
@@ -135,6 +145,14 @@ const SearchTours = () => {
 
               <p>Curated tours from trusted operators worldwide.</p>
             </div>
+
+            <button
+              type="button"
+              className="reset-search-btn"
+              onClick={handleReset}
+            >
+              Reset
+            </button>
           </div>
 
           {/* LOADING */}
