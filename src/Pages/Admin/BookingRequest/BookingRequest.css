@@ -232,12 +232,58 @@
 }
 /* ===================== Booking Calendar ===================== */
 
+.booking-calendar-wrapper {
+  position: relative;
+  margin-top: 8px;
+}
+
+/* Collapsed field shown instead of the always-open calendar */
+.booking-date-field {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border: 1px solid #d9d9d9;
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.95rem;
+  text-align: left;
+  transition: border-color 0.15s ease;
+}
+
+.booking-date-field:hover {
+  border-color: #C9A669;
+}
+
+.booking-date-field-placeholder {
+  color: #9a9a9a;
+}
+
+.booking-date-field-value {
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.booking-date-field-icon {
+  color: #C9A669;
+  flex-shrink: 0;
+}
+
+/* Popup floats above page content instead of pushing the layout down */
 .booking-calendar {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 30;
+  width: 100%;
+  min-width: 320px;
   border: 1px solid #e4e4e4;
   border-radius: 12px;
   padding: 14px;
-  margin-top: 8px;
   background: #fff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
 }
 
 .booking-calendar-header {

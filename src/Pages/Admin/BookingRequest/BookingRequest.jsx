@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams, Link } from "react-router-dom";
 
@@ -79,6 +79,28 @@ const BookingRequest = () => {
   const today = useMemo(() => new Date(), []);
   const [viewYear, setViewYear] = useState(today.getFullYear());
   const [viewMonth, setViewMonth] = useState(today.getMonth()); // 0-indexed
+
+  // NEW: calendar starts collapsed; opens when the date field is clicked.
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const calendarWrapperRef = useRef(null);
+
+  // Close the calendar on any click outside its wrapper (field + popup).
+  useEffect(() => {
+    if (!calendarOpen) return;
+
+    const handleOutsideClick = (e) => {
+      if (
+        calendarWrapperRef.current &&
+        !calendarWrapperRef.current.contains(e.target)
+      ) {
+        setCalendarOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () =>
+      document.removeEventListener("mousedown", handleOutsideClick);
+  }, [calendarOpen]);
 
   useEffect(() => {
     if (tourId) {
@@ -353,91 +375,114 @@ const BookingRequest = () => {
                   Departure date
                 </label>
 
-                {/* NEW: custom calendar replacing the dropdown */}
-                <div className="booking-calendar">
-                  <div className="booking-calendar-header">
-                    <button
-                      type="button"
-                      className="cal-nav-btn"
-                      onClick={goToPrevMonth}
-                      disabled={isViewingCurrentMonth}
-                      aria-label="Previous month"
-                    >
-                      <FaChevronLeft />
-                    </button>
-
-                    <span className="cal-month-label">
-                      {MONTH_NAMES[viewMonth]} {viewYear}
-                    </span>
-
-                    <button
-                      type="button"
-                      className="cal-nav-btn"
-                      onClick={goToNextMonth}
-                      aria-label="Next month"
-                    >
-                      <FaChevronRight />
-                    </button>
-                  </div>
-
-                  <div className="booking-calendar-weekdays">
-                    {WEEKDAY_LABELS.map((label, idx) => (
-                      <span key={`${label}-${idx}`}>{label}</span>
-                    ))}
-                  </div>
-
-                  <div className="booking-calendar-grid">
-                    {calendarCells.map((date, idx) => {
-                      if (!date) {
-                        return (
-                          <div
-                            key={`blank-${idx}`}
-                            className="cal-cell cal-cell-blank"
-                          />
-                        );
+                {/* NEW: collapsible calendar — field toggles a popup */}
+                <div className="booking-calendar-wrapper" ref={calendarWrapperRef}>
+                  <button
+                    type="button"
+                    className="booking-date-field"
+                    onClick={() => setCalendarOpen((prev) => !prev)}
+                  >
+                    <span
+                      className={
+                        formData.bookingDate && !dateNotAvailable
+                          ? "booking-date-field-value"
+                          : "booking-date-field-placeholder"
                       }
+                    >
+                      {formData.bookingDate && !dateNotAvailable
+                        ? formatDisplayDate(new Date(formData.bookingDate))
+                        : "Select departure date"}
+                    </span>
+                    <FaCalendarAlt className="booking-date-field-icon" />
+                  </button>
 
-                      const dayKey = toDateKey(date);
-                      const isValidStart = validStartDateKeys.has(dayKey);
-                      const isSelectedStart =
-                        formData.bookingDate &&
-                        dayKey === toDateKey(formData.bookingDate);
-                      const inRange = isInSelectedRange(date);
-                      const past = isPastDate(date);
-
-                      const classNames = ["cal-cell"];
-                      if (past) classNames.push("cal-cell-past");
-                      if (inRange) classNames.push("cal-cell-in-range");
-                      if (isSelectedStart) classNames.push("cal-cell-selected-start");
-
-                      return (
+                  {calendarOpen && (
+                    <div className="booking-calendar">
+                      <div className="booking-calendar-header">
                         <button
                           type="button"
-                          key={dayKey}
-                          className={classNames.join(" ")}
-                          disabled={past}
-                          onClick={() => handleDayClick(date)}
+                          className="cal-nav-btn"
+                          onClick={goToPrevMonth}
+                          disabled={isViewingCurrentMonth}
+                          aria-label="Previous month"
                         >
-                          <span className="cal-cell-daynum">
-                            {date.getDate()}
-                          </span>
-
-                          {isValidStart && (
-                            <span className="cal-cell-dot" />
-                          )}
+                          <FaChevronLeft />
                         </button>
-                      );
-                    })}
-                  </div>
 
-                  <div className="booking-calendar-legend">
-                    <span>
-                      <i className="legend-dot" /> Departure available
-                    </span>
-                    <span>
-                      <i className="legend-range" /> Package days
-                    </span>
-                  </div>
+                        <span className="cal-month-label">
+                          {MONTH_NAMES[viewMonth]} {viewYear}
+                        </span>
+
+                        <button
+                          type="button"
+                          className="cal-nav-btn"
+                          onClick={goToNextMonth}
+                          aria-label="Next month"
+                        >
+                          <FaChevronRight />
+                        </button>
+                      </div>
+
+                      <div className="booking-calendar-weekdays">
+                        {WEEKDAY_LABELS.map((label, idx) => (
+                          <span key={`${label}-${idx}`}>{label}</span>
+                        ))}
+                      </div>
+
+                      <div className="booking-calendar-grid">
+                        {calendarCells.map((date, idx) => {
+                          if (!date) {
+                            return (
+                              <div
+                                key={`blank-${idx}`}
+                                className="cal-cell cal-cell-blank"
+                              />
+                            );
+                          }
+
+                          const dayKey = toDateKey(date);
+                          const isValidStart = validStartDateKeys.has(dayKey);
+                          const isSelectedStart =
+                            formData.bookingDate &&
+                            dayKey === toDateKey(formData.bookingDate);
+                          const inRange = isInSelectedRange(date);
+                          const past = isPastDate(date);
+
+                          const classNames = ["cal-cell"];
+                          if (past) classNames.push("cal-cell-past");
+                          if (inRange) classNames.push("cal-cell-in-range");
+                          if (isSelectedStart) classNames.push("cal-cell-selected-start");
+
+                          return (
+                            <button
+                              type="button"
+                              key={dayKey}
+                              className={classNames.join(" ")}
+                              disabled={past}
+                              onClick={() => handleDayClick(date)}
+                            >
+                              <span className="cal-cell-daynum">
+                                {date.getDate()}
+                              </span>
+
+                              {isValidStart && (
+                                <span className="cal-cell-dot" />
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      <div className="booking-calendar-legend">
+                        <span>
+                          <i className="legend-dot" /> Departure available
+                        </span>
+                        <span>
+                          <i className="legend-range" /> Package days
+                        </span>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {dateNotAvailable && (
