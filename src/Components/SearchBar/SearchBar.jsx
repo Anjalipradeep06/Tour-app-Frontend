@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   FaSearch,
   FaMapMarkerAlt,
@@ -17,32 +17,17 @@ const emptyFilters = {
 };
 
 // initialValues lets a parent (e.g. SearchTours reading a `?search=`
-// URL param coming from Home's hero search) pre-fill the form so the
-// inputs visually match the results already being shown, instead of
-// the form looking empty while filtered results are displayed.
+// URL param coming from Home's hero search) pre-fill the form on
+// first load, so the inputs visually match results already being
+// shown instead of looking empty. This is read ONCE on mount only —
+// SearchBar fully owns `filters` after that. It does not re-sync if
+// initialValues changes later, so picking a filter on this page never
+// clobbers text the user has already typed here.
 const SearchBar = ({ onSearch, initialValues }) => {
   const [filters, setFilters] = useState({
     ...emptyFilters,
     ...initialValues,
   });
-
-  // Keep the form in sync if initialValues changes after mount — e.g.
-  // the user goes back to Home and searches a different term, or uses
-  // browser back/forward navigation while already on the Search page.
-  useEffect(() => {
-    if (!initialValues) return;
-
-    setFilters((prev) => ({
-      ...emptyFilters,
-      ...initialValues,
-    }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    initialValues?.search,
-    initialValues?.country,
-    initialValues?.continent,
-    initialValues?.activity,
-  ]);
 
   const handleChange = (e) => {
     setFilters((prev) => ({
