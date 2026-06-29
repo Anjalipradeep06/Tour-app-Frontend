@@ -229,3 +229,53 @@
   opacity: 0.9;
   transform: translateY(-1px);
 }
+/* ============================
+   PAGINATION
+   Add this block to your existing ManageDestinations.css
+   (append at the end — does not replace anything already there)
+============================ */
+
+.md-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 32px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.md-page-btn {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid #E6E4DD;
+  background: #fff;
+  color: #1C1F23;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.md-page-btn:hover:not(:disabled) {
+  border-color: #C9A669;
+}
+
+.md-page-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.md-page-btn-active {
+  background: linear-gradient(to right, #C9A669, #B78E4F);
+  color: #1C1F23;
+  border: none;
+}
+
+.md-page-ellipsis {
+  padding: 0 6px;
+  color: #6B6F76;
+  font-size: 13px;
+}

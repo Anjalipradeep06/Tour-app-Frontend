@@ -18,6 +18,8 @@ const CONTINENTS = [
   "Antarctica",
 ];
 
+const LIMIT = 12;
+
 const ManageDestinations = () => {
   const dispatch = useDispatch();
 
@@ -25,6 +27,8 @@ const ManageDestinations = () => {
     allDestinations = [],
     loading,
     total = 0,
+    page = 1,
+    pages = 1,
   } = useSelector(
     (state) => state.destinations
   );
@@ -35,6 +39,9 @@ const ManageDestinations = () => {
   const [continent, setContinent] =
     useState("");
 
+  const [currentPage, setCurrentPage] =
+    useState(1);
+
   const [showModal, setShowModal] =
     useState(false);
 
@@ -43,19 +50,63 @@ const ManageDestinations = () => {
     setEditingDestination,
   ] = useState(null);
 
+  // Reset to page 1 whenever filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, continent]);
+
   useEffect(() => {
     dispatch(
       getAllDestinations({
         search,
         continent:
           continent || undefined,
+        page: currentPage,
+        limit: LIMIT,
       })
     );
   }, [
     dispatch,
     search,
     continent,
+    currentPage,
   ]);
+
+  const handlePrev = () => {
+    if (currentPage > 1) {
+      setCurrentPage((p) => p - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentPage < pages) {
+      setCurrentPage((p) => p + 1);
+    }
+  };
+
+  // Build a compact page list with ellipses for larger ranges
+  const getPageNumbers = () => {
+    const totalPages = pages || 1;
+    const current = page || 1;
+    const range = [];
+
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) range.push(i);
+      return range;
+    }
+
+    range.push(1);
+    if (current > 3) range.push("...");
+
+    const start = Math.max(2, current - 1);
+    const end = Math.min(totalPages - 1, current + 1);
+    for (let i = start; i <= end; i++) range.push(i);
+
+    if (current < totalPages - 2) range.push("...");
+    range.push(totalPages);
+
+    return range;
+  };
 
   return (
     <div className="admin-shell">
@@ -193,6 +244,52 @@ const ManageDestinations = () => {
               </div>
             )
           )}
+        </div>
+      )}
+
+      {/* PAGINATION */}
+      {!loading && pages > 1 && (
+        <div className="md-pagination">
+          <button
+            className="md-page-btn"
+            onClick={handlePrev}
+            disabled={page <= 1}
+          >
+            Prev
+          </button>
+
+          {getPageNumbers().map((p, idx) =>
+            p === "..." ? (
+              <span
+                key={`ellipsis-${idx}`}
+                className="md-page-ellipsis"
+              >
+                ...
+              </span>
+            ) : (
+              <button
+                key={p}
+                className={
+                  p === page
+                    ? "md-page-btn md-page-btn-active"
+                    : "md-page-btn"
+                }
+                onClick={() =>
+                  setCurrentPage(p)
+                }
+              >
+                {p}
+              </button>
+            )
+          )}
+
+          <button
+            className="md-page-btn"
+            onClick={handleNext}
+            disabled={page >= pages}
+          >
+            Next
+          </button>
         </div>
       )}
 
