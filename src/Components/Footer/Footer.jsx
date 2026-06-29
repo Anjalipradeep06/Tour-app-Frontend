@@ -67,13 +67,13 @@ const Footer = () => {
         <div className="footer-links">
           <h3>Popular Destinations</h3>
 
-          <Link to="/search?destination=dubai">Dubai</Link>
-          <Link to="/search?destination=switzerland">
+          <Link to="/search?country=Singapore">Singapore</Link>
+          <Link to="/search?country=Switzerland">
             Switzerland
           </Link>
-          <Link to="/search?destination=japan">Japan</Link>
-          <Link to="/search?destination=maldives">
-            Maldives
+          <Link to="/search?country=Japan">Japan</Link>
+          <Link to="/search?country=Australia">
+            Australia
           </Link>
         </div>
 
