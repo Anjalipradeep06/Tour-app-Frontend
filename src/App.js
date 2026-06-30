@@ -1,7 +1,7 @@
 import { Routes, Route, useLocation } from "react-router-dom";
 
 import "react-toastify/dist/ReactToastify.css";
-
+import ScrollToTop from "./Components/ScrollToTop/ScrollToTop";
 import Navbar from "./Components/Navbar/Navbar";
 import Footer from "./Components/Footer/Footer";
 
@@ -41,6 +41,7 @@ function App() {
 
   return (
     <>
+     <ScrollToTop />
       {!isAdminRoute && <Navbar />}
 
       <main>
@@ -108,7 +109,7 @@ function App() {
             }
           >
             <Route index element={<AdminDashboard />} />
-<Route path="bookings" element={<AdminBookings />} />
+            <Route path="bookings" element={<AdminBookings />} />
             <Route path="tours" element={<ManageTours />} />
             <Route
               path="destinations"
@@ -117,10 +118,10 @@ function App() {
             <Route path="users" element={<ManageUsers />} />
             <Route path="reviews" element={<ManageReviews />} />
           </Route>
-<Route
-  path="/admin/profile"
-  element={<AdminProfile />}
-/>
+          <Route
+            path="/admin/profile"
+            element={<AdminProfile />}
+          />
           <Route
             path="/destinations/:id"
             element={<DestinationDetails />}
