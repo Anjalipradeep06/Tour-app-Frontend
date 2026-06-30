@@ -1,4 +1,4 @@
-// Repeatable list of date inputs for the Tour model's
+// Repeatable list of date+time inputs for the Tour model's
 // startDates: [Date] field.
 const StartDatesEditor = ({ dates, onChange }) => {
   const addDate = () => {
@@ -31,7 +31,7 @@ const StartDatesEditor = ({ dates, onChange }) => {
         {dates.map((dateValue, index) => (
           <div key={index} className="tf-date-row">
             <input
-              type="date"
+              type="datetime-local"
               className="tf-input"
               value={dateValue || ""}
               onChange={(e) => updateDate(index, e.target.value)}

@@ -29,6 +29,18 @@ const emptyTour = {
   isFeatured: false,
 };
 
+// Converts a stored Date/ISO string into a "YYYY-MM-DDTHH:mm" string
+// using LOCAL date/time parts, suitable for an <input type="datetime-local">.
+// We deliberately avoid toISOString() here because it converts to UTC
+// first, which can shift both the date and time shown to the admin.
+const toLocalDateTimeInputValue = (d) => {
+  const date = new Date(d);
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+    date.getDate()
+  )}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+};
+
 const toFormState = (tour) => {
   if (!tour) return emptyTour;
 
@@ -47,9 +59,7 @@ const toFormState = (tour) => {
     inclusions: tour.inclusions || [],
     exclusions: tour.exclusions || [],
     itinerary: tour.itinerary || [],
-    startDates: (tour.startDates || []).map((d) =>
-      new Date(d).toISOString().slice(0, 10)
-    ),
+    startDates: (tour.startDates || []).map(toLocalDateTimeInputValue),
     meetingPoint: {
       address: tour.meetingPoint?.address || "",
       latitude: tour.meetingPoint?.latitude ?? "",
@@ -75,7 +85,14 @@ const toPayload = (form) => ({
     title: d.title.trim(),
     description: d.description.trim(),
   })),
-  startDates: form.startDates.filter(Boolean),
+  // Convert each "YYYY-MM-DDTHH:mm" datetime-local string into a real
+  // Date in the BROWSER (local timezone), then serialize to ISO (UTC).
+  // This guarantees the admin's intended local time (e.g. 9:00 AM IST)
+  // is converted correctly regardless of what timezone the backend
+  // server itself runs in.
+  startDates: form.startDates
+    .filter(Boolean)
+    .map((d) => new Date(d).toISOString()),
   meetingPoint: {
     address: form.meetingPoint.address.trim(),
     latitude: form.meetingPoint.latitude

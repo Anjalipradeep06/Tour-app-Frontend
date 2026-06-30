@@ -29,6 +29,7 @@ import "./BookingRequest.css";
 
 // Normalize any date-ish value to a "YYYY-MM-DD" string using LOCAL date
 // parts (not toISOString, which can shift the day across timezones).
+// Used purely for calendar grouping/matching by day, never for display.
 const toDateKey = (d) => {
   const date = d instanceof Date ? d : new Date(d);
   const year = date.getFullYear();
@@ -229,6 +230,16 @@ const BookingRequest = () => {
         })
       : null;
 
+  // NEW: formats the time portion of a Date, e.g. "9:00 AM"
+  const formatDisplayTime = (date) =>
+    date
+      ? date.toLocaleTimeString("en-IN", {
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+        })
+      : null;
+
   const selectedEndDate = getEndDate(
     formData.bookingDate,
     tour?.duration
@@ -249,6 +260,23 @@ const BookingRequest = () => {
     availableStartDates.forEach((d) => set.add(toDateKey(d)));
     return set;
   }, [availableStartDates]);
+
+  // NEW: maps "YYYY-MM-DD" -> the actual Date object (with real time)
+  // for that start date, so we can recover and display the admin-set
+  // departure time once a calendar day is clicked.
+  const startDateTimeMap = useMemo(() => {
+    const map = new Map();
+    availableStartDates.forEach((d) => {
+      const dateObj = new Date(d);
+      map.set(toDateKey(dateObj), dateObj);
+    });
+    return map;
+  }, [availableStartDates]);
+
+  // NEW: the full datetime (with time) for whichever date is selected.
+  const selectedStartDateTime = formData.bookingDate
+    ? new Date(formData.bookingDate)
+    : null;
 
   const totalAmount =
     (tour?.price || 0) *
@@ -334,12 +362,20 @@ const BookingRequest = () => {
       return;
     }
 
-    // Valid admin-registered start date — select it. The existing
-    // availability-check useEffect picks this up automatically, and
-    // selectedEndDate recalculates from tour.duration on the next render,
-    // which is what drives the automatic range highlight below.
+    // Valid admin-registered start date — select it. We store the FULL
+    // datetime (with the admin's real departure time) rather than just
+    // the date key, so the time is preserved through to the booking
+    // that eventually gets saved. The existing availability-check
+    // useEffect picks this up automatically (it still matches by day
+    // on the backend), and selectedEndDate recalculates from
+    // tour.duration on the next render.
+    const fullDateTime = startDateTimeMap.get(dayKey);
+
     setDateNotAvailable(false);
-    setFormData((prev) => ({ ...prev, bookingDate: dayKey }));
+    setFormData((prev) => ({
+      ...prev,
+      bookingDate: fullDateTime.toISOString(),
+    }));
   };
 
   const isViewingCurrentMonth =
@@ -390,7 +426,13 @@ const BookingRequest = () => {
                       }
                     >
                       {formData.bookingDate && !dateNotAvailable
-                        ? formatDisplayDate(new Date(formData.bookingDate))
+                        ? `${formatDisplayDate(
+                            new Date(formData.bookingDate)
+                          )}${
+                            selectedStartDateTime
+                              ? `, ${formatDisplayTime(selectedStartDateTime)}`
+                              : ""
+                          }`
                         : "Select departure date"}
                     </span>
                     <FaCalendarAlt className="booking-date-field-icon" />
@@ -460,6 +502,11 @@ const BookingRequest = () => {
                               className={classNames.join(" ")}
                               disabled={past}
                               onClick={() => handleDayClick(date)}
+                              title={
+                                isValidStart
+                                  ? formatDisplayTime(startDateTimeMap.get(dayKey))
+                                  : undefined
+                              }
                             >
                               <span className="cal-cell-daynum">
                                 {date.getDate()}
@@ -503,7 +550,9 @@ const BookingRequest = () => {
                     {tour.duration}-day trip:{" "}
                     {formatDisplayDate(
                       new Date(formData.bookingDate)
-                    )}{" "}
+                    )}
+                    {selectedStartDateTime &&
+                      ` at ${formatDisplayTime(selectedStartDateTime)}`}{" "}
                     → {formatDisplayDate(selectedEndDate)}
                   </p>
                 )}
@@ -685,7 +734,9 @@ const BookingRequest = () => {
                       <strong>
                         {formatDisplayDate(
                           new Date(formData.bookingDate)
-                        )}{" "}
+                        )}
+                        {selectedStartDateTime &&
+                          `, ${formatDisplayTime(selectedStartDateTime)}`}{" "}
                         – {formatDisplayDate(selectedEndDate)}
                       </strong>
                     </div>
