@@ -114,7 +114,7 @@ const Register = () => {
   useEffect(() => {
     if (user) {
       const timer = setTimeout(() => {
-        navigate("/");
+        navigate("/login");
       }, 1500);
 
       return () => clearTimeout(timer);
